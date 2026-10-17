@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "dotnet-sdk"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      dotnet-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      nuget-updates:
+        applies-to: version-updates
+        patterns:
+          - "*"
