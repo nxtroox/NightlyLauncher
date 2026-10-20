@@ -5,12 +5,11 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 
-internal sealed class DatabaseService(IPathService pathService, JsonSerializerOptions jsonSerializerOptions, IStringLocalizer<DatabaseService> localizer) : IDatabaseService {
+internal sealed class DatabaseService(IPathService pathService, JsonSerializerOptions jsonSerializerOptions) : IDatabaseService {
     private List<InstalledApp>? _installedApps;
 
     private async Task<List<InstalledApp>> LoadAsync(CancellationToken cancellationToken) {
