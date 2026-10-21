@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Diagnostics;
+using System.Formats.Tar;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -33,6 +34,10 @@ internal sealed class AppUpdaterService(
 
         var option = app.Manifest.InstallOptions.First(o => o.Guid == manifest.SelectedInstallOptionGuid);
 
+        var supportedFileTypes = new[] { ".zip", ".tar", ".tar.gz" };
+        if (!supportedFileTypes.Any(option.DownloadUri.LocalPath.EndsWith))
+            throw new NotSupportedException(localizer["UnsupportedFileType"]);
+
         var archivePath = Path.Combine(pathService.DownloadPath, option.DownloadUri.LocalPath);
         var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
@@ -45,8 +50,7 @@ internal sealed class AppUpdaterService(
 
             Directory.CreateDirectory(installPath);
 
-            await ZipFile.ExtractToDirectoryAsync(
-                archivePath, installPath, true, cancellationToken);
+            await ExtractArchive(archivePath, installPath, cancellationToken);
 
             if (manifest.Portable && option.PortablePath is not null) {
                 if (option.PortablePath.PortablePathType == PortablePathType.File)
@@ -61,6 +65,19 @@ internal sealed class AppUpdaterService(
             if (File.Exists(archivePath))
                 File.Delete(archivePath);
         }
+    }
+
+    private async Task ExtractArchive(string archivePath, string destinationPath, CancellationToken cancellationToken) {
+        if (archivePath.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
+            await ZipFile.ExtractToDirectoryAsync(archivePath, destinationPath, true, cancellationToken);
+        else if (archivePath.EndsWith(".tar", StringComparison.OrdinalIgnoreCase))
+            await TarFile.ExtractToDirectoryAsync(archivePath, destinationPath, true, cancellationToken);
+        else if (archivePath.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)) {
+            await using var fileStream = File.OpenRead(archivePath);
+            await using var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
+            await TarFile.ExtractToDirectoryAsync(archivePath, destinationPath, true, cancellationToken);
+        } else
+            throw new NotSupportedException(localizer["UnsupportedFileType"]);
     }
 
     private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {

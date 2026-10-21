@@ -9,9 +9,7 @@ using NightlyLauncher.Views;
 namespace NightlyLauncher;
 
 public sealed class App : Application {
-    public override void Initialize() {
-        AvaloniaXamlLoader.Load(this);
-    }
+    public override void Initialize() => AvaloniaXamlLoader.Load(this);
 
     public override void OnFrameworkInitializationCompleted() {
         var collection = new ServiceCollection();
