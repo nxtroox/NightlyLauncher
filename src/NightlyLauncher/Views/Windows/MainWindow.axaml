@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:models="clr-namespace:NightlyLauncher.Models"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
-        x:Class="NightlyLauncher.Views.MainWindow"
+        x:Class="NightlyLauncher.Views.Windows.MainWindow"
         x:DataType="vm:MainViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="NightlyLauncher - Installed apps"
@@ -23,6 +23,9 @@
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Edit app"
                           Command="{Binding EditAppCommand}" />
+                <Separator />
+                <MenuItem Header="_Settings"
+                          Command="{Binding OpenSettingsCommand}" />
             </MenuItem>
         </Menu>
 

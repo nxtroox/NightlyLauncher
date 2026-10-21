@@ -4,7 +4,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Extensions;
 using NightlyLauncher.ViewModels;
-using NightlyLauncher.Views;
+using NightlyLauncher.Views.Windows;
 
 namespace NightlyLauncher;
 
@@ -19,7 +19,7 @@ public sealed class App : Application {
         var vm = services.GetRequiredService<MainViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
-            desktop.MainWindow = new MainWindow(vm);
+            desktop.MainWindow = new MainWindow { DataContext = vm };
         }
 
         base.OnFrameworkInitializationCompleted();

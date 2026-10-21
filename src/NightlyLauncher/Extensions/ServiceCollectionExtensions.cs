@@ -10,6 +10,7 @@ namespace NightlyLauncher.Extensions;
 public static class ServiceCollectionExtensions {
     public static void AddCommonServices(this IServiceCollection collection) {
         collection.AddTransient<MainViewModel>();
+        collection.AddTransient<SettingsViewModel>();
 
         collection.AddHttpClient<AppUpdaterService>(client => {
             client.DefaultRequestHeaders.UserAgent.Add(
@@ -24,6 +25,8 @@ public static class ServiceCollectionExtensions {
         collection.AddScoped<IDatabaseService, DatabaseService>();
 
         collection.AddTransient<IPathService, PathService>();
+
+        collection.AddTransient<IDialogService, DialogService>();
 
         collection.AddSingleton(new JsonSerializerOptions {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true

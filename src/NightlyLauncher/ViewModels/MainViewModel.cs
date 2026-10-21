@@ -9,10 +9,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using NightlyLauncher.Models;
 using NightlyLauncher.Services;
+using NightlyLauncher.Views.Windows;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class MainViewModel(IDatabaseService databaseService, IConfigService configService) : ViewModelBase {
+internal partial class MainViewModel(
+    IDatabaseService databaseService,
+    IConfigService configService,
+    IDialogService dialogService) : ViewModelBase {
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
     [ObservableProperty]
@@ -40,6 +44,12 @@ internal partial class MainViewModel(IDatabaseService databaseService, IConfigSe
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private void LaunchApp() => throw new NotImplementedException();
+
+    [RelayCommand]
+    private async Task OpenSettings() {
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            await dialogService.ShowDialogAsync<SettingsWindow, SettingsViewModel, bool>(desktop.MainWindow!);
+    }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
         await configService.GetConfigAsync(cancellationToken);
