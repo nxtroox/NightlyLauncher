@@ -26,8 +26,7 @@ public static class ServiceCollectionExtensions {
         collection.AddTransient<IPathService, PathService>();
 
         collection.AddSingleton(new JsonSerializerOptions {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-            WriteIndented = true
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true
         });
 
         collection.AddLocalization();

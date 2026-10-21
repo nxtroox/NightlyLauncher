@@ -6,4 +6,4 @@ internal sealed record InstalledApp(
     AppManifest Manifest,
     string? LocalVersion = null,
     string? LatestVersion = null,
-    DateTime? InstalledOn = null);
+    DateTime? UpdatedOn = null);

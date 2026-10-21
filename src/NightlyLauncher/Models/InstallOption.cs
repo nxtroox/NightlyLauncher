@@ -2,9 +2,9 @@
 
 namespace NightlyLauncher.Models;
 
-internal sealed record InstallOperation(
+internal sealed record InstallOption(
+    Guid Guid,
     Uri DownloadUri,
     Uri LatestCommitUri,
-    string InstallPath,
     PortablePath? PortablePath = null,
     string? ReadableName = null);

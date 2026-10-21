@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -9,35 +8,19 @@ using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 
-internal sealed class DatabaseService(IPathService pathService, JsonSerializerOptions jsonSerializerOptions) : IDatabaseService {
+internal sealed class DatabaseService(IPathService pathService, JsonSerializerOptions jsonSerializerOptions)
+    : IDatabaseService {
     private List<InstalledApp>? _installedApps;
 
-    private async Task<List<InstalledApp>> LoadAsync(CancellationToken cancellationToken) {
-        List<InstalledApp> apps;
-
-        try {
-            await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
-            apps = await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
-                stream, jsonSerializerOptions, cancellationToken) ?? [];
-        } catch {
-            apps = [];
-        }
-
-        return apps;
-    }
-
-    public Task<string?> GetLocalVersionAsync(AppManifest manifest, CancellationToken cancellationToken = default)
-        => throw new NotImplementedException();
-
     public async Task UpdateAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
-        _installedApps ??= await LoadAsync(cancellationToken);
+        await GetAppsAsync(cancellationToken);
 
-        var found = _installedApps.FirstOrDefault(a => a.Manifest == app.Manifest);
+        var found = _installedApps!.FirstOrDefault(a => a.Manifest.Guid == app.Manifest.Guid);
 
         if (found is not null)
-            _installedApps.Remove(found);
+            _installedApps!.Remove(found);
 
-        _installedApps.Add(app);
+        _installedApps!.Add(app);
 
         await using var stream = File.Open(pathService.DatabasePath, FileMode.OpenOrCreate, FileAccess.Write);
 
@@ -46,4 +29,14 @@ internal sealed class DatabaseService(IPathService pathService, JsonSerializerOp
 
     public async Task<IEnumerable<InstalledApp>> GetAppsAsync(CancellationToken cancellationToken = default) =>
         _installedApps ??= await LoadAsync(cancellationToken);
+
+    private async Task<List<InstalledApp>> LoadAsync(CancellationToken cancellationToken) {
+        try {
+            await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
+            return await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
+                stream, jsonSerializerOptions, cancellationToken) ?? [];
+        } catch {
+            return [];
+        }
+    }
 }

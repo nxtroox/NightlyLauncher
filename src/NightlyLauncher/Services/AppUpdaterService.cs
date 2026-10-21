@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
@@ -13,23 +14,70 @@ using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 
-internal sealed class AppUpdaterService(HttpClient httpClient, IConfigService configService, IDatabaseService databaseService, IPathService pathService, IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
-    private async Task<string> GetLatestVersionAsync(InstallOperation operation, CancellationToken cancellationToken) {
-        var result = await httpClient.GetFromJsonAsync<CommitResponse>(operation.LatestCommitUri, cancellationToken);
+internal sealed class AppUpdaterService(
+    HttpClient httpClient,
+    IConfigService configService,
+    IDatabaseService databaseService,
+    IPathService pathService,
+    IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
+    public async Task<bool> NeedsUpdateAsync(InstalledApp app, AppManifest manifest,
+        CancellationToken cancellationToken = default) {
+        var option = app.Manifest.InstallOptions.First(o => o.Guid == manifest.SelectedInstallOptionGuid);
+        return app.LocalVersion != await GetLatestVersionAsync(option, cancellationToken);
+    }
+
+    public async Task UpdateAsync(InstalledApp app, AppManifest manifest, IProgress<double>? downloadProgress,
+        CancellationToken cancellationToken = default) {
+        Directory.CreateDirectory(configService.Config.AppPath);
+        Directory.CreateDirectory(configService.Config.DownloadPath);
+
+        var option = app.Manifest.InstallOptions.First(o => o.Guid == manifest.SelectedInstallOptionGuid);
+
+        var archivePath = Path.Combine(pathService.DownloadPath, option.DownloadUri.LocalPath);
+        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+
+        try {
+            await DownloadFileAsync(
+                option.DownloadUri, pathService.DownloadPath, option.DownloadUri.LocalPath, downloadProgress,
+                cancellationToken);
+
+            var installPath = pathService.GetInstallPath(app);
+
+            Directory.CreateDirectory(installPath);
+
+            await ZipFile.ExtractToDirectoryAsync(
+                archivePath, installPath, true, cancellationToken);
+
+            if (manifest.Portable && option.PortablePath is not null) {
+                if (option.PortablePath.PortablePathType == PortablePathType.File)
+                    await File.Create(Path.Combine(installPath, option.PortablePath.Path)).DisposeAsync();
+                else
+                    Directory.CreateDirectory(Path.Combine(installPath, option.PortablePath.Path));
+            }
+
+            await databaseService.UpdateAppAsync(
+                new InstalledApp(manifest, latestVersion, latestVersion, DateTime.UtcNow), cancellationToken);
+        } finally {
+            if (File.Exists(archivePath))
+                File.Delete(archivePath);
+        }
+    }
+
+    private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
+        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitUri, cancellationToken);
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHash"]);
     }
 
-    private sealed record CommitResponse(
-        [property: JsonPropertyName("sha")] string? Sha);
-
-    private async Task DownloadFileAsync(Uri uri, string downloadPath, string fileName, IProgress<double>? progress, CancellationToken cancellationToken) {
+    private async Task DownloadFileAsync(Uri uri, string downloadPath, string fileName, IProgress<double>? progress,
+        CancellationToken cancellationToken) {
         Directory.CreateDirectory(downloadPath);
 
         var fullPath = Path.Combine(downloadPath, fileName);
         var tempPath = fullPath + ".tmp";
 
         try {
-            using var response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            using var response =
+                await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
             response.EnsureSuccessStatusCode();
 
             var contentLength = response.Content.Headers.ContentLength;
@@ -73,48 +121,18 @@ internal sealed class AppUpdaterService(HttpClient httpClient, IConfigService co
                 ArrayPool<byte>.Shared.Return(buffer);
             }
 
-            File.Move(tempPath, fullPath, overwrite: true);
+            File.Move(tempPath, fullPath, true);
         } catch {
-            try { File.Delete(tempPath); } catch { /* ignore */ }
+            try {
+                File.Delete(tempPath);
+            } catch {
+                /* ignore */
+            }
+
             throw;
         }
     }
 
-    public async Task<bool> NeedsUpdateAsync(InstallOperation operation, AppManifest manifest, CancellationToken cancellationToken = default) {
-        var localVersion = await databaseService.GetLocalVersionAsync(manifest, cancellationToken);
-        var newVersion = await GetLatestVersionAsync(operation, cancellationToken);
-
-        return localVersion != newVersion;
-    }
-
-    public async Task UpdateAsync(InstallOperation operation, AppManifest manifest, IProgress<double>? downloadProgress, CancellationToken cancellationToken = default) {
-        Directory.CreateDirectory(configService.Config.AppPath);
-        Directory.CreateDirectory(configService.Config.DownloadPath);
-
-        var archivePath = Path.Combine(pathService.DownloadPath, operation.DownloadUri.LocalPath);
-        var latestVersion = await GetLatestVersionAsync(operation, cancellationToken);
-
-        try {
-            await DownloadFileAsync(
-                operation.DownloadUri, pathService.DownloadPath, operation.DownloadUri.LocalPath, downloadProgress, cancellationToken);
-
-            Directory.CreateDirectory(operation.InstallPath);
-
-            await ZipFile.ExtractToDirectoryAsync(
-                archivePath, operation.InstallPath, overwriteFiles: true, cancellationToken);
-
-            if (manifest.Portable && operation.PortablePath is not null) {
-                if (operation.PortablePath.PortablePathType == PortablePathType.File)
-                    await File.Create(Path.Combine(operation.InstallPath, operation.PortablePath.Path)).DisposeAsync();
-                else
-                    Directory.CreateDirectory(Path.Combine(operation.InstallPath, operation.PortablePath.Path));
-            }
-
-            await databaseService.UpdateAppAsync(
-                new InstalledApp(manifest, latestVersion, latestVersion, DateTime.UtcNow), cancellationToken);
-        } finally {
-            if (File.Exists(archivePath))
-                File.Delete(archivePath);
-        }
-    }
+    private sealed record CommitResponse(
+        [property: JsonPropertyName("sha")] string? Sha);
 }
