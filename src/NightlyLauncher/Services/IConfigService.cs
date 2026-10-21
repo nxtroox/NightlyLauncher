@@ -5,6 +5,7 @@ using NightlyLauncher.Models;
 namespace NightlyLauncher.Services;
 
 internal interface IConfigService {
-    Task<Config> GetConfigAsync(CancellationToken cancellationToken = default);
     Config Config { get; }
+    Task<Config> GetConfigAsync(CancellationToken cancellationToken = default);
+    Task UpdateConfigAsync(Config config, CancellationToken cancellationToken = default);
 }

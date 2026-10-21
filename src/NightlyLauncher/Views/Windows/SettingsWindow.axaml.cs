@@ -9,8 +9,10 @@ internal partial class SettingsWindow : Window {
     public SettingsWindow() => InitializeComponent();
 
     protected override async void OnOpened(EventArgs e) {
-        if (DataContext is SettingsViewModel viewModel)
+        if (DataContext is SettingsViewModel viewModel) {
             await viewModel.InitializeAsync();
+            viewModel.OnRequestClose += (_, _) => Close();
+        }
 
         base.OnOpened(e);
     }

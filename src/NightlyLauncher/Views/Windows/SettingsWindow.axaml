@@ -28,7 +28,8 @@
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save"
-                    HorizontalAlignment="Right" />
+                    HorizontalAlignment="Right"
+                    Command="{Binding SaveConfigCommand}" />
             <Button Content="Cancel"
                     HorizontalAlignment="Right"
                     Click="OnCancelClick" />
