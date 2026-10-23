@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
         x:Class="NightlyLauncher.Views.Windows.SettingsWindow"
         x:DataType="vm:SettingsViewModel"
-        Title="NightyLauncher - Settings"
+        Title="NightlyLauncher - Settings"
         Height="450"
         Width="600">
     <Grid RowDefinitions="*,Auto">
@@ -15,13 +15,15 @@
                 <Label Content="App path" />
                 <StackPanel Orientation="Horizontal">
                     <TextBox Text="{Binding Config?.AppPath}" />
-                    <Button Content="Select folder" />
+                    <Button Content="Select folder"
+                            Command="{Binding SelectFolderCommand}" />
                 </StackPanel>
 
                 <Label Content="Download path" />
                 <StackPanel Orientation="Horizontal">
                     <TextBox Text="{Binding Config?.DownloadPath}" />
-                    <Button Content="Select folder" />
+                    <Button Content="Select folder"
+                            Command="{Binding SelectFolderCommand}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -7,9 +7,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
 using NightlyLauncher.Models;
 using NightlyLauncher.Services;
-using NightlyLauncher.Views.Windows;
 
 namespace NightlyLauncher.ViewModels;
 
@@ -47,8 +47,8 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task OpenSettings() {
-        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            await dialogService.ShowDialogAsync<SettingsWindow, SettingsViewModel, bool>(desktop.MainWindow!);
+        var vm = dialogService.CreateViewModel<SettingsViewModel>();
+        await dialogService.ShowDialogAsync(this, vm);
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {

@@ -18,9 +18,8 @@ public sealed class App : Application {
         var services = collection.BuildServiceProvider();
         var vm = services.GetRequiredService<MainViewModel>();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow { DataContext = vm };
-        }
 
         base.OnFrameworkInitializationCompleted();
     }

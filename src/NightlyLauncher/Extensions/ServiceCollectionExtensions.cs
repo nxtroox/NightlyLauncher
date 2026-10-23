@@ -1,6 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
+using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia;
+using HanumanInstitute.MvvmDialogs.Avalonia.MessageBox;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Services;
 using NightlyLauncher.ViewModels;
@@ -26,7 +29,11 @@ public static class ServiceCollectionExtensions {
 
         collection.AddTransient<IPathService, PathService>();
 
-        collection.AddTransient<IDialogService, DialogService>();
+        collection.AddSingleton<IDialogService>(sp => new DialogService(
+            new DialogManager(
+                new ViewLocator(),
+                new DialogFactory().AddMessageBox(MessageBoxMode.Popup)),
+            sp.GetService));
 
         collection.AddSingleton(new JsonSerializerOptions {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true
