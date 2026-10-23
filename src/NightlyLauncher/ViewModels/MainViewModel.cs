@@ -51,6 +51,12 @@ internal partial class MainViewModel(
         await dialogService.ShowDialogAsync(this, vm);
     }
 
+    [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
+    private async Task RemoveApp(CancellationToken cancellationToken = default) {
+        await databaseService.RemoveAppAsync(SelectedApp!, cancellationToken);
+        await LoadApps(cancellationToken);
+    }
+
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
         await configService.GetConfigAsync(cancellationToken);
         await LoadApps(cancellationToken);

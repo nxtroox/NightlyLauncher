@@ -23,6 +23,8 @@
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Edit app"
                           Command="{Binding EditAppCommand}" />
+                <MenuItem Header="_Remove app"
+                          Command="{Binding RemoveAppCommand}" />
                 <Separator />
                 <MenuItem Header="_Settings"
                           Command="{Binding OpenSettingsCommand}" />
@@ -44,6 +46,8 @@
                             <ContextMenu>
                                 <MenuItem Header="Launch"
                                           Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.LaunchAppCommand}" />
+                                <MenuItem Header="Remove"
+                                          Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.RemoveAppCommand}" />
                                 <MenuItem Header="Edit"
                                           Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.EditAppCommand}" />
                             </ContextMenu>

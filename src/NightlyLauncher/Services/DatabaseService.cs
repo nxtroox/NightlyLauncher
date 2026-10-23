@@ -4,39 +4,57 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 
-internal sealed class DatabaseService(IPathService pathService, JsonSerializerOptions jsonSerializerOptions)
+internal sealed class DatabaseService(
+    IPathService pathService,
+    JsonSerializerOptions jsonSerializerOptions,
+    IStringLocalizer<DatabaseService> localizer)
     : IDatabaseService {
     private List<InstalledApp>? _installedApps;
 
-    public async Task UpdateAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
-        await GetAppsAsync(cancellationToken);
+    public async Task<IEnumerable<InstalledApp>> GetAppsAsync(CancellationToken cancellationToken = default) {
+        if (_installedApps is not null)
+            return _installedApps;
 
-        var found = _installedApps!.FirstOrDefault(a => a.Manifest.Guid == app.Manifest.Guid);
+        try {
+            await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
+            _installedApps = await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
+                stream, jsonSerializerOptions, cancellationToken) ?? [];
+        } catch {
+            _installedApps = [];
+        }
+
+        return _installedApps;
+    }
+
+    public async Task RemoveAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        var found = await FindAppAsync(app, cancellationToken);
 
         if (found is not null)
             _installedApps!.Remove(found);
+        else
+            throw new KeyNotFoundException(localizer["AppNotFound", app.Manifest.Guid]);
+    }
+
+    public async Task UpdateAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        try {
+            await RemoveAppAsync(app, cancellationToken);
+        } catch (KeyNotFoundException) {
+            /* ignore */
+        }
 
         _installedApps!.Add(app);
 
-        await using var stream = File.Open(pathService.DatabasePath, FileMode.OpenOrCreate, FileAccess.Write);
-
+        await using var stream = File.Open(pathService.DatabasePath, FileMode.Create, FileAccess.Write);
         await JsonSerializer.SerializeAsync(stream, _installedApps, jsonSerializerOptions, cancellationToken);
     }
 
-    public async Task<IEnumerable<InstalledApp>> GetAppsAsync(CancellationToken cancellationToken = default) =>
-        _installedApps ??= await LoadAsync(cancellationToken);
-
-    private async Task<List<InstalledApp>> LoadAsync(CancellationToken cancellationToken) {
-        try {
-            await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
-            return await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
-                stream, jsonSerializerOptions, cancellationToken) ?? [];
-        } catch {
-            return [];
-        }
+    private async Task<InstalledApp?> FindAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        await GetAppsAsync(cancellationToken);
+        return _installedApps!.FirstOrDefault(a => a.Manifest.Guid == app.Manifest.Guid);
     }
 }
