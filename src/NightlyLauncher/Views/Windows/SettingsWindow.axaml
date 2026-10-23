@@ -16,14 +16,14 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBox Text="{Binding Config?.AppPath}" />
                     <Button Content="Select folder"
-                            Command="{Binding SelectFolderCommand}" />
+                            Command="{Binding SelectAppPathCommand}" />
                 </StackPanel>
 
                 <Label Content="Download path" />
                 <StackPanel Orientation="Horizontal">
                     <TextBox Text="{Binding Config?.DownloadPath}" />
                     <Button Content="Select folder"
-                            Command="{Binding SelectFolderCommand}" />
+                            Command="{Binding SelectDownloadPathCommand}" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

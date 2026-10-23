@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Text.Json;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
-using HanumanInstitute.MvvmDialogs.Avalonia.MessageBox;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Services;
 using NightlyLauncher.ViewModels;
@@ -32,7 +31,7 @@ public static class ServiceCollectionExtensions {
         collection.AddSingleton<IDialogService>(sp => new DialogService(
             new DialogManager(
                 new ViewLocator(),
-                new DialogFactory().AddMessageBox(MessageBoxMode.Popup)),
+                new DialogFactory().AddMessageBox()),
             sp.GetService));
 
         collection.AddSingleton(new JsonSerializerOptions {
