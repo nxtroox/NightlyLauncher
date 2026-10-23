@@ -12,7 +12,7 @@ namespace NightlyLauncher.ViewModels;
 internal partial class SettingsViewModel(IConfigService configService) : ViewModelBase, IModalDialogViewModel {
     [ObservableProperty] public partial Config? Config { get; private set; }
 
-    public bool? DialogResult { get; } = true;
+    public bool? DialogResult { get; set; }
 
     internal event EventHandler? OnRequestClose;
 
@@ -22,6 +22,13 @@ internal partial class SettingsViewModel(IConfigService configService) : ViewMod
     [RelayCommand]
     private async Task SaveConfig(CancellationToken cancellationToken) {
         await configService.UpdateConfigAsync(Config!, cancellationToken);
+        DialogResult = true;
+        OnRequestClose?.Invoke(this, EventArgs.Empty);
+    }
+
+    [RelayCommand]
+    private void Cancel() {
+        DialogResult = false;
         OnRequestClose?.Invoke(this, EventArgs.Empty);
     }
 

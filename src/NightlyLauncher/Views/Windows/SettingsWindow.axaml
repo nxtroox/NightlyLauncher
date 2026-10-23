@@ -34,7 +34,7 @@
                     Command="{Binding SaveConfigCommand}" />
             <Button Content="Cancel"
                     HorizontalAlignment="Right"
-                    Click="OnCancelClick" />
+                    Command="{Binding CancelCommand}" />
         </StackPanel>
     </Grid>
 </Window>
