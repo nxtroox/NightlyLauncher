@@ -24,9 +24,11 @@ public static class ServiceCollectionExtensions {
 
         collection.AddSingleton<IConfigService, ConfigService>();
 
-        collection.AddScoped<IDatabaseService, DatabaseService>();
+        collection.AddSingleton<IDatabaseService, DatabaseService>();
 
         collection.AddTransient<IPathService, PathService>();
+
+        collection.AddTransient<ILauncherService, LauncherService>();
 
         collection.AddSingleton<IDialogService>(sp => new DialogService(
             new DialogManager(

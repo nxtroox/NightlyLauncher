@@ -6,9 +6,8 @@ using NightlyLauncher.Models;
 namespace NightlyLauncher.Services;
 
 internal interface IAppUpdaterService {
-    Task<bool> NeedsUpdateAsync(InstalledApp app, AppManifest manifest,
-        CancellationToken cancellationToken = default);
+    Task<bool> NeedsUpdateAsync(InstalledApp app, CancellationToken cancellationToken = default);
 
-    Task UpdateAsync(InstalledApp app, AppManifest manifest, IProgress<double>? downloadProgress,
+    Task UpdateAsync(InstalledApp app, IProgress<double>? downloadProgress,
         CancellationToken cancellationToken = default);
 }

@@ -16,7 +16,7 @@ internal sealed class PathService(IConfigService configService) : IPathService {
 
     public string GetInstallPath(InstalledApp app) =>
         Path.Combine(ParseRootedPath(configService.Config.AppPath),
-            app.Manifest.Guid + "_" + app.Manifest.SelectedInstallOptionGuid);
+            app.Manifest.Guid + "_" + app.SelectedInstallOptionGuid);
 
     private static bool IsPortable() {
         var exeConfig = Path.Combine(

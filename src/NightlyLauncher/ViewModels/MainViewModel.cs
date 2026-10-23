@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +15,8 @@ namespace NightlyLauncher.ViewModels;
 internal partial class MainViewModel(
     IDatabaseService databaseService,
     IConfigService configService,
-    IDialogService dialogService) : ViewModelBase {
+    IDialogService dialogService,
+    ILauncherService launcherService) : ViewModelBase {
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
     [ObservableProperty]
@@ -26,8 +26,8 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task AddApp(CancellationToken cancellationToken) {
-        var manifest = new AppManifest(Guid.NewGuid(), "Placeholder", new List<InstallOption>());
-        var app = new InstalledApp(manifest, UpdatedOn: DateTime.UtcNow);
+        var manifest = new AppManifest(Guid.NewGuid(), "Placeholder", []);
+        var app = new InstalledApp(manifest, "1.0.0", UpdatedOn: DateTime.UtcNow);
 
         await databaseService.UpdateAppAsync(app, cancellationToken);
         await LoadApps(cancellationToken);
@@ -43,7 +43,7 @@ internal partial class MainViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private void LaunchApp() => throw new NotImplementedException();
+    private void LaunchApp() => launcherService.LaunchApp(SelectedApp!);
 
     [RelayCommand]
     private async Task OpenSettings() {

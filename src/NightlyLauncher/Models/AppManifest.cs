@@ -7,6 +7,5 @@ internal sealed record AppManifest(
     Guid Guid,
     string ReadableName,
     IEnumerable<InstallOption> InstallOptions,
-    Guid? SelectedInstallOptionGuid = null,
     bool UpdatePrompt = false,
     bool Portable = false);

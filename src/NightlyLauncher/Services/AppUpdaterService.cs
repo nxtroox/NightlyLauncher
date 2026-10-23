@@ -21,46 +21,51 @@ internal sealed class AppUpdaterService(
     IDatabaseService databaseService,
     IPathService pathService,
     IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
-    public async Task<bool> NeedsUpdateAsync(InstalledApp app, AppManifest manifest,
-        CancellationToken cancellationToken = default) {
-        var option = app.Manifest.InstallOptions.First(o => o.Guid == manifest.SelectedInstallOptionGuid);
-        return app.LocalVersion != await GetLatestVersionAsync(option, cancellationToken);
+    public async Task<bool> NeedsUpdateAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        if (app.LocalVersion != app.LatestVersion) return true;
+
+        var option = FindInstallOption(app);
+        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+
+        await databaseService.UpdateAppAsync(app with { LatestVersion = latestVersion }, cancellationToken);
+        return app.LocalVersion != latestVersion;
     }
 
-    public async Task UpdateAsync(InstalledApp app, AppManifest manifest, IProgress<double>? downloadProgress,
+    public async Task UpdateAsync(InstalledApp app, IProgress<double>? downloadProgress,
         CancellationToken cancellationToken = default) {
         Directory.CreateDirectory(configService.Config.AppPath);
         Directory.CreateDirectory(configService.Config.DownloadPath);
 
-        var option = app.Manifest.InstallOptions.First(o => o.Guid == manifest.SelectedInstallOptionGuid);
+        var option = FindInstallOption(app);
 
         var supportedFileTypes = new[] { ".zip", ".tar", ".tar.gz" };
         if (!supportedFileTypes.Any(option.DownloadUri.LocalPath.EndsWith))
             throw new NotSupportedException(localizer["UnsupportedFileType"]);
 
         var archivePath = Path.Combine(pathService.DownloadPath, option.DownloadUri.LocalPath);
-        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
         try {
             await DownloadFileAsync(
-                option.DownloadUri, pathService.DownloadPath, option.DownloadUri.LocalPath, downloadProgress,
+                option.DownloadUri, downloadProgress,
                 cancellationToken);
 
             var installPath = pathService.GetInstallPath(app);
-
             Directory.CreateDirectory(installPath);
 
             await ExtractArchive(archivePath, installPath, cancellationToken);
 
-            if (manifest.Portable && option.PortablePath is not null) {
+            if (app.Manifest.Portable && option.PortablePath is not null) {
                 if (option.PortablePath.PortablePathType == PortablePathType.File)
                     await File.Create(Path.Combine(installPath, option.PortablePath.Path)).DisposeAsync();
                 else
                     Directory.CreateDirectory(Path.Combine(installPath, option.PortablePath.Path));
             }
 
+            var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+
             await databaseService.UpdateAppAsync(
-                new InstalledApp(manifest, latestVersion, latestVersion, DateTime.UtcNow), cancellationToken);
+                new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, latestVersion,
+                    DateTime.UtcNow), cancellationToken);
         } finally {
             if (File.Exists(archivePath))
                 File.Delete(archivePath);
@@ -77,7 +82,7 @@ internal sealed class AppUpdaterService(
             await using var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
             await TarFile.ExtractToDirectoryAsync(archivePath, destinationPath, true, cancellationToken);
         } else
-            throw new NotSupportedException(localizer["UnsupportedFileType"]);
+            throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
     }
 
     private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
@@ -85,11 +90,12 @@ internal sealed class AppUpdaterService(
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHash"]);
     }
 
-    private async Task DownloadFileAsync(Uri uri, string downloadPath, string fileName, IProgress<double>? progress,
+    private async Task DownloadFileAsync(Uri uri, IProgress<double>? progress,
         CancellationToken cancellationToken) {
+        var downloadPath = pathService.DownloadPath;
         Directory.CreateDirectory(downloadPath);
 
-        var fullPath = Path.Combine(downloadPath, fileName);
+        var fullPath = Path.Combine(downloadPath, uri.LocalPath);
         var tempPath = fullPath + ".tmp";
 
         try {
@@ -124,7 +130,7 @@ internal sealed class AppUpdaterService(
                     await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
                     totalRead += read;
 
-                    if (contentLength is > 0 && Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(250)) {
+                    if (contentLength is > 0 && Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(500)) {
                         progress?.Report(Math.Clamp((double)totalRead / contentLength.Value * 100.0, 0, 100));
                         lastReport = Stopwatch.GetTimestamp();
                     }
@@ -149,6 +155,9 @@ internal sealed class AppUpdaterService(
             throw;
         }
     }
+
+    private static InstallOption FindInstallOption(InstalledApp app) =>
+        app.Manifest.InstallOptions.First(o => o.Guid == app.SelectedInstallOptionGuid);
 
     private sealed record CommitResponse(
         [property: JsonPropertyName("sha")] string? Sha);

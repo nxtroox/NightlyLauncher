@@ -34,9 +34,10 @@ internal sealed class DatabaseService(
     public async Task RemoveAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
         var found = await FindAppAsync(app, cancellationToken);
 
-        if (found is not null)
+        if (found is not null) {
             _installedApps!.Remove(found);
-        else
+            await UpdateDatabaseAsync(cancellationToken);
+        } else
             throw new KeyNotFoundException(localizer["AppNotFound", app.Manifest.Guid]);
     }
 
@@ -48,12 +49,15 @@ internal sealed class DatabaseService(
         }
 
         _installedApps!.Add(app);
+        await UpdateDatabaseAsync(cancellationToken);
+    }
 
+    private async Task UpdateDatabaseAsync(CancellationToken cancellationToken) {
         await using var stream = File.Open(pathService.DatabasePath, FileMode.Create, FileAccess.Write);
         await JsonSerializer.SerializeAsync(stream, _installedApps, jsonSerializerOptions, cancellationToken);
     }
 
-    private async Task<InstalledApp?> FindAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+    private async Task<InstalledApp?> FindAppAsync(InstalledApp app, CancellationToken cancellationToken) {
         await GetAppsAsync(cancellationToken);
         return _installedApps!.FirstOrDefault(a => a.Manifest.Guid == app.Manifest.Guid);
     }

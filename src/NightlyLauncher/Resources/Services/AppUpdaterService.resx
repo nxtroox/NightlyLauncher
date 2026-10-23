@@ -6,7 +6,7 @@
   <data name="EmptyCommitHash" xml:space="preserve">
     <value>Commit hash is either empty or broken.</value>
   </data>
-  <data name="UnsupportedFileType" xml:space="preserve">
-    <value>Unsupported file type.</value>
+  <data name="UnsupportedArchiveFileType" xml:space="preserve">
+    <value>Unsupported archive file type.</value>
   </data>
 </root>
