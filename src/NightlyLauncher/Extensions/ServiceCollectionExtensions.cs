@@ -40,6 +40,6 @@ public static class ServiceCollectionExtensions {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true
         });
 
-        collection.AddLocalization();
+        collection.AddLocalization(options => options.ResourcesPath = "Resources");
     }
 }

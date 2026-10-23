@@ -11,12 +11,12 @@ using NightlyLauncher.Services;
 namespace NightlyLauncher.ViewModels;
 
 internal partial class SettingsViewModel(IConfigService configService, IDialogService dialogService)
-    : ViewModelBase, IModalDialogViewModel {
+    : ViewModelBase, IModalDialogViewModel, ICloseable {
     [ObservableProperty] public partial Config? Config { get; private set; }
 
-    public bool? DialogResult { get; private set; }
+    public event EventHandler? RequestClose;
 
-    internal event EventHandler? OnRequestClose;
+    public bool? DialogResult { get; private set; }
 
     [RelayCommand]
     private Task SelectAppPath() =>
@@ -39,13 +39,13 @@ internal partial class SettingsViewModel(IConfigService configService, IDialogSe
     private async Task SaveConfig(CancellationToken cancellationToken) {
         await configService.UpdateConfigAsync(Config!, cancellationToken);
         DialogResult = true;
-        OnRequestClose?.Invoke(this, EventArgs.Empty);
+        RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
     [RelayCommand]
     private void Cancel() {
         DialogResult = false;
-        OnRequestClose?.Invoke(this, EventArgs.Empty);
+        RequestClose?.Invoke(this, EventArgs.Empty);
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>

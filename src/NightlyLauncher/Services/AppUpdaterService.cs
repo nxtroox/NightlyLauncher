@@ -21,6 +21,14 @@ internal sealed class AppUpdaterService(
     IDatabaseService databaseService,
     IPathService pathService,
     IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
+    public void DeleteAppData(InstalledApp app) {
+        try {
+            Directory.Delete(pathService.GetInstallPath(app), true);
+        } catch (DirectoryNotFoundException) {
+            /* ignore */
+        }
+    }
+
     public async Task<bool> NeedsUpdateAsync(InstalledApp app, CancellationToken cancellationToken = default) {
         if (app.LocalVersion != app.LatestVersion) return true;
 

@@ -10,7 +10,6 @@ internal partial class SettingsWindow : Window {
     protected override async void OnOpened(EventArgs e) {
         if (DataContext is SettingsViewModel viewModel) {
             await viewModel.InitializeAsync();
-            viewModel.OnRequestClose += (_, _) => Close(viewModel.DialogResult);
         }
 
         base.OnOpened(e);
