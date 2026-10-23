@@ -8,8 +8,9 @@ namespace NightlyLauncher.Services;
 internal interface IAppUpdaterService {
     void DeleteAppData(InstalledApp app);
 
-    Task<bool> NeedsUpdateAsync(InstalledApp app, CancellationToken cancellationToken = default);
+    Task<bool> NeedsUpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
+        CancellationToken cancellationToken = default);
 
-    Task UpdateAsync(InstalledApp app, IProgress<double>? downloadProgress,
+    Task UpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default);
 }

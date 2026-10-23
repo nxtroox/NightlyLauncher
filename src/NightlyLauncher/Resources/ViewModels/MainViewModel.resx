@@ -1,15 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="RemoveAppConfirmationTitle" xml:space="preserve">
-    <value>Remove {0}?</value>
-  </data>
   <data name="RemoveAppConfirmationText" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
   </data>
-  <data name="RemoveAppDataConfirmationTitle" xml:space="preserve">
-    <value>Remove data for {0}?</value>
+  <data name="RemoveAppConfirmationTitle" xml:space="preserve">
+    <value>Remove {0}?</value>
   </data>
   <data name="RemoveAppDataConfirmationText" xml:space="preserve">
     <value>Also remove data for {0}?</value>
+  </data>
+  <data name="RemoveAppDataConfirmationTitle" xml:space="preserve">
+    <value>Remove data for {0}?</value>
   </data>
 </root>

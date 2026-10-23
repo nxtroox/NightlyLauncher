@@ -30,8 +30,19 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task AddApp(CancellationToken cancellationToken) {
-        var manifest = new AppManifest(Guid.NewGuid(), "Placeholder", []);
-        var app = new InstalledApp(manifest, "1.0.0", UpdatedOn: DateTime.UtcNow);
+        var installGuid = Guid.NewGuid();
+
+        var manifest = new AppManifest(Guid.NewGuid(), "Cemu", [
+                new InstallOption(installGuid,
+                    new Uri(
+                        "https://nightly.link/cemu-project/Cemu/workflows/build_check/main/cemu-bin-windows-x64.zip"),
+                    new Uri("https://api.github.com/repos/cemu-project/Cemu/commits/main"),
+                    new LaunchCommand("Cemu.exe"),
+                    new PortablePath("portable", PortablePathType.Folder),
+                    "(win-x64, zip)")
+            ],
+            true, true);
+        var app = new InstalledApp(manifest, "0", installGuid, UpdatedOn: DateTime.UtcNow);
 
         await databaseService.UpdateAppAsync(app, cancellationToken);
         await LoadApps(cancellationToken);
@@ -47,7 +58,29 @@ internal partial class MainViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private void LaunchApp() => launcherService.LaunchApp(SelectedApp!);
+    private async Task LaunchApp(CancellationToken cancellationToken = default) {
+        var vm = dialogService.CreateViewModel<UpdaterViewModel>();
+
+        var progress = new Progress<ProgressReport>(report => {
+            vm.StatusText = report.StatusText;
+
+            vm.ProgressIsIndeterminate = report.Percentage < 0;
+            if (report.Percentage >= 0) {
+                vm.ProgressValue = report.Percentage;
+            }
+        });
+
+        var dialogTask = dialogService.ShowDialogAsync(this, vm);
+
+        try {
+            await launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
+        } finally {
+            vm.Close(true);
+            await dialogTask;
+        }
+
+        await LoadApps(cancellationToken);
+    }
 
     [RelayCommand]
     private async Task OpenSettings() {

@@ -17,7 +17,6 @@ namespace NightlyLauncher.Services;
 
 internal sealed class AppUpdaterService(
     HttpClient httpClient,
-    IConfigService configService,
     IDatabaseService databaseService,
     IPathService pathService,
     IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
@@ -29,33 +28,23 @@ internal sealed class AppUpdaterService(
         }
     }
 
-    public async Task<bool> NeedsUpdateAsync(InstalledApp app, CancellationToken cancellationToken = default) {
-        if (app.LocalVersion != app.LatestVersion) return true;
-
-        var option = FindInstallOption(app);
-        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
-
-        await databaseService.UpdateAppAsync(app with { LatestVersion = latestVersion }, cancellationToken);
-        return app.LocalVersion != latestVersion;
-    }
-
-    public async Task UpdateAsync(InstalledApp app, IProgress<double>? downloadProgress,
+    public async Task UpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
-        Directory.CreateDirectory(configService.Config.AppPath);
-        Directory.CreateDirectory(configService.Config.DownloadPath);
-
+        progress.Report(new ProgressReport(-1, localizer["Updating"]));
         var option = FindInstallOption(app);
 
         var supportedFileTypes = new[] { ".zip", ".tar", ".tar.gz" };
         if (!supportedFileTypes.Any(option.DownloadUri.LocalPath.EndsWith))
-            throw new NotSupportedException(localizer["UnsupportedFileType"]);
+            throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
 
-        var archivePath = Path.Combine(pathService.DownloadPath, option.DownloadUri.LocalPath);
+        var archivePath = Path.Combine(pathService.DownloadPath, Path.GetFileName(option.DownloadUri.LocalPath));
 
         try {
             await DownloadFileAsync(
-                option.DownloadUri, downloadProgress,
+                option.DownloadUri, progress,
                 cancellationToken);
+
+            progress.Report(new ProgressReport(-1, localizer["Updating"]));
 
             var installPath = pathService.GetInstallPath(app);
             Directory.CreateDirectory(installPath);
@@ -74,10 +63,36 @@ internal sealed class AppUpdaterService(
             await databaseService.UpdateAppAsync(
                 new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, latestVersion,
                     DateTime.UtcNow), cancellationToken);
+
+            progress.Report(new ProgressReport(100, localizer["UpdateComplete"]));
         } finally {
             if (File.Exists(archivePath))
                 File.Delete(archivePath);
         }
+    }
+
+    public async Task<bool> NeedsUpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
+        CancellationToken cancellationToken = default) {
+        progress.Report(new ProgressReport(-1, localizer["CheckingForUpdates"]));
+
+        if (app.LocalVersion != app.LatestVersion) {
+            progress.Report(new ProgressReport(-1, localizer["UpdateFound"]));
+            return true;
+        }
+
+        var option = FindInstallOption(app);
+        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+
+        if (app.LatestVersion != latestVersion)
+            await databaseService.UpdateAppAsync(app with { LatestVersion = latestVersion }, cancellationToken);
+
+        if (app.LocalVersion != latestVersion) {
+            progress.Report(new ProgressReport(-1, localizer["UpdateFound"]));
+            return true;
+        }
+
+        progress.Report(new ProgressReport(-1, localizer["NoUpdateFound"]));
+        return false;
     }
 
     private async Task ExtractArchive(string archivePath, string destinationPath, CancellationToken cancellationToken) {
@@ -88,7 +103,7 @@ internal sealed class AppUpdaterService(
         else if (archivePath.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)) {
             await using var fileStream = File.OpenRead(archivePath);
             await using var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
-            await TarFile.ExtractToDirectoryAsync(archivePath, destinationPath, true, cancellationToken);
+            await TarFile.ExtractToDirectoryAsync(gZipStream, destinationPath, true, cancellationToken);
         } else
             throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
     }
@@ -98,12 +113,12 @@ internal sealed class AppUpdaterService(
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHash"]);
     }
 
-    private async Task DownloadFileAsync(Uri uri, IProgress<double>? progress,
+    private async Task DownloadFileAsync(Uri uri, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken) {
         var downloadPath = pathService.DownloadPath;
         Directory.CreateDirectory(downloadPath);
 
-        var fullPath = Path.Combine(downloadPath, uri.LocalPath);
+        var fullPath = Path.Combine(downloadPath, Path.GetFileName(uri.LocalPath));
         var tempPath = fullPath + ".tmp";
 
         try {
@@ -114,45 +129,49 @@ internal sealed class AppUpdaterService(
             var contentLength = response.Content.Headers.ContentLength;
 
             if (contentLength is null or 0)
-                progress?.Report(-1);
+                progress.Report(new ProgressReport(-1, localizer["DownloadingUpdate"]));
 
             await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
-            await using var target = new FileStream(tempPath,
-                new FileStreamOptions {
-                    Mode = FileMode.Create,
-                    Access = FileAccess.Write,
-                    Share = FileShare.None,
-                    BufferSize = 0,
-                    Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
-                    PreallocationSize = contentLength ?? 0
-                });
+            await using (var target = new FileStream(tempPath,
+                             new FileStreamOptions {
+                                 Mode = FileMode.Create,
+                                 Access = FileAccess.Write,
+                                 Share = FileShare.None,
+                                 BufferSize = 0,
+                                 Options = FileOptions.Asynchronous | FileOptions.SequentialScan,
+                                 PreallocationSize = contentLength ?? 0
+                             })) {
+                var buffer = ArrayPool<byte>.Shared.Rent(256 * 1024);
 
-            var buffer = ArrayPool<byte>.Shared.Rent(256 * 1024);
+                try {
+                    long totalRead = 0;
+                    var lastReport = Stopwatch.GetTimestamp();
+                    int read;
 
-            try {
-                long totalRead = 0;
-                var lastReport = Stopwatch.GetTimestamp();
-                int read;
+                    while ((read = await source.ReadAsync(buffer, cancellationToken)) > 0) {
+                        await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
+                        totalRead += read;
 
-                while ((read = await source.ReadAsync(buffer, cancellationToken)) > 0) {
-                    await target.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
-                    totalRead += read;
-
-                    if (contentLength is > 0 && Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(500)) {
-                        progress?.Report(Math.Clamp((double)totalRead / contentLength.Value * 100.0, 0, 100));
-                        lastReport = Stopwatch.GetTimestamp();
+                        if (contentLength is > 0 &&
+                            Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(500)) {
+                            progress.Report(new ProgressReport(
+                                Math.Clamp((int)(totalRead * 100 / contentLength.Value), 0, 100),
+                                localizer["DownloadingUpdate"]));
+                            lastReport = Stopwatch.GetTimestamp();
+                        }
                     }
+
+                    if (contentLength.HasValue && totalRead != contentLength.Value)
+                        throw new IOException(localizer["DownloadIncomplete"]);
+
+                    progress.Report(new ProgressReport(100, localizer["DownloadingUpdate"]));
+                } finally {
+                    ArrayPool<byte>.Shared.Return(buffer);
                 }
-
-                if (contentLength.HasValue && totalRead != contentLength.Value)
-                    throw new IOException(localizer["DownloadIncomplete"]);
-
-                progress?.Report(100);
-            } finally {
-                ArrayPool<byte>.Shared.Return(buffer);
             }
 
             File.Move(tempPath, fullPath, true);
+            progress.Report(new ProgressReport(100, localizer["DownloadComplete"]));
         } catch {
             try {
                 File.Delete(tempPath);

@@ -1,0 +1,27 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NightlyLauncher.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
+        x:Class="NightlyLauncher.Views.Windows.UpdaterWindow"
+        x:DataType="vm:UpdaterViewModel"
+        Title="NightlyLauncher - Updater"
+        Height="200"
+        Width="600"
+        WindowStartupLocation="CenterScreen"
+        WindowDecorations="None">
+    <Grid RowDefinitions="*,*">
+        <Label Content="{Binding StatusText}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Bottom" />
+
+        <ProgressBar Value="{Binding ProgressValue}"
+                     Grid.Row="1"
+                     Height="24"
+                     VerticalAlignment="Top"
+                     IsIndeterminate="{Binding ProgressIsIndeterminate}"
+                     Minimum="0"
+                     Maximum="100" />
+    </Grid>
+</Window>

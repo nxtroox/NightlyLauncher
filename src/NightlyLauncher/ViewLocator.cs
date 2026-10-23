@@ -8,5 +8,6 @@ public sealed class ViewLocator : StrongViewLocator {
     public ViewLocator() {
         Register<MainViewModel, MainWindow>();
         Register<SettingsViewModel, SettingsWindow>();
+        Register<UpdaterViewModel, UpdaterWindow>();
     }
 }
