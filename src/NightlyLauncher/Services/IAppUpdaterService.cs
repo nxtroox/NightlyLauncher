@@ -13,4 +13,6 @@ internal interface IAppUpdaterService {
 
     Task UpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default);
+
+    InstallOption FindInstallOption(InstalledApp app);
 }

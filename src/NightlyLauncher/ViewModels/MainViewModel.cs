@@ -21,7 +21,7 @@ internal partial class MainViewModel(
     IDialogService dialogService,
     ILauncherService launcherService,
     IStringLocalizer<MainViewModel> localizer,
-    IAppUpdaterService appUpdaterService,
+    IAppUpdaterService updaterService,
     IPathService pathService) : ViewModelBase {
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
@@ -75,7 +75,35 @@ internal partial class MainViewModel(
         var dialogTask = dialogService.ShowDialogAsync(this, vm);
 
         try {
-            await launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
+            var needsUpdate = await updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
+            var shouldUpdate = !SelectedApp!.IsInstalled || needsUpdate;
+
+            if (shouldUpdate && SelectedApp.IsInstalled && SelectedApp.Manifest.UpdatePrompt) {
+                var updatePrompt = new MessageBoxSettings {
+                    Button = MessageBoxButton.YesNo,
+                    Content = localizer["UpdatePromptText", SelectedApp.Manifest.ReadableName],
+                    Icon = MessageBoxImage.Information,
+                    DefaultValue = false,
+                    Title = localizer["UpdatePromptTitle", SelectedApp.Manifest.ReadableName]
+                };
+
+                shouldUpdate = await dialogService.ShowMessageBoxAsync(this, updatePrompt) is true;
+            }
+
+            if (shouldUpdate)
+                await updaterService.UpdateAsync(SelectedApp!, progress, cancellationToken);
+
+            launcherService.LaunchApp(SelectedApp!, progress);
+        } catch (Exception ex) {
+            var messageBox = new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = ex.Message,
+                Icon = MessageBoxImage.Error,
+                DefaultValue = true,
+                Title = localizer["ErrorMessageBoxTitle", SelectedApp!.Manifest.ReadableName]
+            };
+
+            await dialogService.ShowMessageBoxAsync(this, messageBox);
         } finally {
             vm.Close(true);
             await dialogTask;
@@ -116,7 +144,7 @@ internal partial class MainViewModel(
                     await dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
 
                 if (removeAppDataResult is true) {
-                    appUpdaterService.DeleteAppData(SelectedApp);
+                    updaterService.DeleteAppData(SelectedApp);
                 }
             }
 

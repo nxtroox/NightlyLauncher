@@ -61,7 +61,7 @@ internal sealed class AppUpdaterService(
             var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
             await databaseService.UpdateAppAsync(
-                new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, latestVersion,
+                new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, true, latestVersion,
                     DateTime.UtcNow), cancellationToken);
 
             progress.Report(new ProgressReport(100, localizer["UpdateComplete"]));
@@ -93,6 +93,18 @@ internal sealed class AppUpdaterService(
 
         progress.Report(new ProgressReport(-1, localizer["NoUpdateFound"]));
         return false;
+    }
+
+    public InstallOption FindInstallOption(InstalledApp app) {
+        var option = app.Manifest.InstallOptions.FirstOrDefault(o => o.Guid == app.SelectedInstallOptionGuid);
+
+        if (option is not null) return option;
+
+        var optionName = string.IsNullOrWhiteSpace(app.SelectedInstallOptionGuid.ToString())
+            ? localizer["UnknownInstallOption"]
+            : app.SelectedInstallOptionGuid.ToString();
+
+        throw new InvalidOperationException(localizer["SelectedInstallOptionNotFound", optionName]);
     }
 
     private async Task ExtractArchive(string archivePath, string destinationPath, CancellationToken cancellationToken) {
@@ -182,9 +194,6 @@ internal sealed class AppUpdaterService(
             throw;
         }
     }
-
-    private static InstallOption FindInstallOption(InstalledApp app) =>
-        app.Manifest.InstallOptions.First(o => o.Guid == app.SelectedInstallOptionGuid);
 
     private sealed record CommitResponse(
         [property: JsonPropertyName("sha")] string? Sha);
