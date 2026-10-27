@@ -10,23 +10,37 @@
         Height="450"
         Width="400">
     <Grid RowDefinitions="*,Auto">
-        <ScrollViewer>
-            <StackPanel>
-                <Label Content="App path" />
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding Config?.AppPath}" />
-                    <Button Content="Select folder"
-                            Command="{Binding SelectAppPathCommand}" />
-                </StackPanel>
-
-                <Label Content="Download path" />
-                <StackPanel Orientation="Horizontal">
-                    <TextBox Text="{Binding Config?.DownloadPath}" />
-                    <Button Content="Select folder"
-                            Command="{Binding SelectDownloadPathCommand}" />
-                </StackPanel>
+        <StackPanel>
+            <Label Content="App path" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Config?.AppPath}" />
+                <Button Content="Select folder"
+                        Command="{Binding SelectAppPathCommand}" />
             </StackPanel>
-        </ScrollViewer>
+
+            <Label Content="Download path" />
+            <StackPanel Orientation="Horizontal">
+                <TextBox Text="{Binding Config?.DownloadPath}" />
+                <Button Content="Select folder"
+                        Command="{Binding SelectDownloadPathCommand}" />
+            </StackPanel>
+
+            <Label Content="Repositories" />
+            <ScrollViewer>
+                <ListBox ItemsSource="{Binding Config?.Repositories}"
+                         SelectedItem="{Binding SelectedRepository}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBox Text="{Binding ReadableName}"
+                                     ToolTip.Tip="{Binding UpdateUri}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </ScrollViewer>
+
+            <Button Content="Add repository"
+                    Command="{Binding AddRepositoryCommand}" />
+        </StackPanel>
 
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save"

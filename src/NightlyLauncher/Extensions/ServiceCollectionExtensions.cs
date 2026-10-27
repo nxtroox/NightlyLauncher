@@ -12,15 +12,23 @@ namespace NightlyLauncher.Extensions;
 public static class ServiceCollectionExtensions {
     public static void AddCommonServices(this IServiceCollection collection) {
         collection.AddTransient<EditViewModel>();
+        collection.AddTransient<InputViewModel>();
         collection.AddTransient<MainViewModel>();
         collection.AddTransient<SettingsViewModel>();
         collection.AddTransient<UpdaterViewModel>();
 
         collection.AddHttpClient<IAppUpdaterService, AppUpdaterService>(client => {
             client.DefaultRequestHeaders.UserAgent.Add(
-                new ProductInfoHeaderValue(
-                    "NightlyLauncher", Assembly.GetExecutingAssembly().GetName().Version?.ToString())
+                new ProductInfoHeaderValue("NightlyLauncher",
+                    Assembly.GetExecutingAssembly().GetName().Version?.ToString())
             );
+        });
+
+        collection.AddHttpClient<IRepositoryService, RepositoryService>(client => {
+            client.DefaultRequestHeaders.UserAgent.Add(
+                new ProductInfoHeaderValue("NightlyLauncher",
+                    Assembly.GetExecutingAssembly().GetName().Version?.ToString()));
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         });
 
         collection.AddSingleton<IConfigService, ConfigService>();

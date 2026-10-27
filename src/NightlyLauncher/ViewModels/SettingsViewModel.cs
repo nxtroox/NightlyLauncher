@@ -5,18 +5,53 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
+using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SettingsViewModel(IConfigService configService, IDialogService dialogService)
+internal partial class SettingsViewModel(
+    IConfigService configService,
+    IDialogService dialogService,
+    IRepositoryService repositoryService,
+    IStringLocalizer<SettingsViewModel> localizer)
     : ViewModelBase, IModalDialogViewModel, ICloseable {
     [ObservableProperty] public partial Config? Config { get; private set; }
+
+    [ObservableProperty] public partial Repository? SelectedRepository { get; set; }
 
     public event EventHandler? RequestClose;
 
     public bool? DialogResult { get; private set; }
+
+    [RelayCommand]
+    private async Task AddRepository(CancellationToken cancellationToken) {
+        var vm = dialogService.CreateViewModel<InputViewModel>();
+
+        vm.Title = localizer["UrlInputTitle"];
+        vm.Content = localizer["UrlInputContent"];
+        vm.TextHint = localizer["UrlInputHint"];
+
+        var result = await dialogService.ShowDialogAsync(this, vm);
+
+        if (result is true) {
+            try {
+                await repositoryService.AddRepositoryAsync(new Uri(vm.Text!), cancellationToken);
+                Config = await configService.GetConfigAsync(cancellationToken);
+            } catch (Exception ex) {
+                var messageBoxSettings = new MessageBoxSettings {
+                    Button = MessageBoxButton.Ok,
+                    Content = ex.Message,
+                    DefaultValue = true,
+                    Icon = MessageBoxImage.Error,
+                    Title = localizer["AddRepositoryError"]
+                };
+
+                await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            }
+        }
+    }
 
     [RelayCommand]
     private Task SelectAppPath() =>

@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="UrlInputContent" xml:space="preserve">
+    <value>Enter repository URL</value>
+  </data>
+  <data name="UrlInputHint" xml:space="preserve">
+    <value>https://example.com/repo.json</value>
+  </data>
+  <data name="UrlInputTitle" xml:space="preserve">
+    <value>NightlyLauncher - Enter URL</value>
+  </data>
+  <data name="AddRepositoryError" xml:space="preserve">
+    <value>Error while adding repository</value>
+  </data>
+</root>

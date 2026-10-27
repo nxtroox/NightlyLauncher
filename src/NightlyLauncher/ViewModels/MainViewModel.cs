@@ -22,7 +22,8 @@ internal partial class MainViewModel(
     ILauncherService launcherService,
     IStringLocalizer<MainViewModel> localizer,
     IAppUpdaterService updaterService,
-    IPathService pathService) : ViewModelBase {
+    IPathService pathService,
+    IRepositoryService repositoryService) : ViewModelBase {
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
     [ObservableProperty]
@@ -161,6 +162,10 @@ internal partial class MainViewModel(
             await LoadApps(cancellationToken);
         }
     }
+
+    [RelayCommand]
+    private async Task UpdateRepositories(CancellationToken cancellationToken = default) =>
+        await repositoryService.UpdateRepositoriesAsync(cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
         await configService.GetConfigAsync(cancellationToken);
