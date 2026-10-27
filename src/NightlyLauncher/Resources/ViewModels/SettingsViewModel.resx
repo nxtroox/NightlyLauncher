@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="AddRepositoryError" xml:space="preserve">
+    <value>Error while adding repository</value>
+  </data>
+  <data name="RemoveRepositoryConfirmationText" xml:space="preserve">
+    <value>Are you sure that you want to remove the repository '{0}'?</value>
+  </data>
+  <data name="RemoveRepositoryConfirmationTitle" xml:space="preserve">
+    <value>Remove '{0}'?</value>
+  </data>
   <data name="UrlInputContent" xml:space="preserve">
     <value>Enter repository URL</value>
   </data>
@@ -7,9 +16,6 @@
     <value>https://example.com/repo.json</value>
   </data>
   <data name="UrlInputTitle" xml:space="preserve">
-    <value>NightlyLauncher - Enter URL</value>
-  </data>
-  <data name="AddRepositoryError" xml:space="preserve">
-    <value>Error while adding repository</value>
+    <value>Enter URL</value>
   </data>
 </root>

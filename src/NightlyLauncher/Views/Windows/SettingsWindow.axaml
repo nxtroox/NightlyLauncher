@@ -28,13 +28,24 @@
             <Label Content="Repositories" />
             <ScrollViewer>
                 <ListBox ItemsSource="{Binding Config?.Repositories}"
-                         SelectedItem="{Binding SelectedRepository}">
+                         SelectedItem="{Binding SelectedRepository}"
+                         x:Name="RepositoryListBox">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBox Text="{Binding ReadableName}"
-                                     ToolTip.Tip="{Binding UpdateUri}" />
+                            <TextBlock Text="{Binding ReadableName}"
+                                       ToolTip.Tip="{Binding UpdateUri}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>
+                    <ListBox.Styles>
+                        <Style Selector="ListBoxItem">
+                            <Setter Property="ContextMenu">
+                                <ContextMenu>
+                                    <MenuItem Header="Remove"
+                                              Command="{Binding #RepositoryListBox.((vm:SettingsViewModel)DataContext)?.RemoveRepositoryCommand}" />
+                                </ContextMenu>
+                            </Setter>
+                        </Style>
+                    </ListBox.Styles>
                 </ListBox>
             </ScrollViewer>
 

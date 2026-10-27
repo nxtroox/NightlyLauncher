@@ -3,7 +3,6 @@
         xmlns:vm="using:NightlyLauncher.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:models="clr-namespace:NightlyLauncher.Models"
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
         x:Class="NightlyLauncher.Views.Windows.MainWindow"
         x:DataType="vm:MainViewModel"
@@ -58,7 +57,7 @@
                     </Style>
                 </ListBox.Styles>
                 <ListBox.ItemTemplate>
-                    <DataTemplate x:DataType="models:InstalledApp">
+                    <DataTemplate>
                         <Label Content="{Binding Manifest.ReadableName}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>

@@ -19,7 +19,11 @@ internal partial class SettingsViewModel(
     : ViewModelBase, IModalDialogViewModel, ICloseable {
     [ObservableProperty] public partial Config? Config { get; private set; }
 
-    [ObservableProperty] public partial Repository? SelectedRepository { get; set; }
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(RemoveRepositoryCommand))]
+    public partial Repository? SelectedRepository { get; set; }
+
+    private bool CanModifyRepository => SelectedRepository is not null;
 
     public event EventHandler? RequestClose;
 
@@ -50,6 +54,24 @@ internal partial class SettingsViewModel(
 
                 await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
             }
+        }
+    }
+
+    [RelayCommand(CanExecute = nameof(CanModifyRepository))]
+    private async Task RemoveRepository(CancellationToken cancellationToken = default) {
+        var messageBoxSettings = new MessageBoxSettings {
+            Button = MessageBoxButton.YesNo,
+            Content = localizer["RemoveRepositoryConfirmationText", SelectedRepository!.ReadableName],
+            DefaultValue = false,
+            Icon = MessageBoxImage.Warning,
+            Title = localizer["RemoveRepositoryConfirmationTitle", SelectedRepository.ReadableName]
+        };
+
+        var result = await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+
+        if (result is true) {
+            await repositoryService.RemoveRepositoryAsync(SelectedRepository, cancellationToken);
+            Config = await configService.GetConfigAsync(cancellationToken);
         }
     }
 
