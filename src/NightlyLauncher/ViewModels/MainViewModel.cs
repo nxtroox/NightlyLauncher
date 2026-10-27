@@ -53,15 +53,13 @@ internal partial class MainViewModel(
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task EditApp(CancellationToken cancellationToken = default) {
         var vm = dialogService.CreateViewModel<EditViewModel>();
-        vm.SelectedApp = SelectedApp;
+        vm.SelectedApp = SelectedApp!;
 
         var result = await dialogService.ShowDialogAsync(this, vm);
+        if (result is not true) return;
 
-        if (result is true) {
-            SelectedApp = vm.SelectedApp;
-            await databaseService.UpdateAppAsync(SelectedApp!, cancellationToken);
-            await LoadApps(cancellationToken);
-        }
+        await databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
+        await LoadApps(cancellationToken);
     }
 
     [RelayCommand]
@@ -104,7 +102,7 @@ internal partial class MainViewModel(
             if (shouldUpdate)
                 await updaterService.UpdateAsync(SelectedApp!, progress, cancellationToken);
 
-            launcherService.LaunchApp(SelectedApp!, progress);
+            await launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
         } catch (Exception ex) {
             var messageBox = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,

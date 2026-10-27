@@ -31,10 +31,11 @@ internal sealed class AppUpdaterService(
     public async Task UpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
         progress.Report(new ProgressReport(-1, localizer["Updating"]));
-        var option = FindInstallOption(app);
+        var option = databaseService.FindInstallOption(app);
 
         var supportedFileTypes = new[] { ".zip", ".tar", ".tar.gz" };
-        if (!supportedFileTypes.Any(option.DownloadUri.LocalPath.EndsWith))
+        if (!supportedFileTypes.Any(fileType =>
+                option.DownloadUri.LocalPath.EndsWith(fileType, StringComparison.OrdinalIgnoreCase)))
             throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
 
         var archivePath = Path.Combine(pathService.DownloadPath, Path.GetFileName(option.DownloadUri.LocalPath));
@@ -51,12 +52,7 @@ internal sealed class AppUpdaterService(
 
             await ExtractArchive(archivePath, installPath, cancellationToken);
 
-            if (app.Manifest.Portable && option.PortablePath is not null) {
-                if (option.PortablePath.PortablePathType == PortablePathType.File)
-                    await File.Create(Path.Combine(installPath, option.PortablePath.Path)).DisposeAsync();
-                else
-                    Directory.CreateDirectory(Path.Combine(installPath, option.PortablePath.Path));
-            }
+            await ApplyPortableAsync(app, cancellationToken);
 
             var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
@@ -80,7 +76,7 @@ internal sealed class AppUpdaterService(
             return true;
         }
 
-        var option = FindInstallOption(app);
+        var option = databaseService.FindInstallOption(app);
         var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
         if (app.LatestVersion != latestVersion)
@@ -95,16 +91,26 @@ internal sealed class AppUpdaterService(
         return false;
     }
 
-    public InstallOption FindInstallOption(InstalledApp app) {
-        var option = app.Manifest.InstallOptions.FirstOrDefault(o => o.Guid == app.SelectedInstallOptionGuid);
+    public async Task ApplyPortableAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        var portablePath = databaseService.FindInstallOption(app).PortablePath;
 
-        if (option is not null) return option;
+        if (portablePath is null) return;
 
-        var optionName = string.IsNullOrWhiteSpace(app.SelectedInstallOptionGuid.ToString())
-            ? localizer["UnknownInstallOption"]
-            : app.SelectedInstallOptionGuid.ToString();
+        var path = Path.Combine(pathService.GetInstallPath(app), portablePath.Path);
+        var disabledPath = path + ".disabled";
+        var (source, destination) = app.Manifest.Portable ? (disabledPath, path) : (path, disabledPath);
 
-        throw new InvalidOperationException(localizer["SelectedInstallOptionNotFound", optionName]);
+        if (portablePath.PortablePathType is PortablePathType.Folder) {
+            if (Directory.Exists(source))
+                Directory.Move(source, destination);
+            else if (app.Manifest.Portable)
+                Directory.CreateDirectory(path);
+        } else {
+            if (File.Exists(source))
+                File.Move(source, destination);
+            else if (app.Manifest.Portable)
+                await File.WriteAllBytesAsync(path, [], cancellationToken);
+        }
     }
 
     private async Task ExtractArchive(string archivePath, string destinationPath, CancellationToken cancellationToken) {

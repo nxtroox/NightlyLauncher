@@ -53,6 +53,18 @@ internal sealed class DatabaseService(
         await UpdateDatabaseAsync(cancellationToken);
     }
 
+    public InstallOption FindInstallOption(InstalledApp app) {
+        var option = app.Manifest.InstallOptions.FirstOrDefault(o => o.Guid == app.SelectedInstallOptionGuid);
+
+        if (option is not null) return option;
+
+        var optionName = string.IsNullOrWhiteSpace(app.SelectedInstallOptionGuid.ToString())
+            ? localizer["UnknownInstallOption"]
+            : app.SelectedInstallOptionGuid.ToString();
+
+        throw new InvalidOperationException(localizer["SelectedInstallOptionNotFound", optionName]);
+    }
+
     private async Task UpdateDatabaseAsync(CancellationToken cancellationToken) {
         await using var stream = File.Open(pathService.DatabasePath, FileMode.Create, FileAccess.Write);
         await JsonSerializer.SerializeAsync(stream, _installedApps, jsonSerializerOptions, cancellationToken);
