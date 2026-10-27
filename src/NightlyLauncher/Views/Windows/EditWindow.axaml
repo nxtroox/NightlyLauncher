@@ -1,0 +1,46 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        x:Class="NightlyLauncher.Views.Windows.EditWindow"
+        x:DataType="vm:EditViewModel"
+        Title="NightlyLauncher - Edit"
+        Height="450"
+        Width="400">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollViewer>
+            <StackPanel>
+                <Label Content="{Binding SelectedApp?.Manifest.ReadableName}" />
+                <Label Content="{Binding SelectedApp?.UpdatedOn}" />
+
+                <StackPanel>
+                    <Label Content="Selected install option:" />
+                    <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
+                              SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
+                              PlaceholderText="Select an installation option">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding ReadableName}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </StackPanel>
+
+                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
+                          Content="Prompt on update" />
+                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
+                          Content="Portable mode" />
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save"
+                    HorizontalAlignment="Right"
+                    Command="{Binding SaveCommand}" />
+            <Button Content="Cancel"
+                    HorizontalAlignment="Right"
+                    Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

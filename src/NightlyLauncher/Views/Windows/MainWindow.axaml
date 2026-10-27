@@ -46,10 +46,10 @@
                             <ContextMenu>
                                 <MenuItem Header="Launch"
                                           Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.LaunchAppCommand}" />
-                                <MenuItem Header="Remove"
-                                          Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.RemoveAppCommand}" />
                                 <MenuItem Header="Edit"
                                           Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.EditAppCommand}" />
+                                <MenuItem Header="Remove"
+                                          Command="{Binding #AppListBox.((vm:MainViewModel)DataContext)?.RemoveAppCommand}" />
                             </ContextMenu>
                         </Setter>
                     </Style>

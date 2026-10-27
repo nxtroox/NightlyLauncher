@@ -25,7 +25,7 @@ internal sealed class DatabaseService(
             await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
             _installedApps = await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
                 stream, jsonSerializerOptions, cancellationToken) ?? [];
-        } catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException) {
+        } catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException) {
             _installedApps = [];
         }
 

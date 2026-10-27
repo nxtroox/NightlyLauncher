@@ -61,7 +61,7 @@ internal sealed class AppUpdaterService(
             var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
             await databaseService.UpdateAppAsync(
-                new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, true, latestVersion,
+                new InstalledApp(app.Manifest, latestVersion, app.SelectedInstallOptionGuid, latestVersion,
                     DateTime.UtcNow), cancellationToken);
 
             progress.Report(new ProgressReport(100, localizer["UpdateComplete"]));

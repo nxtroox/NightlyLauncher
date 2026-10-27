@@ -36,7 +36,7 @@ internal partial class SettingsViewModel(IConfigService configService, IDialogSe
     }
 
     [RelayCommand]
-    private async Task SaveConfig(CancellationToken cancellationToken) {
+    private async Task Save(CancellationToken cancellationToken) {
         await configService.UpdateConfigAsync(Config!, cancellationToken);
         DialogResult = true;
         RequestClose?.Invoke(this, EventArgs.Empty);

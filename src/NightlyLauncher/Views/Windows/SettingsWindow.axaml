@@ -3,12 +3,12 @@
         xmlns:vm="using:NightlyLauncher.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="NightlyLauncher.Views.Windows.SettingsWindow"
         x:DataType="vm:SettingsViewModel"
         Title="NightlyLauncher - Settings"
         Height="450"
-        Width="600">
+        Width="400">
     <Grid RowDefinitions="*,Auto">
         <ScrollViewer>
             <StackPanel>
@@ -31,7 +31,7 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save"
                     HorizontalAlignment="Right"
-                    Command="{Binding SaveConfigCommand}" />
+                    Command="{Binding SaveCommand}" />
             <Button Content="Cancel"
                     HorizontalAlignment="Right"
                     Command="{Binding CancelCommand}" />

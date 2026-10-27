@@ -44,14 +44,25 @@ internal partial class MainViewModel(
                     "(win-x64, zip)")
             ],
             true, true);
-        var app = new InstalledApp(manifest, "0", installGuid, UpdatedOn: DateTime.UtcNow);
+        var app = new InstalledApp(manifest, "0", installGuid);
 
         await databaseService.UpdateAppAsync(app, cancellationToken);
         await LoadApps(cancellationToken);
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private void EditApp() => throw new NotImplementedException();
+    private async Task EditApp(CancellationToken cancellationToken = default) {
+        var vm = dialogService.CreateViewModel<EditViewModel>();
+        vm.SelectedApp = SelectedApp;
+
+        var result = await dialogService.ShowDialogAsync(this, vm);
+
+        if (result is true) {
+            SelectedApp = vm.SelectedApp;
+            await databaseService.UpdateAppAsync(SelectedApp!, cancellationToken);
+            await LoadApps(cancellationToken);
+        }
+    }
 
     [RelayCommand]
     private static void Exit() {
@@ -76,9 +87,9 @@ internal partial class MainViewModel(
 
         try {
             var needsUpdate = await updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
-            var shouldUpdate = !SelectedApp!.IsInstalled || needsUpdate;
+            var shouldUpdate = SelectedApp!.UpdatedOn is null || needsUpdate;
 
-            if (shouldUpdate && SelectedApp.IsInstalled && SelectedApp.Manifest.UpdatePrompt) {
+            if (shouldUpdate && SelectedApp.UpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
                 var updatePrompt = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
                     Content = localizer["UpdatePromptText", SelectedApp.Manifest.ReadableName],
