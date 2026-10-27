@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -20,7 +21,8 @@ internal partial class MainViewModel(
     IDialogService dialogService,
     ILauncherService launcherService,
     IStringLocalizer<MainViewModel> localizer,
-    IAppUpdaterService appUpdaterService) : ViewModelBase {
+    IAppUpdaterService appUpdaterService,
+    IPathService pathService) : ViewModelBase {
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
     [ObservableProperty]
@@ -101,18 +103,21 @@ internal partial class MainViewModel(
         var removeAppResult = await dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
-            var removeAppDataMessageBoxSettings = new MessageBoxSettings {
-                Button = MessageBoxButton.YesNo,
-                DefaultValue = false,
-                Icon = MessageBoxImage.Warning,
-                Title = localizer["RemoveAppDataConfirmationTitle", SelectedApp.Manifest.ReadableName],
-                Content = localizer["RemoveAppDataConfirmationText", SelectedApp.Manifest.ReadableName]
-            };
+            if (Directory.Exists(pathService.GetInstallPath(SelectedApp))) {
+                var removeAppDataMessageBoxSettings = new MessageBoxSettings {
+                    Button = MessageBoxButton.YesNo,
+                    DefaultValue = false,
+                    Icon = MessageBoxImage.Warning,
+                    Title = localizer["RemoveAppDataConfirmationTitle", SelectedApp.Manifest.ReadableName],
+                    Content = localizer["RemoveAppDataConfirmationText", SelectedApp.Manifest.ReadableName]
+                };
 
-            var removeAppDataResult = await dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
+                var removeAppDataResult =
+                    await dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
 
-            if (removeAppDataResult is true) {
-                appUpdaterService.DeleteAppData(SelectedApp);
+                if (removeAppDataResult is true) {
+                    appUpdaterService.DeleteAppData(SelectedApp);
+                }
             }
 
             await databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
