@@ -7,5 +7,5 @@ internal sealed record InstallOption(
     Uri DownloadUri,
     Uri LatestCommitUri,
     LaunchCommand LaunchCommand,
-    PortablePath? PortablePath = null,
-    string? ReadableName = null);
+    string ReadableName,
+    PortablePath? PortablePath = null);

@@ -17,13 +17,6 @@ internal class RepositoryService(
     : IRepositoryService {
     private List<Repository> _repositories = [];
 
-    public async Task<List<Repository>?> GetRepositoriesAsync(CancellationToken cancellationToken = default) {
-        if (_repositories.Count == 0)
-            await LoadRepositoriesAsync(cancellationToken);
-
-        return _repositories.Count > 0 ? _repositories : null;
-    }
-
     public async Task UpdateRepositoriesAsync(CancellationToken cancellationToken = default) {
         await GetRepositoriesAsync(cancellationToken);
 
@@ -57,6 +50,22 @@ internal class RepositoryService(
             await UpdateConfig(cancellationToken);
         } else
             throw new KeyNotFoundException(localizer["RepositoryNotFound", repository.ReadableName]);
+    }
+
+    public async Task<List<AppManifest>?> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
+        await GetRepositoriesAsync(cancellationToken);
+
+        var apps = new List<AppManifest>();
+        _repositories.ForEach(repo => apps.AddRange(repo.Apps));
+
+        return apps.Count > 0 ? apps : null;
+    }
+
+    private async Task<List<Repository>?> GetRepositoriesAsync(CancellationToken cancellationToken) {
+        if (_repositories.Count == 0)
+            await LoadRepositoriesAsync(cancellationToken);
+
+        return _repositories.Count > 0 ? _repositories : null;
     }
 
     private async Task LoadRepositoriesAsync(CancellationToken cancellationToken) {

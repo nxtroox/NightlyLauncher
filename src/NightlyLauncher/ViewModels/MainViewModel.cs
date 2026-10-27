@@ -41,8 +41,8 @@ internal partial class MainViewModel(
                         "https://nightly.link/cemu-project/Cemu/workflows/build_check/main/cemu-bin-windows-x64.zip"),
                     new Uri("https://api.github.com/repos/cemu-project/Cemu/commits/main"),
                     new LaunchCommand("Cemu.exe"),
-                    new PortablePath("portable", PortablePathType.Folder),
-                    "(win-x64, zip)")
+                    "(win-x64, zip)",
+                    new PortablePath("portable", PortablePathType.Folder))
             ],
             true, true);
         var app = new InstalledApp(manifest, "0", installGuid);
@@ -77,9 +77,8 @@ internal partial class MainViewModel(
             vm.StatusText = report.StatusText;
 
             vm.ProgressIsIndeterminate = report.Percentage < 0;
-            if (report.Percentage >= 0) {
+            if (report.Percentage >= 0)
                 vm.ProgressValue = report.Percentage;
-            }
         });
 
         var dialogTask = dialogService.ShowDialogAsync(this, vm);
