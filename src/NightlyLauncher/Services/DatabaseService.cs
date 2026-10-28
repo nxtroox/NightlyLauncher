@@ -37,7 +37,7 @@ internal sealed class DatabaseService(
 
         if (found is not null) {
             _installedApps!.Remove(found);
-            await UpdateDatabaseAsync(cancellationToken);
+            await WriteDatabaseAsync(cancellationToken);
         } else
             throw new KeyNotFoundException(localizer["AppNotFound", app.Manifest.Guid]);
     }
@@ -50,7 +50,7 @@ internal sealed class DatabaseService(
         }
 
         _installedApps!.Add(app);
-        await UpdateDatabaseAsync(cancellationToken);
+        await WriteDatabaseAsync(cancellationToken);
     }
 
     public InstallOption FindInstallOption(InstalledApp app) {
@@ -65,7 +65,12 @@ internal sealed class DatabaseService(
         throw new InvalidOperationException(localizer["SelectedInstallOptionNotFound", optionName]);
     }
 
-    private async Task UpdateDatabaseAsync(CancellationToken cancellationToken) {
+    private async Task WriteDatabaseAsync(CancellationToken cancellationToken) {
+        var directory = Path.GetDirectoryName(pathService.DatabasePath);
+
+        if (directory is not null)
+            Directory.CreateDirectory(directory);
+
         await using var stream = File.Open(pathService.DatabasePath, FileMode.Create, FileAccess.Write);
         await JsonSerializer.SerializeAsync(stream, _installedApps, jsonSerializerOptions, cancellationToken);
     }

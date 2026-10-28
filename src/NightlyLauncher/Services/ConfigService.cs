@@ -24,14 +24,17 @@ internal sealed class ConfigService(
     }
 
     private async Task WriteConfigAsync(Config config, string path, CancellationToken cancellationToken) {
-        await using var stream = File.Create(path);
+        var directory = Path.GetDirectoryName(path);
+
+        if (directory is not null)
+            Directory.CreateDirectory(directory);
+
+        await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
         await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
     }
 
     private async Task<Config> LoadAsync(string path, CancellationToken cancellationToken) {
         if (!File.Exists(path)) {
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-
             var config = new Config();
             await WriteConfigAsync(config, path, cancellationToken);
 
@@ -44,6 +47,7 @@ internal sealed class ConfigService(
             stream, jsonSerializerOptions, cancellationToken) ?? new Config();
     }
 
+    // this is here so that DataBaseService and ConfigService don't depend on each other
     private static string GetConfigPath() {
         var appDataConfig = Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.ApplicationData), "NightlyLauncher", "config.json");

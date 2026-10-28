@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="ErrorMessageBoxTitle" xml:space="preserve">
+  <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>An error appeared while updating {0}</value>
   </data>
   <data name="RemoveAppConfirmationText" xml:space="preserve">
@@ -14,6 +14,9 @@
   </data>
   <data name="RemoveAppDataConfirmationTitle" xml:space="preserve">
     <value>Remove data for {0}?</value>
+  </data>
+  <data name="RepositoryUpdateErrorMessageBoxTitle" xml:space="preserve">
+    <value>Error while updating repositories</value>
   </data>
   <data name="UpdatePromptText" xml:space="preserve">
     <value>Would you like to update {0}?</value>
