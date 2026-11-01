@@ -12,12 +12,14 @@ namespace NightlyLauncher.ViewModels;
 
 internal partial class AppBrowserViewModel : DialogViewModelBase {
     private readonly IDialogService _dialogService;
+    private readonly IStringLocalizer<AppBrowserViewModel> _localizer;
     private readonly IRepositoryService _repositoryService;
 
     public AppBrowserViewModel(IDialogService dialogService, IRepositoryService repositoryService,
         IStringLocalizer<AppBrowserViewModel> localizer) {
         _dialogService = dialogService;
         _repositoryService = repositoryService;
+        _localizer = localizer;
 
         Title = localizer["Title"];
         Content = localizer["Content"];
@@ -35,6 +37,9 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
     [RelayCommand]
     private async Task AddApp() {
         var vm = _dialogService.CreateViewModel<SelectionViewModel>();
+
+        vm.Title = _localizer["SelectInstallOptionTitle"];
+        vm.Content = _localizer["SelectInstallOptionContent"];
 
         foreach (var option in SelectedApp!.InstallOptions) {
             if (_repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))

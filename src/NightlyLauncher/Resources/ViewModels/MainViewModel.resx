@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
-    <value>An error appeared while updating {0}</value>
+    <value>An error appeared while updating {0}.</value>
   </data>
   <data name="NoInstallOptionSelected" xml:space="preserve">
-    <value>No install option selected</value>
+    <value>No install option selected.</value>
   </data>
   <data name="RemoveAppConfirmationText" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
@@ -19,7 +19,7 @@
     <value>Remove data for {0}?</value>
   </data>
   <data name="RepositoryUpdateErrorMessageBoxTitle" xml:space="preserve">
-    <value>Error while updating repositories</value>
+    <value>Error while updating repositories.</value>
   </data>
   <data name="UpdatePromptText" xml:space="preserve">
     <value>Would you like to update {0}?</value>

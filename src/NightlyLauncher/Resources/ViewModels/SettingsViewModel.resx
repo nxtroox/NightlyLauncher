@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="AddRepositoryError" xml:space="preserve">
-    <value>Error while adding repository</value>
+    <value>Error while adding repository.</value>
   </data>
   <data name="RemoveRepositoryConfirmationText" xml:space="preserve">
     <value>Are you sure that you want to remove the repository '{0}'?</value>
