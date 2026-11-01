@@ -1,0 +1,51 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using HanumanInstitute.MvvmDialogs;
+using Microsoft.Extensions.Localization;
+using NightlyLauncher.Models;
+using NightlyLauncher.Services;
+
+namespace NightlyLauncher.ViewModels;
+
+internal partial class AppBrowserViewModel : DialogViewModelBase {
+    private readonly IDialogService _dialogService;
+    private readonly IRepositoryService _repositoryService;
+
+    public AppBrowserViewModel(IDialogService dialogService, IRepositoryService repositoryService,
+        IStringLocalizer<AppBrowserViewModel> localizer) {
+        _dialogService = dialogService;
+        _repositoryService = repositoryService;
+
+        Title = localizer["Title"];
+        Content = localizer["Content"];
+    }
+
+    public ObservableCollection<AppManifest> Apps { get; set; } = [];
+
+    [ObservableProperty] public partial AppManifest? SelectedApp { get; set; }
+    [ObservableProperty] public partial string? SearchBoxInput { get; set; }
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OkCommand))]
+    public partial Guid? SelectedInstallOptionGuid { get; private set; }
+
+    [RelayCommand]
+    private async Task AddApp() {
+        var vm = _dialogService.CreateViewModel<SelectionViewModel>();
+
+        foreach (var option in SelectedApp!.InstallOptions) {
+            if (_repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
+                vm.Items.Add(option);
+        }
+
+        if (await _dialogService.ShowDialogAsync(this, vm) is true && vm.SelectedItem is InstallOption installOption) {
+            SelectedInstallOptionGuid = installOption.Guid;
+            OkCommand.Execute(null);
+        }
+    }
+
+    protected override bool CanSubmit() => SelectedInstallOptionGuid is not null;
+}

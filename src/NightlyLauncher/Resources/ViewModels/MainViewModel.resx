@@ -3,6 +3,9 @@
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>An error appeared while updating {0}</value>
   </data>
+  <data name="NoInstallOptionSelected" xml:space="preserve">
+    <value>No install option selected</value>
+  </data>
   <data name="RemoveAppConfirmationText" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
   </data>

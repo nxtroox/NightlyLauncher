@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Avalonia;
@@ -33,26 +34,30 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task AddApp(CancellationToken cancellationToken) {
-        var installGuid = Guid.NewGuid();
+        var vm = dialogService.CreateViewModel<AppBrowserViewModel>();
+        var manifests = await repositoryService.GetAvailableAppsAsync(cancellationToken);
 
-        var manifest = new AppManifest(Guid.NewGuid(), "Cemu", [
-                new InstallOption(installGuid,
-                    new Uri(
-                        "https://nightly.link/cemu-project/Cemu/workflows/build_check/main/cemu-bin-windows-x64.zip"),
-                    new Uri("https://api.github.com/repos/cemu-project/Cemu/commits/main"),
-                    new LaunchCommand("Cemu.exe"),
-                    "(win-x64, zip)",
-                    new PortablePath("portable", PortablePathType.Folder))
-            ],
-            true, true);
-        var app = new InstalledApp(manifest, "0", installGuid);
+        foreach (var manifest in manifests) {
+            var found = Apps.FirstOrDefault(a => a.Manifest.Guid == manifest.Guid);
+            if (found is not null) continue;
 
-        await databaseService.UpdateAppAsync(app, cancellationToken);
-        await LoadApps(cancellationToken);
+            vm.Apps.Add(manifest);
+        }
+
+        var result = await dialogService.ShowDialogAsync(this, vm);
+
+        if (result is true) {
+            var app = new InstalledApp(vm.SelectedApp!,
+                vm.SelectedInstallOptionGuid ??
+                throw new InvalidOperationException(localizer["NoInstallOptionSelected"]));
+
+            await databaseService.UpdateAppAsync(app, cancellationToken);
+            await LoadApps(cancellationToken);
+        }
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private async Task EditApp(CancellationToken cancellationToken = default) {
+    private async Task EditApp(CancellationToken cancellationToken) {
         var vm = dialogService.CreateViewModel<EditViewModel>();
         vm.SelectedApp = SelectedApp!;
 
@@ -70,7 +75,7 @@ internal partial class MainViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private async Task LaunchApp(CancellationToken cancellationToken = default) {
+    private async Task LaunchApp(CancellationToken cancellationToken) {
         var vm = dialogService.CreateViewModel<UpdaterViewModel>();
 
         var progress = new Progress<ProgressReport>(report => {
@@ -104,17 +109,17 @@ internal partial class MainViewModel(
 
             await launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
         } catch (Exception ex) {
-            var messageBox = new MessageBoxSettings {
+            var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
                 Content = ex.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
-                Title = localizer["ErrorMessageBoxTitle", SelectedApp!.Manifest.ReadableName]
+                Title = localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.ReadableName]
             };
 
-            await dialogService.ShowMessageBoxAsync(this, messageBox);
+            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
         } finally {
-            vm.Close(true);
+            vm.OkCommand.Execute(null);
             await dialogTask;
         }
 
@@ -128,7 +133,7 @@ internal partial class MainViewModel(
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private async Task RemoveApp(CancellationToken cancellationToken = default) {
+    private async Task RemoveApp(CancellationToken cancellationToken) {
         var removeAppMessageBoxSettings = new MessageBoxSettings {
             Button = MessageBoxButton.YesNo,
             DefaultValue = false,
@@ -163,8 +168,22 @@ internal partial class MainViewModel(
     }
 
     [RelayCommand]
-    private async Task UpdateRepositories(CancellationToken cancellationToken = default) =>
-        await repositoryService.UpdateRepositoriesAsync(cancellationToken);
+    private async Task UpdateRepositories(CancellationToken cancellationToken) {
+        // TODO: dont stop updating when only 1 repository throws exceptions
+        try {
+            await repositoryService.UpdateRepositoriesAsync(cancellationToken);
+        } catch (Exception ex) {
+            var messageBoxSettings = new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = ex.Message,
+                Icon = MessageBoxImage.Error,
+                DefaultValue = true,
+                Title = localizer["RepositoryUpdateErrorMessageBoxTitle"]
+            };
+
+            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+        }
+    }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
         await configService.GetConfigAsync(cancellationToken);
@@ -175,7 +194,7 @@ internal partial class MainViewModel(
 
     private async Task LoadApps(CancellationToken cancellationToken) {
         Apps.Clear();
-        foreach (var app in await databaseService.GetAppsAsync(cancellationToken))
+        foreach (var app in await databaseService.GetInstalledAppsAsync(cancellationToken))
             Apps.Add(app);
     }
 }

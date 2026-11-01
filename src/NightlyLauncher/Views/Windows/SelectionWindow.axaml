@@ -1,0 +1,32 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:NightlyLauncher.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
+        x:Class="NightlyLauncher.Views.Windows.SelectionWindow"
+        x:DataType="vm:SelectionViewModel"
+        Title="{Binding Title}"
+        WindowStartupLocation="CenterScreen"
+        Height="200"
+        Width="600">
+    <Grid RowDefinitions="*,*,Auto">
+        <Label Content="{Binding Content}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Bottom" />
+
+        <!-- TODO: DataTemplate for InstallOption -->
+        <ComboBox Grid.Row="1"
+                  HorizontalAlignment="Stretch"
+                  VerticalAlignment="Top"
+                  ItemsSource="{Binding Items}"
+                  SelectedItem="{Binding SelectedItem}" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Ok"
+                    Command="{Binding OkCommand}" />
+            <Button Content="Cancel"
+                    Command="{Binding CancelCommand}" />
+        </StackPanel>
+    </Grid>
+</Window>

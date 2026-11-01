@@ -1,0 +1,14 @@
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+
+namespace NightlyLauncher.ViewModels;
+
+internal partial class SelectionViewModel : DialogViewModelBase {
+    public ObservableCollection<object> Items { get; set; } = [];
+
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OkCommand))]
+    public partial object? SelectedItem { get; set; }
+
+    protected override bool CanSubmit() => SelectedItem is not null;
+}

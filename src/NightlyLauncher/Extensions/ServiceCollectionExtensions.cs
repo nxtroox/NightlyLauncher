@@ -11,9 +11,11 @@ namespace NightlyLauncher.Extensions;
 
 public static class ServiceCollectionExtensions {
     public static void AddCommonServices(this IServiceCollection collection) {
+        collection.AddTransient<AppBrowserViewModel>();
         collection.AddTransient<EditViewModel>();
         collection.AddTransient<InputViewModel>();
         collection.AddTransient<MainViewModel>();
+        collection.AddTransient<SelectionViewModel>();
         collection.AddTransient<SettingsViewModel>();
         collection.AddTransient<UpdaterViewModel>();
 

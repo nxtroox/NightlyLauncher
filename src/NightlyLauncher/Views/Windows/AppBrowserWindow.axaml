@@ -1,0 +1,42 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="NightlyLauncher.Views.Windows.AppBrowserWindow"
+        x:DataType="vm:AppBrowserViewModel"
+        Title="{Binding Title}"
+        Height="450"
+        Width="650">
+    <StackPanel>
+        <StackPanel>
+            <TextBox PlaceholderText="{Binding Content}"
+                     Text="{Binding SearchBoxInput}" />
+        </StackPanel>
+        <ListBox DoubleTapped="AppListBox_DoubleTapped"
+                 ItemsSource="{Binding Apps}"
+                 SelectedItem="{Binding SelectedApp}"
+                 x:Name="AppListBox">
+            <ListBox.KeyBindings>
+                <KeyBinding Command="{Binding AddAppCommand}"
+                            Gesture="Enter" />
+            </ListBox.KeyBindings>
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="ContextMenu">
+                        <ContextMenu>
+                            <MenuItem Header="Add"
+                                      Command="{Binding #AppListBox.((vm:AppBrowserViewModel)DataContext)?.AddAppCommand}" />
+                        </ContextMenu>
+                    </Setter>
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Label Content="{Binding ReadableName}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</Window>
