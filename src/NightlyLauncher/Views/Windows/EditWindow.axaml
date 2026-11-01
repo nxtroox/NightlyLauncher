@@ -6,13 +6,14 @@
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="NightlyLauncher.Views.Windows.EditWindow"
         x:DataType="vm:EditViewModel"
-        Title="NightlyLauncher - Edit"
+        Title="{Binding Title}"
         Height="450"
         Width="400">
     <Grid RowDefinitions="*,Auto">
         <ScrollViewer>
             <StackPanel>
-                <Label Content="{Binding SelectedApp?.Manifest.ReadableName}" />
+                <Label Content="{Binding SelectedApp?.Manifest.ReadableName}"
+                       ToolTip.Tip="{Binding SelectedApp?.Manifest.Guid}" />
                 <Label Content="{Binding SelectedApp?.UpdatedOn}" />
 
                 <StackPanel>
@@ -22,7 +23,8 @@
                               PlaceholderText="Select an installation option">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ReadableName}" />
+                                <TextBlock Text="{Binding ReadableName}"
+                                           ToolTip.Tip="{Binding Guid}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
@@ -37,7 +39,7 @@
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button Content="Save"
                     HorizontalAlignment="Right"
-                    Command="{Binding SaveCommand}" />
+                    Command="{Binding OkCommand}" />
             <Button Content="Cancel"
                     HorizontalAlignment="Right"
                     Command="{Binding CancelCommand}" />

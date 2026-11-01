@@ -16,7 +16,7 @@ internal partial class MainWindow : Window {
     }
 
     private void AppListBox_DoubleTapped(object? sender, TappedEventArgs e) {
-        if (DataContext is MainViewModel mainViewModel)
-            mainViewModel.LaunchAppCommand.Execute(null);
+        if (DataContext is MainViewModel viewModel)
+            viewModel.LaunchAppCommand.Execute(null);
     }
 }

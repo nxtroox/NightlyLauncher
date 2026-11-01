@@ -11,12 +11,25 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SettingsViewModel(
-    IConfigService configService,
-    IDialogService dialogService,
-    IRepositoryService repositoryService,
-    IStringLocalizer<SettingsViewModel> localizer)
-    : ViewModelBase, IModalDialogViewModel, ICloseable {
+internal partial class SettingsViewModel : DialogViewModelBase {
+    private readonly IConfigService _configService;
+    private readonly IDialogService _dialogService;
+    private readonly IStringLocalizer<SettingsViewModel> _localizer;
+    private readonly IRepositoryService _repositoryService;
+
+    public SettingsViewModel(
+        IConfigService configService,
+        IDialogService dialogService,
+        IRepositoryService repositoryService,
+        IStringLocalizer<SettingsViewModel> localizer) {
+        _configService = configService;
+        _dialogService = dialogService;
+        _repositoryService = repositoryService;
+        _localizer = localizer;
+
+        Title = _localizer["Title"];
+    }
+
     [ObservableProperty] public partial Config? Config { get; private set; }
 
     [ObservableProperty]
@@ -25,53 +38,49 @@ internal partial class SettingsViewModel(
 
     private bool CanModifyRepository => SelectedRepository is not null;
 
-    public event EventHandler? RequestClose;
-
-    public bool? DialogResult { get; private set; }
-
     [RelayCommand]
     private async Task AddRepository(CancellationToken cancellationToken) {
-        var vm = dialogService.CreateViewModel<InputViewModel>();
+        var vm = _dialogService.CreateViewModel<InputViewModel>();
 
-        vm.Title = localizer["UrlInputTitle"];
-        vm.Content = localizer["UrlInputContent"];
-        vm.TextHint = localizer["UrlInputHint"];
+        vm.Title = _localizer["UrlInputTitle"];
+        vm.Content = _localizer["UrlInputContent"];
+        vm.TextHint = _localizer["UrlInputHint"];
 
-        var result = await dialogService.ShowDialogAsync(this, vm);
+        var result = await _dialogService.ShowDialogAsync(this, vm);
 
         if (result is true) {
             try {
-                await repositoryService.AddRepositoryAsync(new Uri(vm.Text!), cancellationToken);
-                Config = await configService.GetConfigAsync(cancellationToken);
+                await _repositoryService.AddRepositoryAsync(new Uri(vm.Text!), cancellationToken);
+                Config = await _configService.GetConfigAsync(cancellationToken);
             } catch (Exception ex) {
                 var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.Ok,
                     Content = ex.Message,
                     DefaultValue = true,
                     Icon = MessageBoxImage.Error,
-                    Title = localizer["AddRepositoryError"]
+                    Title = _localizer["AddRepositoryError"]
                 };
 
-                await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+                await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
             }
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanModifyRepository))]
-    private async Task RemoveRepository(CancellationToken cancellationToken = default) {
+    private async Task RemoveRepository(CancellationToken cancellationToken) {
         var messageBoxSettings = new MessageBoxSettings {
             Button = MessageBoxButton.YesNo,
-            Content = localizer["RemoveRepositoryConfirmationText", SelectedRepository!.ReadableName],
+            Content = _localizer["RemoveRepositoryConfirmationText", SelectedRepository!.ReadableName],
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = localizer["RemoveRepositoryConfirmationTitle", SelectedRepository.ReadableName]
+            Title = _localizer["RemoveRepositoryConfirmationTitle", SelectedRepository.ReadableName]
         };
 
-        var result = await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+        var result = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
 
         if (result is true) {
-            await repositoryService.RemoveRepositoryAsync(SelectedRepository, cancellationToken);
-            Config = await configService.GetConfigAsync(cancellationToken);
+            await _repositoryService.RemoveRepositoryAsync(SelectedRepository, cancellationToken);
+            Config = await _configService.GetConfigAsync(cancellationToken);
         }
     }
 
@@ -86,7 +95,7 @@ internal partial class SettingsViewModel(
     private async Task SelectFolderAsync(Action<string> callback) {
         var settings = new OpenFolderDialogSettings { Title = "Select Folder" };
 
-        var folder = await dialogService.ShowOpenFolderDialogAsync(this, settings);
+        var folder = await _dialogService.ShowOpenFolderDialogAsync(this, settings);
 
         if (folder is not null)
             callback(folder.LocalPath);
@@ -94,17 +103,12 @@ internal partial class SettingsViewModel(
 
     [RelayCommand]
     private async Task Save(CancellationToken cancellationToken) {
-        await configService.UpdateConfigAsync(Config!, cancellationToken);
-        DialogResult = true;
-        RequestClose?.Invoke(this, EventArgs.Empty);
-    }
-
-    [RelayCommand]
-    private void Cancel() {
-        DialogResult = false;
-        RequestClose?.Invoke(this, EventArgs.Empty);
+        await _configService.UpdateConfigAsync(Config!, cancellationToken);
+        OkCommand.Execute(null);
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
-        Config = await configService.GetConfigAsync(cancellationToken);
+        Config = await _configService.GetConfigAsync(cancellationToken);
+
+    protected override bool CanSubmit() => true; // TODO: implement
 }

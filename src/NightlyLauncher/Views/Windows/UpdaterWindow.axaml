@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
         x:Class="NightlyLauncher.Views.Windows.UpdaterWindow"
         x:DataType="vm:UpdaterViewModel"
-        Title="NightlyLauncher - Updater"
+        Title="{Binding Title}"
         Height="200"
         Width="600"
         WindowStartupLocation="CenterScreen"

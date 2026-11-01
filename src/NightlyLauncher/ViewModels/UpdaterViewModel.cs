@@ -1,22 +1,14 @@
-﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
-using HanumanInstitute.MvvmDialogs;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.Localization;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class UpdaterViewModel : ViewModelBase, IModalDialogViewModel, ICloseable {
+internal partial class UpdaterViewModel : DialogViewModelBase {
+    public UpdaterViewModel(IStringLocalizer<UpdaterViewModel> localizer) => Title = localizer["Title"];
+
     [ObservableProperty] public partial string? StatusText { get; set; }
-
     [ObservableProperty] public partial double ProgressValue { get; set; } = -1;
-
     [ObservableProperty] public partial bool ProgressIsIndeterminate { get; set; } = true;
 
-    public event EventHandler? RequestClose;
-
-    public bool? DialogResult { get; private set; }
-
-    internal void Close(bool result) {
-        DialogResult = result;
-        RequestClose?.Invoke(this, EventArgs.Empty);
-    }
+    protected override bool CanSubmit() => true;
 }

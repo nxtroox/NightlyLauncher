@@ -1,12 +1,7 @@
-﻿using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Controls;
 
 namespace NightlyLauncher.Views.Windows;
 
-public partial class InputWindow : Window {
-    public InputWindow() {
-        InitializeComponent();
-    }
+internal partial class InputWindow : Window {
+    public InputWindow() => InitializeComponent();
 }
-

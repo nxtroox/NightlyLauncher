@@ -1,13 +1,13 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using HanumanInstitute.MvvmDialogs;
+using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class EditViewModel : ViewModelBase, IModalDialogViewModel, ICloseable {
+internal partial class EditViewModel : DialogViewModelBase {
+    public EditViewModel(IStringLocalizer<EditViewModel> localizer) => Title = localizer["Title"];
+
     [ObservableProperty] public partial InstalledApp? SelectedApp { get; set; }
 
     public InstallOption? SelectedInstallOption {
@@ -25,20 +25,7 @@ internal partial class EditViewModel : ViewModelBase, IModalDialogViewModel, ICl
         }
     }
 
-    public event EventHandler? RequestClose;
-    public bool? DialogResult { get; private set; }
-
     partial void OnSelectedAppChanged(InstalledApp? value) => OnPropertyChanged(nameof(SelectedInstallOption));
 
-    [RelayCommand]
-    private void Save() {
-        DialogResult = true;
-        RequestClose?.Invoke(this, EventArgs.Empty);
-    }
-
-    [RelayCommand]
-    private void Cancel() {
-        DialogResult = false;
-        RequestClose?.Invoke(this, EventArgs.Empty);
-    }
+    protected override bool CanSubmit() => true; // TODO: implement
 }

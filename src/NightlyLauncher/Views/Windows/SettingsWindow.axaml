@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
         x:Class="NightlyLauncher.Views.Windows.SettingsWindow"
         x:DataType="vm:SettingsViewModel"
-        Title="NightlyLauncher - Settings"
+        Title="{Binding Title}"
         Height="450"
         Width="400">
     <Grid RowDefinitions="*,Auto">
