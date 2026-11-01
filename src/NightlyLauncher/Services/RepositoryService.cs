@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
+using OperatingSystem = NightlyLauncher.Models.OperatingSystem;
 
 namespace NightlyLauncher.Services;
 
@@ -22,7 +24,7 @@ internal class RepositoryService(
 
         foreach (var repo in _repositories) {
             if (repo.UpdateUri is null) return;
-            _repositories.Remove(repo);
+            _repositories.Remove(repo); // TODO: unsafe removal; if repository fetching fails then it's gone
 
             await AddRepositoryAsync(repo.UpdateUri, cancellationToken);
         }
@@ -52,20 +54,39 @@ internal class RepositoryService(
             throw new KeyNotFoundException(localizer["RepositoryNotFound", repository.ReadableName]);
     }
 
-    public async Task<List<AppManifest>?> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
+    public async Task<List<AppManifest>> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
         await GetRepositoriesAsync(cancellationToken);
 
-        var apps = new List<AppManifest>();
-        _repositories.ForEach(repo => apps.AddRange(repo.Apps));
-
-        return apps.Count > 0 ? apps : null;
+        return [
+            .. _repositories.SelectMany(repo => repo.Apps)
+                .Where(manifest => manifest.InstallOptions.Any(option =>
+                    CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture)))
+        ];
     }
 
-    private async Task<List<Repository>?> GetRepositoriesAsync(CancellationToken cancellationToken) {
+    public bool CheckAppCompatibility(OperatingSystem requestedOperatingSystem, Architecture requestedArchitecture) {
+        var os = GetCurrentOperatingSystem();
+        if (os != requestedOperatingSystem) return false;
+
+        var arch = RuntimeInformation.ProcessArchitecture;
+
+        if (os is not OperatingSystem.MacOs && arch is Architecture.X64 &&
+            requestedArchitecture is Architecture.X86)
+            return true;
+
+        if (os is not OperatingSystem.Linux && arch is Architecture.Arm64 &&
+            requestedArchitecture is Architecture.X64)
+            return true;
+
+        if (os is OperatingSystem.Windows && arch is Architecture.Arm64 && requestedArchitecture is Architecture.X86)
+            return true;
+
+        return arch == requestedArchitecture;
+    }
+
+    private async Task GetRepositoriesAsync(CancellationToken cancellationToken) {
         if (_repositories.Count == 0)
             await LoadRepositoriesAsync(cancellationToken);
-
-        return _repositories.Count > 0 ? _repositories : null;
     }
 
     private async Task LoadRepositoriesAsync(CancellationToken cancellationToken) {
@@ -83,4 +104,10 @@ internal class RepositoryService(
     private async Task UpdateConfig(CancellationToken cancellationToken) =>
         await configService.UpdateConfigAsync(configService.Config with { Repositories = _repositories },
             cancellationToken);
+
+    private OperatingSystem GetCurrentOperatingSystem() =>
+        System.OperatingSystem.IsWindows() ? OperatingSystem.Windows
+        : System.OperatingSystem.IsMacOS() ? OperatingSystem.MacOs
+        : System.OperatingSystem.IsLinux() ? OperatingSystem.Linux
+        : throw new PlatformNotSupportedException(localizer["UnsupportedOperatingSystem"]);
 }

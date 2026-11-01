@@ -6,4 +6,7 @@
   <data name="RepositoryNotFetched" xml:space="preserve">
     <value>Repository could not be fetched.</value>
   </data>
+  <data name="UnsupportedOperatingSystem" xml:space="preserve">
+    <value>Running on unsupported operating system</value>
+  </data>
 </root>

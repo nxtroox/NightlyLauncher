@@ -8,4 +8,5 @@ internal sealed record InstallOption(
     Uri LatestCommitUri,
     LaunchCommand LaunchCommand,
     string ReadableName,
+    Platform Platform,
     PortablePath? PortablePath = null);

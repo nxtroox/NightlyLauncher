@@ -17,7 +17,7 @@ internal sealed class DatabaseService(
     : IDatabaseService {
     private List<InstalledApp>? _installedApps;
 
-    public async Task<IEnumerable<InstalledApp>> GetAppsAsync(CancellationToken cancellationToken = default) {
+    public async Task<IEnumerable<InstalledApp>> GetInstalledAppsAsync(CancellationToken cancellationToken = default) {
         if (_installedApps is not null)
             return _installedApps;
 
@@ -76,7 +76,7 @@ internal sealed class DatabaseService(
     }
 
     private async Task<InstalledApp?> FindAppAsync(InstalledApp app, CancellationToken cancellationToken) {
-        await GetAppsAsync(cancellationToken);
+        await GetInstalledAppsAsync(cancellationToken);
         return _installedApps!.FirstOrDefault(a => a.Manifest.Guid == app.Manifest.Guid);
     }
 }
