@@ -110,5 +110,5 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
         Config = await _configService.GetConfigAsync(cancellationToken);
 
-    protected override bool CanSubmit() => true; // TODO: implement
+    protected override bool CanSubmit() => true;
 }

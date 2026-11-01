@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -36,6 +37,16 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
 
     [RelayCommand]
     private async Task AddApp() {
+        var compatibleApps = SelectedApp!.InstallOptions.Where(option =>
+                _repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
+            .ToList();
+
+        if (compatibleApps.Count is 1) {
+            SelectedInstallOptionGuid = compatibleApps[0].Guid;
+            OkCommand.Execute(null);
+            return;
+        }
+
         var vm = _dialogService.CreateViewModel<SelectionViewModel>();
 
         vm.Title = _localizer["SelectInstallOptionTitle"];

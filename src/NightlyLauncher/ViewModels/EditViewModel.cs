@@ -27,5 +27,5 @@ internal partial class EditViewModel : DialogViewModelBase {
 
     partial void OnSelectedAppChanged(InstalledApp? value) => OnPropertyChanged(nameof(SelectedInstallOption));
 
-    protected override bool CanSubmit() => true; // TODO: implement
+    protected override bool CanSubmit() => true;
 }

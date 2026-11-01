@@ -22,12 +22,20 @@ internal class RepositoryService(
     public async Task UpdateRepositoriesAsync(CancellationToken cancellationToken = default) {
         await GetRepositoriesAsync(cancellationToken);
 
-        foreach (var repo in _repositories) {
-            if (repo.UpdateUri is null) return;
-            _repositories.Remove(repo); // TODO: unsafe removal; if repository fetching fails then it's gone
+        var updated = false;
+        for (var index = 0; index < _repositories.Count; index++) {
+            var repo = _repositories[index];
+            if (repo.UpdateUri is null) continue;
 
-            await AddRepositoryAsync(repo.UpdateUri, cancellationToken);
+            var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
+
+            _repositories[index] = updatedRepository ??
+                                   throw new InvalidOperationException(localizer["RepositoryNotFetched"]);
+            updated = true;
         }
+
+        if (updated)
+            await UpdateConfig(cancellationToken);
     }
 
     public async Task AddRepositoryAsync(Uri uri, CancellationToken cancellationToken = default) {
