@@ -3,6 +3,9 @@
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>NightlyLauncher - Update {0}</value>
   </data>
+  <data name="MainWindowTitle" xml:space="preserve">
+    <value>Installed apps - NightlyLauncher</value>
+  </data>
   <data name="NoAppsAvailableMessageBoxContent" xml:space="preserve">
     <value>No new apps are available for download.</value>
   </data>

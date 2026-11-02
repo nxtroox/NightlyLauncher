@@ -11,7 +11,7 @@
         Width="650">
     <StackPanel>
         <StackPanel>
-            <TextBox PlaceholderText="{Binding Content}"
+            <TextBox PlaceholderText="{Binding SearchPlaceholderText}"
                      Text="{Binding SearchText}" />
         </StackPanel>
         <ListBox DoubleTapped="AppListBox_DoubleTapped"

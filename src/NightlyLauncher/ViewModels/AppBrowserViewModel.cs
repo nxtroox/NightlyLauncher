@@ -23,13 +23,14 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
         _localizer = localizer;
 
         Title = localizer["AppBrowserWindowTitle"];
-        Content = localizer["AppBrowserWindowContent"];
+        SearchPlaceholderText = localizer["AppBrowserWindowContent"];
     }
 
     public ObservableCollection<AppManifest> Apps { get; set; } = [];
 
     [ObservableProperty] public partial AppManifest? SelectedApp { get; set; }
     [ObservableProperty] public partial string? SearchText { get; set; }
+    [ObservableProperty] public partial string? SearchPlaceholderText { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OkCommand))]

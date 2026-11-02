@@ -1,14 +1,10 @@
 ﻿using System;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HanumanInstitute.MvvmDialogs;
 
 namespace NightlyLauncher.ViewModels;
 
 internal abstract partial class DialogViewModelBase : ViewModelBase, IModalDialogViewModel, ICloseable {
-    [ObservableProperty] public partial string? Title { get; set; }
-    [ObservableProperty] public partial string? Content { get; set; } // TODO: not every dialog has this
-
     public event EventHandler? RequestClose;
     public bool? DialogResult { get; private set; }
 

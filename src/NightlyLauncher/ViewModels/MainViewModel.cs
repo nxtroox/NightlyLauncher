@@ -16,15 +16,36 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class MainViewModel(
-    IDatabaseService databaseService,
-    IConfigService configService,
-    IDialogService dialogService,
-    ILauncherService launcherService,
-    IStringLocalizer<MainViewModel> localizer,
-    IAppUpdaterService updaterService,
-    IPathService pathService,
-    IRepositoryService repositoryService) : ViewModelBase {
+internal partial class MainViewModel : ViewModelBase {
+    private readonly IConfigService _configService;
+    private readonly IDatabaseService _databaseService;
+    private readonly IDialogService _dialogService;
+    private readonly ILauncherService _launcherService;
+    private readonly IStringLocalizer<MainViewModel> _localizer;
+    private readonly IPathService _pathService;
+    private readonly IRepositoryService _repositoryService;
+    private readonly IAppUpdaterService _updaterService;
+
+    public MainViewModel(IConfigService configService,
+        IDatabaseService databaseService,
+        IDialogService dialogService,
+        ILauncherService launcherService,
+        IStringLocalizer<MainViewModel> localizer,
+        IPathService pathService,
+        IRepositoryService repositoryService,
+        IAppUpdaterService updaterService) {
+        _configService = configService;
+        _databaseService = databaseService;
+        _dialogService = dialogService;
+        _launcherService = launcherService;
+        _localizer = localizer;
+        _pathService = pathService;
+        _repositoryService = repositoryService;
+        _updaterService = updaterService;
+
+        Title = _localizer["MainWindowTitle"];
+    }
+
     public ObservableCollection<InstalledApp> Apps { get; } = [];
 
     [ObservableProperty]
@@ -34,7 +55,7 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task AddApps(CancellationToken cancellationToken) {
-        var manifests = await repositoryService.GetAvailableAppsAsync(cancellationToken);
+        var manifests = await _repositoryService.GetAvailableAppsAsync(cancellationToken);
         var apps = manifests
             .Where(manifest => Apps.All(a => a.Manifest.Guid != manifest.Guid))
             .ToList();
@@ -42,42 +63,42 @@ internal partial class MainViewModel(
         if (apps.Count is 0) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
-                Content = localizer["NoAppsAvailableMessageBoxContent"],
+                Content = _localizer["NoAppsAvailableMessageBoxContent"],
                 DefaultValue = true,
                 Icon = MessageBoxImage.Information,
-                Title = localizer["NoAppsAvailableMessageBoxTitle"]
+                Title = _localizer["NoAppsAvailableMessageBoxTitle"]
             };
 
-            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
             return;
         }
 
-        var vm = dialogService.CreateViewModel<AppBrowserViewModel>();
+        var vm = _dialogService.CreateViewModel<AppBrowserViewModel>();
 
         foreach (var app in apps)
             vm.Apps.Add(app);
 
-        var result = await dialogService.ShowDialogAsync(this, vm);
+        var result = await _dialogService.ShowDialogAsync(this, vm);
 
         if (result is true) {
             var app = new InstalledApp(vm.SelectedApp!,
                 vm.SelectedInstallOptionGuid ??
-                throw new InvalidOperationException(localizer["NoInstallOptionSelectedExceptionMessage"]));
+                throw new InvalidOperationException(_localizer["NoInstallOptionSelectedExceptionMessage"]));
 
-            await databaseService.UpdateAppAsync(app, cancellationToken);
+            await _databaseService.UpdateAppAsync(app, cancellationToken);
             await LoadApps(cancellationToken);
         }
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task EditApp(CancellationToken cancellationToken) {
-        var vm = dialogService.CreateViewModel<EditViewModel>();
+        var vm = _dialogService.CreateViewModel<EditViewModel>();
         vm.SelectedApp = SelectedApp!;
 
-        var result = await dialogService.ShowDialogAsync(this, vm);
+        var result = await _dialogService.ShowDialogAsync(this, vm);
         if (result is not true) return;
 
-        await databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
+        await _databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
         await LoadApps(cancellationToken);
     }
 
@@ -89,7 +110,7 @@ internal partial class MainViewModel(
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task LaunchApp(CancellationToken cancellationToken) {
-        var vm = dialogService.CreateViewModel<UpdaterViewModel>();
+        var vm = _dialogService.CreateViewModel<UpdaterViewModel>();
 
         var progress = new Progress<ProgressReport>(report => {
             vm.StatusText = report.StatusText;
@@ -99,38 +120,38 @@ internal partial class MainViewModel(
                 vm.ProgressValue = report.Percentage;
         });
 
-        var dialogTask = dialogService.ShowDialogAsync(this, vm);
+        var dialogTask = _dialogService.ShowDialogAsync(this, vm);
 
         try {
-            var needsUpdate = await updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
+            var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
             var shouldUpdate = SelectedApp!.LastUpdatedOn is null || needsUpdate;
 
             if (shouldUpdate && SelectedApp.LastUpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
                 var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
-                    Content = localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.DisplayName],
+                    Content = _localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.DisplayName],
                     Icon = MessageBoxImage.Information,
                     DefaultValue = false,
-                    Title = localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.DisplayName]
+                    Title = _localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.DisplayName]
                 };
 
-                shouldUpdate = await dialogService.ShowMessageBoxAsync(this, messageBoxSettings) is true;
+                shouldUpdate = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings) is true;
             }
 
             if (shouldUpdate)
-                await updaterService.UpdateAsync(SelectedApp!, progress, cancellationToken);
+                await _updaterService.UpdateAsync(SelectedApp!, progress, cancellationToken);
 
-            await launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
+            await _launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
                 Content = ex.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
-                Title = localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
+                Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
             };
 
-            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
         } finally {
             vm.OkCommand.Execute(null);
             await dialogTask;
@@ -141,8 +162,8 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task OpenSettings() {
-        var vm = dialogService.CreateViewModel<SettingsViewModel>();
-        await dialogService.ShowDialogAsync(this, vm);
+        var vm = _dialogService.CreateViewModel<SettingsViewModel>();
+        await _dialogService.ShowDialogAsync(this, vm);
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
@@ -151,31 +172,31 @@ internal partial class MainViewModel(
             Button = MessageBoxButton.YesNo,
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.DisplayName],
-            Content = localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.DisplayName]
+            Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.DisplayName],
+            Content = _localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.DisplayName]
         };
 
-        var removeAppResult = await dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
+        var removeAppResult = await _dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
-            if (Directory.Exists(pathService.GetInstallPath(SelectedApp))) {
+            if (Directory.Exists(_pathService.GetInstallPath(SelectedApp))) {
                 var removeAppDataMessageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
                     DefaultValue = false,
                     Icon = MessageBoxImage.Warning,
-                    Title = localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.DisplayName],
-                    Content = localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.DisplayName]
+                    Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.DisplayName],
+                    Content = _localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.DisplayName]
                 };
 
                 var removeAppDataResult =
-                    await dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
+                    await _dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
 
                 if (removeAppDataResult is true) {
-                    updaterService.DeleteAppData(SelectedApp);
+                    _updaterService.DeleteAppData(SelectedApp);
                 }
             }
 
-            await databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
+            await _databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
             await LoadApps(cancellationToken);
         }
     }
@@ -184,22 +205,22 @@ internal partial class MainViewModel(
     private async Task UpdateRepositories(CancellationToken cancellationToken) {
         // TODO: dont stop updating when only 1 repository throws exceptions
         try {
-            await repositoryService.UpdateRepositoriesAsync(cancellationToken);
+            await _repositoryService.UpdateRepositoriesAsync(cancellationToken);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
                 Content = ex.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
-                Title = localizer["RepositoryUpdateErrorMessageBoxTitle"]
+                Title = _localizer["RepositoryUpdateErrorMessageBoxTitle"]
             };
 
-            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
         }
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
-        await configService.GetConfigAsync(cancellationToken);
+        await _configService.GetConfigAsync(cancellationToken);
         await LoadApps(cancellationToken);
     }
 
@@ -207,7 +228,7 @@ internal partial class MainViewModel(
 
     private async Task LoadApps(CancellationToken cancellationToken) {
         Apps.Clear();
-        foreach (var app in await databaseService.GetInstalledAppsAsync(cancellationToken))
+        foreach (var app in await _databaseService.GetInstalledAppsAsync(cancellationToken))
             Apps.Add(app);
     }
 }

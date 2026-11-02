@@ -2,7 +2,7 @@
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class InputViewModel : DialogViewModelBase {
+internal partial class InputViewModel : PromptDialogViewModelBase {
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OkCommand))]
     public partial string? Text { get; set; }

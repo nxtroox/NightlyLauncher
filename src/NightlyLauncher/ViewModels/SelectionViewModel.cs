@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SelectionViewModel : DialogViewModelBase {
+internal partial class SelectionViewModel : PromptDialogViewModelBase {
     public ObservableCollection<object> Items { get; set; } = [];
 
     [ObservableProperty]
