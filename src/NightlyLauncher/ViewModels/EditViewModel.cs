@@ -6,7 +6,7 @@ using NightlyLauncher.Models;
 namespace NightlyLauncher.ViewModels;
 
 internal partial class EditViewModel : DialogViewModelBase {
-    public EditViewModel(IStringLocalizer<EditViewModel> localizer) => Title = localizer["Title"];
+    public EditViewModel(IStringLocalizer<EditViewModel> localizer) => Title = localizer["EditWindowTitle"];
 
     [ObservableProperty] public partial InstalledApp? SelectedApp { get; set; }
 

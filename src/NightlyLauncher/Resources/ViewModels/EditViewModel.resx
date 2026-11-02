@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="Title" xml:space="preserve">
-    <value>NightlyLauncher - Edit app</value>
+  <data name="EditWindowTitle" xml:space="preserve">
+    <value>Edit app - NightlyLauncher</value>
   </data>
 </root>

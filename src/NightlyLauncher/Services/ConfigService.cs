@@ -13,7 +13,8 @@ internal sealed class ConfigService(
     IStringLocalizer<ConfigService> localizer) : IConfigService {
     private Config? _cachedConfig;
 
-    public Config Config => _cachedConfig ?? throw new InvalidOperationException(localizer["ConfigNotLoaded"]);
+    public Config Config =>
+        _cachedConfig ?? throw new InvalidOperationException(localizer["ConfigNotLoadedExceptionMessage"]);
 
     public async Task<Config> GetConfigAsync(CancellationToken cancellationToken) =>
         _cachedConfig ??= await LoadAsync(GetConfigPath(), cancellationToken);

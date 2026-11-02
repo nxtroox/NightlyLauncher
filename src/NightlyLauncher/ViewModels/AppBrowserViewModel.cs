@@ -22,8 +22,8 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
         _repositoryService = repositoryService;
         _localizer = localizer;
 
-        Title = localizer["Title"];
-        Content = localizer["Content"];
+        Title = localizer["AppBrowserWindowTitle"];
+        Content = localizer["AppBrowserWindowContent"];
     }
 
     public ObservableCollection<AppManifest> Apps { get; set; } = [];
@@ -49,8 +49,8 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
 
         var vm = _dialogService.CreateViewModel<SelectionViewModel>();
 
-        vm.Title = _localizer["SelectInstallOptionTitle"];
-        vm.Content = _localizer["SelectInstallOptionContent"];
+        vm.Title = _localizer["SelectInstallOptionDialogTitle"];
+        vm.Content = _localizer["SelectInstallOptionDialogContent"];
 
         foreach (var option in SelectedApp!.InstallOptions) {
             if (_repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))

@@ -33,7 +33,7 @@ internal partial class MainViewModel(
     public partial InstalledApp? SelectedApp { get; set; }
 
     [RelayCommand]
-    private async Task AddApp(CancellationToken cancellationToken) {
+    private async Task AddApps(CancellationToken cancellationToken) {
         var manifests = await repositoryService.GetAvailableAppsAsync(cancellationToken);
         var apps = manifests
             .Where(manifest => Apps.All(a => a.Manifest.Guid != manifest.Guid))
@@ -42,10 +42,10 @@ internal partial class MainViewModel(
         if (apps.Count is 0) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
-                Content = localizer["NoAppsAvailableContent"],
+                Content = localizer["NoAppsAvailableMessageBoxContent"],
                 DefaultValue = true,
                 Icon = MessageBoxImage.Information,
-                Title = localizer["NoAppsAvailableTitle"]
+                Title = localizer["NoAppsAvailableMessageBoxTitle"]
             };
 
             await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
@@ -62,7 +62,7 @@ internal partial class MainViewModel(
         if (result is true) {
             var app = new InstalledApp(vm.SelectedApp!,
                 vm.SelectedInstallOptionGuid ??
-                throw new InvalidOperationException(localizer["NoInstallOptionSelected"]));
+                throw new InvalidOperationException(localizer["NoInstallOptionSelectedExceptionMessage"]));
 
             await databaseService.UpdateAppAsync(app, cancellationToken);
             await LoadApps(cancellationToken);
@@ -108,10 +108,10 @@ internal partial class MainViewModel(
             if (shouldUpdate && SelectedApp.UpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
                 var updatePrompt = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
-                    Content = localizer["UpdatePromptText", SelectedApp.Manifest.ReadableName],
+                    Content = localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.ReadableName],
                     Icon = MessageBoxImage.Information,
                     DefaultValue = false,
-                    Title = localizer["UpdatePromptTitle", SelectedApp.Manifest.ReadableName]
+                    Title = localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.ReadableName]
                 };
 
                 shouldUpdate = await dialogService.ShowMessageBoxAsync(this, updatePrompt) is true;
@@ -151,8 +151,8 @@ internal partial class MainViewModel(
             Button = MessageBoxButton.YesNo,
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = localizer["RemoveAppConfirmationTitle", SelectedApp!.Manifest.ReadableName],
-            Content = localizer["RemoveAppConfirmationText", SelectedApp.Manifest.ReadableName]
+            Title = localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.ReadableName],
+            Content = localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.ReadableName]
         };
 
         var removeAppResult = await dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
@@ -163,8 +163,8 @@ internal partial class MainViewModel(
                     Button = MessageBoxButton.YesNo,
                     DefaultValue = false,
                     Icon = MessageBoxImage.Warning,
-                    Title = localizer["RemoveAppDataConfirmationTitle", SelectedApp.Manifest.ReadableName],
-                    Content = localizer["RemoveAppDataConfirmationText", SelectedApp.Manifest.ReadableName]
+                    Title = localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.ReadableName],
+                    Content = localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.ReadableName]
                 };
 
                 var removeAppDataResult =

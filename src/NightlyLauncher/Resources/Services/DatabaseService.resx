@@ -1,6 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="AppNotFound" xml:space="preserve">
+  <data name="AppNotFoundExceptionMessage" xml:space="preserve">
     <value>App {0} was not found.</value>
+  </data>
+  <data name="SelectedInstallOptionNotFoundExceptionMessage" xml:space="preserve">
+    <value>Selected install option {0} was not found.</value>
+  </data>
+  <data name="UnknownInstallOptionPlaceholder" xml:space="preserve">
+    <value>[Unknown Option]</value>
   </data>
 </root>

@@ -30,13 +30,13 @@ internal sealed class AppUpdaterService(
 
     public async Task UpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
-        progress.Report(new ProgressReport(-1, localizer["Updating"]));
+        progress.Report(new ProgressReport(-1, localizer["UpdatingProgressReportStatusText"]));
         var option = databaseService.FindInstallOption(app);
 
         var supportedFileTypes = new[] { ".zip", ".tar", ".tar.gz" };
         if (!supportedFileTypes.Any(fileType =>
                 option.DownloadUri.LocalPath.EndsWith(fileType, StringComparison.OrdinalIgnoreCase)))
-            throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
+            throw new NotSupportedException(localizer["UnsupportedArchiveFileTypeExceptionMessage"]);
 
         var archivePath = Path.Combine(pathService.DownloadPath, Path.GetFileName(option.DownloadUri.LocalPath));
 
@@ -45,7 +45,7 @@ internal sealed class AppUpdaterService(
                 option.DownloadUri, progress,
                 cancellationToken);
 
-            progress.Report(new ProgressReport(-1, localizer["Updating"]));
+            progress.Report(new ProgressReport(-1, localizer["UpdatingProgressReportStatusText"]));
 
             var installPath = pathService.GetInstallPath(app);
             Directory.CreateDirectory(installPath);
@@ -60,7 +60,7 @@ internal sealed class AppUpdaterService(
                 new InstalledApp(app.Manifest, app.SelectedInstallOptionGuid, latestVersion, latestVersion,
                     DateTime.UtcNow), cancellationToken);
 
-            progress.Report(new ProgressReport(100, localizer["UpdateComplete"]));
+            progress.Report(new ProgressReport(100, localizer["UpdateCompleteProgressReportStatusText"]));
         } finally {
             if (File.Exists(archivePath))
                 File.Delete(archivePath);
@@ -69,10 +69,10 @@ internal sealed class AppUpdaterService(
 
     public async Task<bool> NeedsUpdateAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
-        progress.Report(new ProgressReport(-1, localizer["CheckingForUpdates"]));
+        progress.Report(new ProgressReport(-1, localizer["CheckingForUpdatesProgressReportStatusText"]));
 
         if (app.LocalVersion != app.LatestVersion) {
-            progress.Report(new ProgressReport(-1, localizer["UpdateFound"]));
+            progress.Report(new ProgressReport(-1, localizer["UpdateFoundProgressReportStatusText"]));
             return true;
         }
 
@@ -83,11 +83,11 @@ internal sealed class AppUpdaterService(
             await databaseService.UpdateAppAsync(app with { LatestVersion = latestVersion }, cancellationToken);
 
         if (app.LocalVersion != latestVersion) {
-            progress.Report(new ProgressReport(-1, localizer["UpdateFound"]));
+            progress.Report(new ProgressReport(-1, localizer["UpdateFoundProgressReportStatusText"]));
             return true;
         }
 
-        progress.Report(new ProgressReport(-1, localizer["NoUpdateFound"]));
+        progress.Report(new ProgressReport(-1, localizer["NoUpdateFoundProgressReportStatusText"]));
         return false;
     }
 
@@ -123,12 +123,12 @@ internal sealed class AppUpdaterService(
             await using var gZipStream = new GZipStream(fileStream, CompressionMode.Decompress);
             await TarFile.ExtractToDirectoryAsync(gZipStream, destinationPath, true, cancellationToken);
         } else
-            throw new NotSupportedException(localizer["UnsupportedArchiveFileType"]);
+            throw new NotSupportedException(localizer["UnsupportedArchiveFileTypeExceptionMessage"]);
     }
 
     private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
         var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitUri, cancellationToken);
-        return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHash"]);
+        return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHashExceptionMessage"]);
     }
 
     private async Task DownloadFileAsync(Uri uri, IProgress<ProgressReport> progress,
@@ -147,7 +147,7 @@ internal sealed class AppUpdaterService(
             var contentLength = response.Content.Headers.ContentLength;
 
             if (contentLength is null or 0)
-                progress.Report(new ProgressReport(-1, localizer["DownloadingUpdate"]));
+                progress.Report(new ProgressReport(-1, localizer["DownloadingUpdateProgressReportStatusText"]));
 
             await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
             await using (var target = new FileStream(tempPath,
@@ -174,22 +174,22 @@ internal sealed class AppUpdaterService(
                             Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(500)) {
                             progress.Report(new ProgressReport(
                                 Math.Clamp((int)(totalRead * 100 / contentLength.Value), 0, 100),
-                                localizer["DownloadingUpdate"]));
+                                localizer["DownloadingUpdateProgressReportStatusText"]));
                             lastReport = Stopwatch.GetTimestamp();
                         }
                     }
 
                     if (contentLength.HasValue && totalRead != contentLength.Value)
-                        throw new IOException(localizer["DownloadIncomplete"]);
+                        throw new IOException(localizer["DownloadIncompleteExceptionMessage"]);
 
-                    progress.Report(new ProgressReport(100, localizer["DownloadingUpdate"]));
+                    progress.Report(new ProgressReport(100, localizer["DownloadingUpdateProgressReportStatusText"]));
                 } finally {
                     ArrayPool<byte>.Shared.Return(buffer);
                 }
             }
 
             File.Move(tempPath, fullPath, true);
-            progress.Report(new ProgressReport(100, localizer["DownloadComplete"]));
+            progress.Report(new ProgressReport(100, localizer["DownloadCompleteProgressReportStatusText"]));
         } catch {
             try {
                 File.Delete(tempPath);

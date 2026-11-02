@@ -39,7 +39,7 @@ internal sealed class DatabaseService(
             _installedApps!.Remove(found);
             await WriteDatabaseAsync(cancellationToken);
         } else
-            throw new KeyNotFoundException(localizer["AppNotFound", app.Manifest.Guid]);
+            throw new KeyNotFoundException(localizer["AppNotFoundExceptionMessage", app.Manifest.Guid]);
     }
 
     public async Task UpdateAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
@@ -59,10 +59,10 @@ internal sealed class DatabaseService(
         if (option is not null) return option;
 
         var optionName = string.IsNullOrWhiteSpace(app.SelectedInstallOptionGuid.ToString())
-            ? localizer["UnknownInstallOption"]
+            ? localizer["UnknownInstallOptionPlaceholder"]
             : app.SelectedInstallOptionGuid.ToString();
 
-        throw new InvalidOperationException(localizer["SelectedInstallOptionNotFound", optionName]);
+        throw new InvalidOperationException(localizer["SelectedInstallOptionNotFoundExceptionMessage", optionName]);
     }
 
     private async Task WriteDatabaseAsync(CancellationToken cancellationToken) {

@@ -1,39 +1,33 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="CheckingForUpdates" xml:space="preserve">
+  <data name="CheckingForUpdatesProgressReportStatusText" xml:space="preserve">
     <value>Checking for updates...</value>
   </data>
-  <data name="DownloadComplete" xml:space="preserve">
+  <data name="DownloadCompleteProgressReportStatusText" xml:space="preserve">
     <value>Download complete!</value>
   </data>
-  <data name="DownloadIncomplete" xml:space="preserve">
+  <data name="DownloadIncompleteExceptionMessage" xml:space="preserve">
     <value>Download is incomplete.</value>
   </data>
-  <data name="DownloadingUpdate" xml:space="preserve">
+  <data name="DownloadingUpdateProgressReportStatusText" xml:space="preserve">
     <value>Downloading update...</value>
   </data>
-  <data name="EmptyCommitHash" xml:space="preserve">
+  <data name="EmptyCommitHashExceptionMessage" xml:space="preserve">
     <value>Commit hash is either empty or broken.</value>
   </data>
-  <data name="NoUpdateFound" xml:space="preserve">
+  <data name="NoUpdateFoundProgressReportStatusText" xml:space="preserve">
     <value>No update found!</value>
   </data>
-  <data name="SelectedInstallOptionNotFound" xml:space="preserve">
-    <value>Selected install option {0} was not found.</value>
-  </data>
-  <data name="UnknownInstallOption" xml:space="preserve">
-    <value>[Unknown Option]</value>
-  </data>
-  <data name="UnsupportedArchiveFileType" xml:space="preserve">
+  <data name="UnsupportedArchiveFileTypeExceptionMessage" xml:space="preserve">
     <value>Unsupported archive file type.</value>
   </data>
-  <data name="UpdateComplete" xml:space="preserve">
+  <data name="UpdateCompleteProgressReportStatusText" xml:space="preserve">
     <value>Update complete!</value>
   </data>
-  <data name="UpdateFound" xml:space="preserve">
+  <data name="UpdateFoundProgressReportStatusText" xml:space="preserve">
     <value>Update found!</value>
   </data>
-  <data name="Updating" xml:space="preserve">
+  <data name="UpdatingProgressReportStatusText" xml:space="preserve">
     <value>Updating...</value>
   </data>
 </root>

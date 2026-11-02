@@ -27,7 +27,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
         _repositoryService = repositoryService;
         _localizer = localizer;
 
-        Title = _localizer["Title"];
+        Title = _localizer["SettingsWindowTitle"];
     }
 
     [ObservableProperty] public partial Config? Config { get; private set; }
@@ -42,9 +42,9 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     private async Task AddRepository(CancellationToken cancellationToken) {
         var vm = _dialogService.CreateViewModel<InputViewModel>();
 
-        vm.Title = _localizer["UrlInputTitle"];
-        vm.Content = _localizer["UrlInputContent"];
-        vm.TextHint = _localizer["UrlInputHint"];
+        vm.Title = _localizer["AddRepositoryMessageBoxTitle"];
+        vm.Content = _localizer["UrlInputMessageBoxContent"];
+        vm.TextHint = _localizer["UrlInputMessageBoxTextHint"];
 
         var result = await _dialogService.ShowDialogAsync(this, vm);
 
@@ -58,7 +58,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
                     Content = ex.Message,
                     DefaultValue = true,
                     Icon = MessageBoxImage.Error,
-                    Title = _localizer["AddRepositoryError"]
+                    Title = _localizer["AddRepositoryMessageBoxTitle"]
                 };
 
                 await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
@@ -70,10 +70,10 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     private async Task RemoveRepository(CancellationToken cancellationToken) {
         var messageBoxSettings = new MessageBoxSettings {
             Button = MessageBoxButton.YesNo,
-            Content = _localizer["RemoveRepositoryConfirmationText", SelectedRepository!.ReadableName],
+            Content = _localizer["RemoveRepositoryMessageBoxContent", SelectedRepository!.ReadableName],
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = _localizer["RemoveRepositoryConfirmationTitle", SelectedRepository.ReadableName]
+            Title = _localizer["RemoveRepositoryMessageBoxTitle", SelectedRepository.ReadableName]
         };
 
         var result = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
@@ -93,7 +93,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
         SelectFolderAsync(path => { Config = Config! with { DownloadPath = path }; });
 
     private async Task SelectFolderAsync(Action<string> callback) {
-        var settings = new OpenFolderDialogSettings { Title = "Select Folder" };
+        var settings = new OpenFolderDialogSettings { Title = _localizer["OpenFolderDialogTitle"] };
 
         var folder = await _dialogService.ShowOpenFolderDialogAsync(this, settings);
 

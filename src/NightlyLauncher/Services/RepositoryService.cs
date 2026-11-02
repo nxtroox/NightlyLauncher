@@ -30,7 +30,7 @@ internal class RepositoryService(
             var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
 
             _repositories[index] = updatedRepository ??
-                                   throw new InvalidOperationException(localizer["RepositoryNotFetched"]);
+                                   throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
             updated = true;
         }
 
@@ -47,7 +47,7 @@ internal class RepositoryService(
             _repositories.Add(repo);
             await UpdateConfig(cancellationToken);
         } else
-            throw new InvalidOperationException(localizer["RepositoryNotFetched"]);
+            throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
     }
 
     public async Task RemoveRepositoryAsync(Repository repository, CancellationToken cancellationToken = default) {
@@ -59,7 +59,7 @@ internal class RepositoryService(
             _repositories.Remove(found);
             await UpdateConfig(cancellationToken);
         } else
-            throw new KeyNotFoundException(localizer["RepositoryNotFound", repository.ReadableName]);
+            throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.ReadableName]);
     }
 
     public async Task<List<AppManifest>> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
@@ -117,5 +117,5 @@ internal class RepositoryService(
         System.OperatingSystem.IsWindows() ? OperatingSystem.Windows
         : System.OperatingSystem.IsMacOS() ? OperatingSystem.MacOs
         : System.OperatingSystem.IsLinux() ? OperatingSystem.Linux
-        : throw new PlatformNotSupportedException(localizer["UnsupportedOperatingSystem"]);
+        : throw new PlatformNotSupportedException(localizer["UnsupportedOperatingSystemExceptionMessage"]);
 }

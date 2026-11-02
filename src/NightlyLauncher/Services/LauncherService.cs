@@ -20,7 +20,8 @@ internal sealed class LauncherService(
 
         await updaterService.ApplyPortableAsync(app, cancellationToken);
 
-        progress.Report(new ProgressReport(-1, localizer["LaunchingApp", app.Manifest.ReadableName]));
+        progress.Report(new ProgressReport(-1,
+            localizer["LaunchingAppProgressReportStatusText", app.Manifest.ReadableName]));
 
         var executablePath = Path.Combine(pathService.GetInstallPath(app), option.LaunchCommand.ExecutablePath);
 
