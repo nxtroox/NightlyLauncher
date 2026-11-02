@@ -3,6 +3,12 @@
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>An error appeared while updating {0}.</value>
   </data>
+  <data name="NoAppsAvailableContent" xml:space="preserve">
+    <value>No apps are available for download.</value>
+  </data>
+  <data name="NoAppsAvailableTitle" xml:space="preserve">
+    <value>No apps available</value>
+  </data>
   <data name="NoInstallOptionSelected" xml:space="preserve">
     <value>No install option selected.</value>
   </data>

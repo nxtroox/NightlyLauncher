@@ -34,15 +34,28 @@ internal partial class MainViewModel(
 
     [RelayCommand]
     private async Task AddApp(CancellationToken cancellationToken) {
-        var vm = dialogService.CreateViewModel<AppBrowserViewModel>();
         var manifests = await repositoryService.GetAvailableAppsAsync(cancellationToken);
+        var apps = manifests
+            .Where(manifest => Apps.All(a => a.Manifest.Guid != manifest.Guid))
+            .ToList();
 
-        foreach (var manifest in manifests) {
-            var found = Apps.FirstOrDefault(a => a.Manifest.Guid == manifest.Guid);
-            if (found is not null) continue;
+        if (apps.Count is 0) {
+            var messageBoxSettings = new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = localizer["NoAppsAvailableContent"],
+                DefaultValue = true,
+                Icon = MessageBoxImage.Information,
+                Title = localizer["NoAppsAvailableTitle"]
+            };
 
-            vm.Apps.Add(manifest);
+            await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            return;
         }
+
+        var vm = dialogService.CreateViewModel<AppBrowserViewModel>();
+
+        foreach (var app in apps)
+            vm.Apps.Add(app);
 
         var result = await dialogService.ShowDialogAsync(this, vm);
 
