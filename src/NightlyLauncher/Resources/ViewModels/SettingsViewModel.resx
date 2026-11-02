@@ -10,7 +10,7 @@
     <value>Are you sure that you want to remove the repository '{0}'?</value>
   </data>
   <data name="RemoveRepositoryMessageBoxTitle" xml:space="preserve">
-    <value>NightlyLauncher - Remove repository {0}</value>
+    <value>NightlyLauncher - Remove repository</value>
   </data>
   <data name="SettingsWindowTitle" xml:space="preserve">
     <value>Settings - NightlyLauncher</value>

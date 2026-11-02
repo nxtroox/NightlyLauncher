@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -15,6 +17,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     private readonly IConfigService _configService;
     private readonly IDialogService _dialogService;
     private readonly IStringLocalizer<SettingsViewModel> _localizer;
+    private readonly List<Repository> _repositoriesToRemove = [];
     private readonly IRepositoryService _repositoryService;
 
     public SettingsViewModel(
@@ -73,14 +76,16 @@ internal partial class SettingsViewModel : DialogViewModelBase {
             Content = _localizer["RemoveRepositoryMessageBoxContent", SelectedRepository!.DisplayName],
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = _localizer["RemoveRepositoryMessageBoxTitle", SelectedRepository.DisplayName]
+            Title = _localizer["RemoveRepositoryMessageBoxTitle"]
         };
 
         var result = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
 
         if (result is true) {
-            await _repositoryService.RemoveRepositoryAsync(SelectedRepository, cancellationToken);
-            Config = await _configService.GetConfigAsync(cancellationToken);
+            var repository = SelectedRepository!;
+            _repositoriesToRemove.Add(repository);
+            SetConfig();
+            SelectedRepository = null;
         }
     }
 
@@ -103,12 +108,22 @@ internal partial class SettingsViewModel : DialogViewModelBase {
 
     [RelayCommand]
     private async Task Save(CancellationToken cancellationToken) {
+        foreach (var repository in _repositoriesToRemove)
+            await _repositoryService.RemoveRepositoryAsync(repository, cancellationToken);
+
         await _configService.UpdateConfigAsync(Config!, cancellationToken);
         OkCommand.Execute(null);
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
         Config = await _configService.GetConfigAsync(cancellationToken);
+
+    private void SetConfig() =>
+        Config = Config! with {
+            Repositories = Config.Repositories?
+                .Where(repository => _repositoriesToRemove.All(removed => removed.Guid != repository.Guid))
+                .ToList()
+        };
 
     protected override bool CanSubmit() => true;
 }
