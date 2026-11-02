@@ -103,18 +103,18 @@ internal partial class MainViewModel(
 
         try {
             var needsUpdate = await updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
-            var shouldUpdate = SelectedApp!.UpdatedOn is null || needsUpdate;
+            var shouldUpdate = SelectedApp!.LastUpdatedOn is null || needsUpdate;
 
-            if (shouldUpdate && SelectedApp.UpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
-                var updatePrompt = new MessageBoxSettings {
+            if (shouldUpdate && SelectedApp.LastUpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
+                var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
-                    Content = localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.ReadableName],
+                    Content = localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.DisplayName],
                     Icon = MessageBoxImage.Information,
                     DefaultValue = false,
-                    Title = localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.ReadableName]
+                    Title = localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.DisplayName]
                 };
 
-                shouldUpdate = await dialogService.ShowMessageBoxAsync(this, updatePrompt) is true;
+                shouldUpdate = await dialogService.ShowMessageBoxAsync(this, messageBoxSettings) is true;
             }
 
             if (shouldUpdate)
@@ -127,7 +127,7 @@ internal partial class MainViewModel(
                 Content = ex.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
-                Title = localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.ReadableName]
+                Title = localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
             };
 
             await dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
@@ -151,8 +151,8 @@ internal partial class MainViewModel(
             Button = MessageBoxButton.YesNo,
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.ReadableName],
-            Content = localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.ReadableName]
+            Title = localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.DisplayName],
+            Content = localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.DisplayName]
         };
 
         var removeAppResult = await dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
@@ -163,8 +163,8 @@ internal partial class MainViewModel(
                     Button = MessageBoxButton.YesNo,
                     DefaultValue = false,
                     Icon = MessageBoxImage.Warning,
-                    Title = localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.ReadableName],
-                    Content = localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.ReadableName]
+                    Title = localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.DisplayName],
+                    Content = localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.DisplayName]
                 };
 
                 var removeAppDataResult =

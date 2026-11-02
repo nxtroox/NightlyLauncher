@@ -7,4 +7,4 @@ internal sealed record InstalledApp(
     Guid SelectedInstallOptionGuid,
     string? LocalVersion = null,
     string? LatestVersion = null,
-    DateTime? UpdatedOn = null);
+    DateTime? LastUpdatedOn = null);

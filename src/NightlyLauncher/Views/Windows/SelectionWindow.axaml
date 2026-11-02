@@ -23,7 +23,7 @@
                   SelectedItem="{Binding SelectedItem}">
             <ComboBox.ItemTemplate>
                 <DataTemplate DataType="{x:Type models:InstallOption}">
-                    <TextBlock Text="{Binding ReadableName}"
+                    <TextBlock Text="{Binding DisplayName}"
                                ToolTip.Tip="{Binding Guid}" />
                 </DataTemplate>
             </ComboBox.ItemTemplate>

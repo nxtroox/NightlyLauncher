@@ -32,7 +32,7 @@
                          x:Name="RepositoryListBox">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding ReadableName}"
+                            <TextBlock Text="{Binding DisplayName}"
                                        ToolTip.Tip="{Binding UpdateUri}" />
                         </DataTemplate>
                     </ListBox.ItemTemplate>

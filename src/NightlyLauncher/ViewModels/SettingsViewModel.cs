@@ -70,10 +70,10 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     private async Task RemoveRepository(CancellationToken cancellationToken) {
         var messageBoxSettings = new MessageBoxSettings {
             Button = MessageBoxButton.YesNo,
-            Content = _localizer["RemoveRepositoryMessageBoxContent", SelectedRepository!.ReadableName],
+            Content = _localizer["RemoveRepositoryMessageBoxContent", SelectedRepository!.DisplayName],
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = _localizer["RemoveRepositoryMessageBoxTitle", SelectedRepository.ReadableName]
+            Title = _localizer["RemoveRepositoryMessageBoxTitle", SelectedRepository.DisplayName]
         };
 
         var result = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);

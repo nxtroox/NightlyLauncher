@@ -29,7 +29,7 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
     public ObservableCollection<AppManifest> Apps { get; set; } = [];
 
     [ObservableProperty] public partial AppManifest? SelectedApp { get; set; }
-    [ObservableProperty] public partial string? SearchBoxInput { get; set; }
+    [ObservableProperty] public partial string? SearchText { get; set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OkCommand))]
@@ -37,12 +37,12 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
 
     [RelayCommand]
     private async Task AddApp() {
-        var compatibleApps = SelectedApp!.InstallOptions.Where(option =>
+        var compatibleOptions = SelectedApp!.InstallOptions.Where(option =>
                 _repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
             .ToList();
 
-        if (compatibleApps.Count is 1) {
-            SelectedInstallOptionGuid = compatibleApps[0].Guid;
+        if (compatibleOptions.Count is 1) {
+            SelectedInstallOptionGuid = compatibleOptions[0].Guid;
             OkCommand.Execute(null);
             return;
         }

@@ -30,7 +30,8 @@ internal class RepositoryService(
             var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
 
             _repositories[index] = updatedRepository ??
-                                   throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
+                                   throw new InvalidOperationException(
+                                       localizer["RepositoryNotFetchedExceptionMessage"]);
             updated = true;
         }
 
@@ -59,7 +60,7 @@ internal class RepositoryService(
             _repositories.Remove(found);
             await UpdateConfig(cancellationToken);
         } else
-            throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.ReadableName]);
+            throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.DisplayName]);
     }
 
     public async Task<List<AppManifest>> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
@@ -76,20 +77,21 @@ internal class RepositoryService(
         var os = GetCurrentOperatingSystem();
         if (os != requestedOperatingSystem) return false;
 
-        var arch = RuntimeInformation.ProcessArchitecture;
+        var osArchitecture = RuntimeInformation.OSArchitecture;
 
-        if (os is not OperatingSystem.MacOs && arch is Architecture.X64 &&
+        if (os is not OperatingSystem.MacOs && osArchitecture is Architecture.X64 &&
             requestedArchitecture is Architecture.X86)
             return true;
 
-        if (os is not OperatingSystem.Linux && arch is Architecture.Arm64 &&
+        if (os is not OperatingSystem.Linux && osArchitecture is Architecture.Arm64 &&
             requestedArchitecture is Architecture.X64)
             return true;
 
-        if (os is OperatingSystem.Windows && arch is Architecture.Arm64 && requestedArchitecture is Architecture.X86)
+        if (os is OperatingSystem.Windows && osArchitecture is Architecture.Arm64 &&
+            requestedArchitecture is Architecture.X86)
             return true;
 
-        return arch == requestedArchitecture;
+        return osArchitecture == requestedArchitecture;
     }
 
     private async Task GetRepositoriesAsync(CancellationToken cancellationToken) {

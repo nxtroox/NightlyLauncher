@@ -21,13 +21,13 @@ internal sealed class LauncherService(
         await updaterService.ApplyPortableAsync(app, cancellationToken);
 
         progress.Report(new ProgressReport(-1,
-            localizer["LaunchingAppProgressReportStatusText", app.Manifest.ReadableName]));
+            localizer["LaunchingAppProgressReportStatusText", app.Manifest.DisplayName]));
 
         var executablePath = Path.Combine(pathService.GetInstallPath(app), option.LaunchCommand.ExecutablePath);
 
-        var pi = new ProcessStartInfo { FileName = executablePath, UseShellExecute = true };
-        option.LaunchCommand.Arguments?.ForEach(a => pi.ArgumentList.Add(a));
+        var startInfo = new ProcessStartInfo { FileName = executablePath, UseShellExecute = true };
+        option.LaunchCommand.Arguments?.ForEach(a => startInfo.ArgumentList.Add(a));
 
-        Process.Start(pi);
+        Process.Start(startInfo);
     }
 }

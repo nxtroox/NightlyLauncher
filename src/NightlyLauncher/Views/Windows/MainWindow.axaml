@@ -57,7 +57,7 @@
                 </ListBox.Styles>
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Label Content="{Binding Manifest.ReadableName}" />
+                        <Label Content="{Binding Manifest.DisplayName}" />
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
