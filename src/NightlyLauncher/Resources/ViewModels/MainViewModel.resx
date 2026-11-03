@@ -15,6 +15,9 @@
   <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
     <value>No install option selected.</value>
   </data>
+  <data name="OpenFolderErrorMessageBoxTitle" xml:space="preserve">
+    <value>NightlyLauncher - Open folder</value>
+  </data>
   <data name="RemoveAppMessageBoxContent" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
   </data>

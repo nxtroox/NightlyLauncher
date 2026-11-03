@@ -39,6 +39,8 @@ public static class ServiceCollectionExtensions {
 
         collection.AddTransient<IPathService, PathService>();
 
+        collection.AddTransient<IIoDialogService, IoDialogService>();
+
         collection.AddTransient<ILauncherService, LauncherService>();
 
         collection.AddSingleton<IDialogService>(sp => new DialogService(

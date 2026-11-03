@@ -20,6 +20,7 @@ internal partial class MainViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly IDatabaseService _databaseService;
     private readonly IDialogService _dialogService;
+    private readonly IIoDialogService _ioDialogService;
     private readonly ILauncherService _launcherService;
     private readonly IStringLocalizer<MainViewModel> _localizer;
     private readonly IPathService _pathService;
@@ -30,6 +31,7 @@ internal partial class MainViewModel : ViewModelBase {
         IDatabaseService databaseService,
         IDialogService dialogService,
         ILauncherService launcherService,
+        IIoDialogService ioDialogService,
         IStringLocalizer<MainViewModel> localizer,
         IPathService pathService,
         IRepositoryService repositoryService,
@@ -38,6 +40,7 @@ internal partial class MainViewModel : ViewModelBase {
         _databaseService = databaseService;
         _dialogService = dialogService;
         _launcherService = launcherService;
+        _ioDialogService = ioDialogService;
         _localizer = localizer;
         _pathService = pathService;
         _repositoryService = repositoryService;
@@ -161,6 +164,12 @@ internal partial class MainViewModel : ViewModelBase {
     }
 
     [RelayCommand]
+    private Task OpenAppsFolder() => OpenFolderAsync(_pathService.AppPath);
+
+    [RelayCommand]
+    private Task OpenDownloadsFolder() => OpenFolderAsync(_pathService.DownloadPath);
+
+    [RelayCommand]
     private async Task OpenSettings() {
         var vm = _dialogService.CreateViewModel<SettingsViewModel>();
         await _dialogService.ShowDialogAsync(this, vm);
@@ -230,5 +239,21 @@ internal partial class MainViewModel : ViewModelBase {
         Apps.Clear();
         foreach (var app in await _databaseService.GetInstalledAppsAsync(cancellationToken))
             Apps.Add(app);
+    }
+
+    private async Task OpenFolderAsync(string path) {
+        try {
+            _ioDialogService.OpenFolder(path);
+        } catch (Exception ex) {
+            var messageBoxSettings = new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = ex.Message,
+                DefaultValue = true,
+                Icon = MessageBoxImage.Error,
+                Title = _localizer["OpenFolderErrorMessageBoxTitle"]
+            };
+
+            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+        }
     }
 }

@@ -18,6 +18,11 @@
                 <MenuItem Header="_Update repositories"
                           Command="{Binding UpdateRepositoriesCommand}" />
                 <Separator />
+                <MenuItem Header="Open _Apps folder"
+                          Command="{Binding OpenAppsFolderCommand}" />
+                <MenuItem Header="Open _Downloads folder"
+                          Command="{Binding OpenDownloadsFolderCommand}" />
+                <Separator />
                 <MenuItem Header="E_xit"
                           Command="{Binding ExitCommand}" />
             </MenuItem>

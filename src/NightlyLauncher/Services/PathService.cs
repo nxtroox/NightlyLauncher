@@ -15,6 +15,8 @@ internal sealed class PathService(IConfigService configService) : IPathService {
         : Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.LocalApplicationData), "NightlyLauncher");
 
+    public string AppPath => ParseRootedPath(configService.Config.AppPath, true);
+
     public string DatabasePath => Path.Combine(LocalPath, "apps.json");
 
     public string DownloadPath => ParseRootedPath(configService.Config.DownloadPath, true);
