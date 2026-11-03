@@ -142,9 +142,9 @@ internal partial class MainViewModel : ViewModelBase {
             }
 
             if (shouldUpdate)
-                await _updaterService.UpdateAsync(SelectedApp!, progress, cancellationToken);
+                await _updaterService.UpdateAsync(SelectedApp, progress, cancellationToken);
 
-            await _launcherService.LaunchAppAsync(SelectedApp!, progress, cancellationToken);
+            await _launcherService.LaunchAppAsync(SelectedApp, progress, cancellationToken);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
@@ -233,7 +233,7 @@ internal partial class MainViewModel : ViewModelBase {
         await LoadApps(cancellationToken);
     }
 
-    private bool CanInteractWithApp() => SelectedApp != null;
+    private bool CanInteractWithApp() => SelectedApp is not null;
 
     private async Task LoadApps(CancellationToken cancellationToken) {
         Apps.Clear();
