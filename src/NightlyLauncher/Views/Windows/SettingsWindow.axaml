@@ -9,51 +9,63 @@
         Title="{Binding Title}"
         Height="450"
         Width="400">
-    <Grid RowDefinitions="*,Auto">
-        <StackPanel>
-            <Label Content="App path" />
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Config?.AppPath}" />
-                <Button Content="Select folder"
-                        Command="{Binding SelectAppPathCommand}" />
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <StackPanel Spacing="8">
+            <StackPanel Spacing="4">
+                <TextBlock Text="App path" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                    <TextBox Text="{Binding Config?.AppPath}" />
+                    <Button Grid.Column="1"
+                            Content="Select folder"
+                            Command="{Binding SelectAppPathCommand}" />
+                </Grid>
             </StackPanel>
 
-            <Label Content="Download path" />
-            <StackPanel Orientation="Horizontal">
-                <TextBox Text="{Binding Config?.DownloadPath}" />
-                <Button Content="Select folder"
-                        Command="{Binding SelectDownloadPathCommand}" />
+            <StackPanel Spacing="4">
+                <TextBlock Text="Download path" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                    <TextBox Text="{Binding Config?.DownloadPath}" />
+                    <Button Grid.Column="1"
+                            Content="Select folder"
+                            Command="{Binding SelectDownloadPathCommand}" />
+                </Grid>
             </StackPanel>
 
-            <Label Content="Repositories" />
-            <ScrollViewer>
-                <ListBox ItemsSource="{Binding Config?.Repositories}"
-                         SelectedItem="{Binding SelectedRepository}"
-                         x:Name="RepositoryListBox">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding DisplayName}"
-                                       ToolTip.Tip="{Binding UpdateUri}" />
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                    <ListBox.Styles>
-                        <Style Selector="ListBoxItem">
-                            <Setter Property="ContextMenu">
-                                <ContextMenu>
-                                    <MenuItem Header="Remove"
-                                              Command="{Binding #RepositoryListBox.((vm:SettingsViewModel)DataContext)?.RemoveRepositoryCommand}" />
-                                </ContextMenu>
-                            </Setter>
-                        </Style>
-                    </ListBox.Styles>
-                </ListBox>
-            </ScrollViewer>
+            <StackPanel Spacing="4">
+                <TextBlock Text="Repositories" />
 
-            <Button Content="Add repository"
-                    Command="{Binding AddRepositoryCommand}" />
+                <ScrollViewer>
+                    <ListBox ItemsSource="{Binding Config?.Repositories}"
+                             SelectedItem="{Binding SelectedRepository}"
+                             x:Name="RepositoryListBox">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding DisplayName}"
+                                           ToolTip.Tip="{Binding UpdateUri}" />
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.Styles>
+                            <Style Selector="ListBoxItem">
+                                <Setter Property="ContextMenu">
+                                    <ContextMenu>
+                                        <MenuItem Header="Remove"
+                                                  Command="{Binding #RepositoryListBox.((vm:SettingsViewModel)DataContext)?.RemoveRepositoryCommand}" />
+                                    </ContextMenu>
+                                </Setter>
+                            </Style>
+                        </ListBox.Styles>
+                    </ListBox>
+                </ScrollViewer>
+
+                <Button Content="Add repository"
+                        Command="{Binding AddRepositoryCommand}" />
+            </StackPanel>
         </StackPanel>
 
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="4">
             <Button Content="Save"
                     HorizontalAlignment="Right"
                     Command="{Binding SaveCommand}" />

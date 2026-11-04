@@ -11,24 +11,29 @@
         WindowStartupLocation="CenterScreen"
         Height="200"
         Width="600">
-    <Grid RowDefinitions="*,*,Auto">
-        <Label Content="{Binding Content}"
-               HorizontalAlignment="Center"
-               VerticalAlignment="Bottom" />
+    <Grid RowDefinitions="*,Auto" Margin="16">
+        <StackPanel VerticalAlignment="Center" Spacing="4">
+            <TextBlock Text="{Binding Content}"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Bottom" />
 
-        <ComboBox Grid.Row="1"
-                  HorizontalAlignment="Stretch"
-                  VerticalAlignment="Top"
-                  ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:InstallOption}">
-                    <TextBlock Text="{Binding DisplayName}"
-                               ToolTip.Tip="{Binding Guid}" />
-                </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <ComboBox HorizontalAlignment="Stretch"
+                      VerticalAlignment="Top"
+                      ItemsSource="{Binding Items}"
+                      SelectedItem="{Binding SelectedItem}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type models:InstallOption}">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   ToolTip.Tip="{Binding Guid}" />
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="4">
             <Button Content="Ok"
                     Command="{Binding OkCommand}" />
             <Button Content="Cancel"

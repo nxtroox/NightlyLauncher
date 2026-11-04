@@ -9,15 +9,19 @@
         Title="{Binding Title}"
         Height="450"
         Width="400">
-    <Grid RowDefinitions="*,Auto">
+    <Grid RowDefinitions="*,Auto" Margin="16">
         <ScrollViewer>
-            <StackPanel>
-                <Label Content="{Binding SelectedApp?.Manifest.DisplayName}"
-                       ToolTip.Tip="{Binding SelectedApp?.Manifest.Guid}" />
-                <Label Content="{Binding SelectedApp?.LastUpdatedOn}" />
+            <StackPanel Spacing="8">
+                <StackPanel Spacing="4">
+                    <TextBlock Text="{Binding SelectedApp?.Manifest.DisplayName}"
+                               ToolTip.Tip="{Binding SelectedApp?.Manifest.Guid}" />
+                    <TextBlock FontSize="10"
+                               Text="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}Last updated {0:yyyy-MM-dd}'}"
+                               ToolTip.Tip="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}{0:HH:mm}'}" />
+                </StackPanel>
 
-                <StackPanel>
-                    <Label Content="Selected install option:" />
+                <StackPanel Spacing="4">
+                    <TextBlock Text="Selected install option:" />
                     <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
                               SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
                               PlaceholderText="Select an installation option">
@@ -30,13 +34,19 @@
                     </ComboBox>
                 </StackPanel>
 
-                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
-                          Content="Prompt on update" />
-                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
-                          Content="Portable mode" />
+                <StackPanel Spacing="4">
+                    <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
+                              Content="Prompt on update" />
+                    <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
+                              Content="Portable mode" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+
+        <StackPanel Grid.Row="1"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Spacing="4">
             <Button Content="Save"
                     HorizontalAlignment="Right"
                     Command="{Binding OkCommand}" />

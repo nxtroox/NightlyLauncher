@@ -65,7 +65,7 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding Manifest.DisplayName}" />
                             <TextBlock Grid.Column="1"
-                                       Text="{Binding LastUpdatedOn, StringFormat='{}{0:dd.MM.yyyy}', TargetNullValue='Not installed'}"
+                                       Text="{Binding LastUpdatedOn, StringFormat='{}{0:yyyy-MM-dd}', TargetNullValue='Not installed'}"
                                        ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:HH:mm}'}" />
                         </Grid>
                     </DataTemplate>
