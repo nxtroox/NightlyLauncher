@@ -24,9 +24,13 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
 
         Title = localizer["AppBrowserWindowTitle"];
         SearchPlaceholderText = localizer["AppBrowserWindowContent"];
+
+        Apps.CollectionChanged += (_, _) => ApplySearchFilter();
+        ApplySearchFilter();
     }
 
-    public ObservableCollection<AppManifest> Apps { get; set; } = [];
+    public ObservableCollection<AppManifest> Apps { get; } = [];
+    public ObservableCollection<AppManifest> FilteredApps { get; } = [];
 
     [ObservableProperty] public partial AppManifest? SelectedApp { get; set; }
     [ObservableProperty] public partial string? SearchText { get; set; }
@@ -53,15 +57,29 @@ internal partial class AppBrowserViewModel : DialogViewModelBase {
         vm.Title = _localizer["SelectInstallOptionDialogTitle"];
         vm.Content = _localizer["SelectInstallOptionDialogContent"];
 
-        foreach (var option in SelectedApp!.InstallOptions) {
-            if (_repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
-                vm.Items.Add(option);
-        }
+        foreach (var option in compatibleOptions)
+            vm.Items.Add(option);
 
         if (await _dialogService.ShowDialogAsync(this, vm) is true && vm.SelectedItem is InstallOption installOption) {
             SelectedInstallOptionGuid = installOption.Guid;
             OkCommand.Execute(null);
         }
+    }
+
+    partial void OnSearchTextChanged(string? value) => ApplySearchFilter();
+
+    private void ApplySearchFilter() {
+        var query = SearchText?.Trim();
+        var matches = string.IsNullOrWhiteSpace(query)
+            ? Apps
+            : Apps.Where(app => app.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase));
+
+        FilteredApps.Clear();
+        foreach (var app in matches)
+            FilteredApps.Add(app);
+
+        if (SelectedApp is not null && !FilteredApps.Contains(SelectedApp))
+            SelectedApp = null;
     }
 
     protected override bool CanSubmit() => SelectedInstallOptionGuid is not null;
