@@ -19,7 +19,8 @@ internal class RepositoryService(
     : IRepositoryService {
     private List<Repository> _repositories = [];
 
-    public async Task UpdateRepositoriesAsync(CancellationToken cancellationToken = default) {
+    public async Task UpdateRepositoriesAsync(Func<Exception, Task> errorCallback,
+        CancellationToken cancellationToken = default) {
         await GetRepositoriesAsync(cancellationToken);
 
         var updated = false;
@@ -27,12 +28,17 @@ internal class RepositoryService(
             var repo = _repositories[index];
             if (repo.UpdateUri is null) continue;
 
-            var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
+            try {
+                var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
 
-            _repositories[index] = updatedRepository ??
-                                   throw new InvalidOperationException(
-                                       localizer["RepositoryNotFetchedExceptionMessage"]);
-            updated = true;
+                _repositories[index] = updatedRepository ??
+                                       throw new InvalidOperationException(
+                                           localizer["RepositoryNotFetchedExceptionMessage"]);
+
+                updated = true;
+            } catch (Exception ex) {
+                await errorCallback(ex);
+            }
         }
 
         if (updated)

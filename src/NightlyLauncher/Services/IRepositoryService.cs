@@ -13,5 +13,5 @@ internal interface IRepositoryService {
     bool CheckAppCompatibility(OperatingSystem requestedOperatingSystem, Architecture requestedArchitecture);
     Task<List<AppManifest>> GetAvailableAppsAsync(CancellationToken cancellationToken = default);
     Task RemoveRepositoryAsync(Repository repository, CancellationToken cancellationToken = default);
-    Task UpdateRepositoriesAsync(CancellationToken cancellationToken = default);
+    Task UpdateRepositoriesAsync(Func<Exception, Task> errorCallback, CancellationToken cancellationToken = default);
 }

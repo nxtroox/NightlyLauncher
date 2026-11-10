@@ -210,22 +210,18 @@ internal partial class MainViewModel : ViewModelBase {
     }
 
     [RelayCommand]
-    private async Task UpdateRepositories(CancellationToken cancellationToken) {
-        // TODO: dont stop updating when only 1 repository throws exceptions
-        try {
-            await _repositoryService.UpdateRepositoriesAsync(cancellationToken);
-        } catch (Exception ex) {
+    private async Task UpdateRepositories(CancellationToken cancellationToken) =>
+        await _repositoryService.UpdateRepositoriesAsync(async exception => {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
-                Content = ex.Message,
+                Content = exception.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
                 Title = _localizer["RepositoryUpdateErrorMessageBoxTitle"]
             };
 
             await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
-        }
-    }
+        }, cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
         await _configService.GetConfigAsync(cancellationToken);
