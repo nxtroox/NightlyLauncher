@@ -200,9 +200,8 @@ internal partial class MainViewModel : ViewModelBase {
                 var removeAppDataResult =
                     await _dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
 
-                if (removeAppDataResult is true) {
+                if (removeAppDataResult is true)
                     _updaterService.DeleteAppData(SelectedApp);
-                }
             }
 
             await _databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
@@ -236,9 +235,14 @@ internal partial class MainViewModel : ViewModelBase {
     private bool CanInteractWithApp() => SelectedApp is not null;
 
     private async Task LoadApps(CancellationToken cancellationToken) {
+        var selectedGuid = SelectedApp?.Manifest.Guid;
+        var installedApps = await _databaseService.GetInstalledAppsAsync(cancellationToken);
+
         Apps.Clear();
-        foreach (var app in await _databaseService.GetInstalledAppsAsync(cancellationToken))
+        foreach (var app in installedApps)
             Apps.Add(app);
+
+        SelectedApp = selectedGuid is { } guid ? Apps.FirstOrDefault(app => app.Manifest.Guid == guid) : null;
     }
 
     private async Task OpenFolderAsync(string path) {
