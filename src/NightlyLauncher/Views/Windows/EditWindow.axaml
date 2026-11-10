@@ -16,8 +16,8 @@
                     <TextBlock Text="{Binding SelectedApp?.Manifest.DisplayName}"
                                ToolTip.Tip="{Binding SelectedApp?.Manifest.Guid}" />
                     <TextBlock FontSize="10"
-                               Text="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}Last updated {0:yyyy-MM-dd}'}"
-                               ToolTip.Tip="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}{0:HH:mm}'}" />
+                               Text="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}Last updated {0:yyyy-MM-dd}', TargetNullValue='Not installed'}"
+                               ToolTip.Tip="{Binding SelectedApp?.LastUpdatedOn, StringFormat='{}{0:HH:mm}', TargetNullValue='Never updated'}" />
                 </StackPanel>
 
                 <StackPanel Spacing="4">
