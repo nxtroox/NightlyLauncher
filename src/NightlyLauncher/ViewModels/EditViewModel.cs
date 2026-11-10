@@ -16,7 +16,7 @@ internal partial class EditViewModel : DialogViewModelBase {
 
         set {
             if (SelectedApp is not { } app ||
-                value is null ||
+                value is null || app.Manifest.InstallOptions.All(option => option.Guid != value.Guid) ||
                 app.SelectedInstallOptionGuid == value.Guid) {
                 return;
             }

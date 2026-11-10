@@ -4,7 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace NightlyLauncher.ViewModels;
 
 internal partial class SelectionViewModel : PromptDialogViewModelBase {
-    public ObservableCollection<object> Items { get; set; } = [];
+    public ObservableCollection<object> Items { get; } = [];
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(OkCommand))]
