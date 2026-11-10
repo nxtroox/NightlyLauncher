@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="RepositoryAlreadyInstalledExceptionMessage" xml:space="preserve">
+    <value>Repository is already installed.</value>
+  </data>
   <data name="RepositoryNotFetchedExceptionMessage" xml:space="preserve">
     <value>Repository could not be fetched.</value>
   </data>

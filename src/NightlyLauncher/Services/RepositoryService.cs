@@ -45,6 +45,9 @@ internal class RepositoryService(
         var repo = await GetRepositoryAsync(uri, cancellationToken);
 
         if (repo is not null) {
+            if (_repositories.Any(r => r.UpdateUri == repo.UpdateUri || r.Guid == repo.Guid))
+                throw new InvalidOperationException(localizer["RepositoryAlreadyInstalledExceptionMessage"]);
+
             _repositories.Add(repo);
             await UpdateConfig(cancellationToken);
         } else
