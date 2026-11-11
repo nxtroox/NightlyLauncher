@@ -12,7 +12,7 @@
                  Width="600"
                  WindowStartupLocation="CenterScreen"
                  WindowDecorations="None">
-    <StackPanel VerticalAlignment="Center" Spacing="4" Margin="16">
+    <StackPanel VerticalAlignment="Center" Spacing="8" Margin="16">
         <TextBlock Text="{Binding StatusText}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom" />

@@ -8,9 +8,8 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.LibraryView"
              x:DataType="vm:LibraryViewModel">
-    <DockPanel>
-        <ui:FACommandBar DockPanel.Dock="Top"
-                         DefaultLabelPosition="Right">
+    <Grid Margin="16" RowDefinitions="Auto,*" RowSpacing="8">
+        <ui:FACommandBar DefaultLabelPosition="Right">
             <ui:FACommandBar.PrimaryCommands>
                 <ui:FACommandBarButton Label="Update repositories"
                                        Command="{Binding UpdateRepositoriesCommand}">
@@ -57,7 +56,7 @@
         </ui:FACommandBar>
 
 
-        <ScrollViewer>
+        <ScrollViewer Grid.Row="1">
             <ListBox DoubleTapped="AppListBox_DoubleTapped"
                      ItemsSource="{Binding Apps}"
                      SelectedItem="{Binding SelectedApp}"
@@ -117,5 +116,5 @@
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-    </DockPanel>
+    </Grid>
 </UserControl>

@@ -10,7 +10,7 @@
         <StackPanel Spacing="8">
             <StackPanel Spacing="4">
                 <TextBlock Text="App path" />
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                     <TextBox Text="{Binding Config?.AppPath}" />
                     <Button Grid.Column="1"
                             Content="Select folder"
@@ -20,7 +20,7 @@
 
             <StackPanel Spacing="4">
                 <TextBlock Text="Download path" />
-                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="4">
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
                     <TextBox Text="{Binding Config?.DownloadPath}" />
                     <Button Grid.Column="1"
                             Content="Select folder"
