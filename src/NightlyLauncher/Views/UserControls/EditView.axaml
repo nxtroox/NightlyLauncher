@@ -1,14 +1,11 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
-        x:Class="NightlyLauncher.Views.Windows.EditWindow"
-        x:DataType="vm:EditViewModel"
-        Title="{Binding Title}"
-        Height="450"
-        Width="400">
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
+             x:Class="NightlyLauncher.Views.UserControls.EditView"
+             x:DataType="vm:EditViewModel">
     <Grid RowDefinitions="*,Auto" Margin="16">
         <ScrollViewer>
             <StackPanel Spacing="8">
@@ -55,4 +52,4 @@
                     Command="{Binding CancelCommand}" />
         </StackPanel>
     </Grid>
-</Window>
+</UserControl>

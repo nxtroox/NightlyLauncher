@@ -16,28 +16,31 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class MainViewModel : ViewModelBase {
+internal partial class LibraryViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly IDatabaseService _databaseService;
+    private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
     private readonly IIoDialogService _ioDialogService;
     private readonly ILauncherService _launcherService;
-    private readonly IStringLocalizer<MainViewModel> _localizer;
+    private readonly IStringLocalizer<LibraryViewModel> _localizer;
     private readonly IPathService _pathService;
     private readonly IRepositoryService _repositoryService;
     private readonly IAppUpdaterService _updaterService;
 
-    public MainViewModel(IConfigService configService,
+    public LibraryViewModel(IConfigService configService,
         IDatabaseService databaseService,
+        DialogOwner dialogOwner,
         IDialogService dialogService,
         ILauncherService launcherService,
         IIoDialogService ioDialogService,
-        IStringLocalizer<MainViewModel> localizer,
+        IStringLocalizer<LibraryViewModel> localizer,
         IPathService pathService,
         IRepositoryService repositoryService,
         IAppUpdaterService updaterService) {
         _configService = configService;
         _databaseService = databaseService;
+        _dialogOwner = dialogOwner;
         _dialogService = dialogService;
         _launcherService = launcherService;
         _ioDialogService = ioDialogService;
@@ -46,7 +49,7 @@ internal partial class MainViewModel : ViewModelBase {
         _repositoryService = repositoryService;
         _updaterService = updaterService;
 
-        Title = _localizer["MainWindowTitle"];
+        Title = _localizer["LibraryTitle"];
     }
 
     public ObservableCollection<InstalledApp> Apps { get; } = [];
@@ -54,51 +57,17 @@ internal partial class MainViewModel : ViewModelBase {
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EditAppCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchAppCommand))]
+    [NotifyCanExecuteChangedFor(nameof(OpenAppFolderCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RemoveAppCommand))]
     public partial InstalledApp? SelectedApp { get; set; }
-
-    [RelayCommand]
-    private async Task AddApps(CancellationToken cancellationToken) {
-        var manifests = await _repositoryService.GetAvailableAppsAsync(cancellationToken);
-        var apps = manifests
-            .Where(manifest => Apps.All(a => a.Manifest.Guid != manifest.Guid))
-            .ToList();
-
-        if (apps.Count is 0) {
-            var messageBoxSettings = new MessageBoxSettings {
-                Button = MessageBoxButton.Ok,
-                Content = _localizer["NoAppsAvailableMessageBoxContent"],
-                DefaultValue = true,
-                Icon = MessageBoxImage.Information,
-                Title = _localizer["NoAppsAvailableMessageBoxTitle"]
-            };
-
-            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
-            return;
-        }
-
-        var vm = _dialogService.CreateViewModel<AppBrowserViewModel>();
-
-        foreach (var app in apps)
-            vm.Apps.Add(app);
-
-        var result = await _dialogService.ShowDialogAsync(this, vm);
-
-        if (result is true) {
-            var app = new InstalledApp(vm.SelectedApp!,
-                vm.SelectedInstallOptionGuid ??
-                throw new InvalidOperationException(_localizer["NoInstallOptionSelectedExceptionMessage"]));
-
-            await _databaseService.UpdateAppAsync(app, cancellationToken);
-            await LoadApps(cancellationToken);
-        }
-    }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task EditApp(CancellationToken cancellationToken) {
+        // TODO: fix
         var vm = _dialogService.CreateViewModel<EditViewModel>();
         vm.SelectedApp = SelectedApp!;
 
-        var result = await _dialogService.ShowDialogAsync(this, vm);
+        var result = await _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
         if (result is not true) return;
 
         await _databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
@@ -123,7 +92,7 @@ internal partial class MainViewModel : ViewModelBase {
                 vm.ProgressValue = report.Percentage;
         });
 
-        var dialogTask = _dialogService.ShowDialogAsync(this, vm);
+        var dialogTask = _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
 
         try {
             var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
@@ -138,7 +107,8 @@ internal partial class MainViewModel : ViewModelBase {
                     Title = _localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.DisplayName]
                 };
 
-                shouldUpdate = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings) is true;
+                shouldUpdate =
+                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings) is true;
             }
 
             if (shouldUpdate)
@@ -154,7 +124,7 @@ internal partial class MainViewModel : ViewModelBase {
                 Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
             };
 
-            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
         } finally {
             vm.OkCommand.Execute(null);
             await dialogTask;
@@ -163,17 +133,14 @@ internal partial class MainViewModel : ViewModelBase {
         await LoadApps(cancellationToken);
     }
 
+    [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
+    private Task OpenAppFolder() => OpenFolderAsync(_pathService.GetInstallPath(SelectedApp!));
+
     [RelayCommand]
     private Task OpenAppsFolder() => OpenFolderAsync(_pathService.AppPath);
 
     [RelayCommand]
     private Task OpenDownloadsFolder() => OpenFolderAsync(_pathService.DownloadPath);
-
-    [RelayCommand]
-    private async Task OpenSettings() {
-        var vm = _dialogService.CreateViewModel<SettingsViewModel>();
-        await _dialogService.ShowDialogAsync(this, vm);
-    }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task RemoveApp(CancellationToken cancellationToken) {
@@ -185,7 +152,8 @@ internal partial class MainViewModel : ViewModelBase {
             Content = _localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.DisplayName]
         };
 
-        var removeAppResult = await _dialogService.ShowMessageBoxAsync(this, removeAppMessageBoxSettings);
+        var removeAppResult =
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
             if (Directory.Exists(_pathService.GetInstallPath(SelectedApp))) {
@@ -198,7 +166,8 @@ internal partial class MainViewModel : ViewModelBase {
                 };
 
                 var removeAppDataResult =
-                    await _dialogService.ShowMessageBoxAsync(this, removeAppDataMessageBoxSettings);
+                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this,
+                        removeAppDataMessageBoxSettings);
 
                 if (removeAppDataResult is true)
                     _updaterService.DeleteAppData(SelectedApp);
@@ -220,7 +189,7 @@ internal partial class MainViewModel : ViewModelBase {
                 Title = _localizer["RepositoryUpdateErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
         }, cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
@@ -253,7 +222,7 @@ internal partial class MainViewModel : ViewModelBase {
                 Title = _localizer["OpenFolderErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
         }
     }
 }

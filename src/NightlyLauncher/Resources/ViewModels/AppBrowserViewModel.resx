@@ -1,10 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="AppBrowserWindowContent" xml:space="preserve">
+  <data name="AppBrowserSearchPlaceholderText" xml:space="preserve">
     <value>Search apps</value>
   </data>
-  <data name="AppBrowserWindowTitle" xml:space="preserve">
+  <data name="AppBrowserTitle" xml:space="preserve">
     <value>Browse apps - NightlyLauncher</value>
+  </data>
+  <data name="NoAppsAvailableMessageBoxContent" xml:space="preserve">
+    <value>No new apps are available for download.</value>
+  </data>
+  <data name="NoAppsAvailableMessageBoxTitle" xml:space="preserve">
+    <value>NightlyLauncher - Add apps</value>
+  </data>
+  <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
+    <value>No install option selected.</value>
   </data>
   <data name="SelectInstallOptionDialogContent" xml:space="preserve">
     <value>Select an install option</value>

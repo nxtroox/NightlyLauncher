@@ -14,7 +14,8 @@ internal static class ServiceCollectionExtensions {
         collection.AddTransient<AppBrowserViewModel>();
         collection.AddTransient<EditViewModel>();
         collection.AddTransient<InputViewModel>();
-        collection.AddTransient<MainViewModel>();
+        collection.AddTransient<LibraryViewModel>();
+        collection.AddTransient<MainWindowViewModel>();
         collection.AddTransient<SelectionViewModel>();
         collection.AddTransient<SettingsViewModel>();
         collection.AddTransient<UpdaterViewModel>();
@@ -46,7 +47,7 @@ internal static class ServiceCollectionExtensions {
         collection.AddSingleton<IDialogService>(sp => new DialogService(
             new DialogManager(
                 new ViewLocator(),
-                new DialogFactory().AddMessageBox()),
+                new DialogFactory().AddFluent()),
             sp.GetService));
 
         collection.AddSingleton(new JsonSerializerOptions {
@@ -54,5 +55,7 @@ internal static class ServiceCollectionExtensions {
         });
 
         collection.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        collection.AddSingleton<DialogOwner>();
     }
 }

@@ -1,17 +1,19 @@
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using NightlyLauncher.ViewModels;
+using NightlyLauncher.Views.UserControls;
 using NightlyLauncher.Views.Windows;
 
 namespace NightlyLauncher;
 
 public sealed class ViewLocator : StrongViewLocator {
     public ViewLocator() {
-        Register<AppBrowserViewModel, AppBrowserWindow>();
-        Register<EditViewModel, EditWindow>();
+        Register<AppBrowserViewModel, AppBrowserView>();
+        Register<EditViewModel, EditView>();
         Register<InputViewModel, InputWindow>();
-        Register<MainViewModel, MainWindow>();
+        Register<LibraryViewModel, LibraryView>();
+        Register<MainWindowViewModel, MainWindow>();
         Register<SelectionViewModel, SelectionWindow>();
-        Register<SettingsViewModel, SettingsWindow>();
+        Register<SettingsViewModel, SettingsView>();
         Register<UpdaterViewModel, UpdaterWindow>();
     }
 }

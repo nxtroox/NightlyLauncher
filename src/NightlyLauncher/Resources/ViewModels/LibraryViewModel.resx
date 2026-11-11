@@ -3,17 +3,8 @@
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>NightlyLauncher - Update {0}</value>
   </data>
-  <data name="MainWindowTitle" xml:space="preserve">
-    <value>Installed apps - NightlyLauncher</value>
-  </data>
-  <data name="NoAppsAvailableMessageBoxContent" xml:space="preserve">
-    <value>No new apps are available for download.</value>
-  </data>
-  <data name="NoAppsAvailableMessageBoxTitle" xml:space="preserve">
-    <value>NightlyLauncher - Add apps</value>
-  </data>
-  <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
-    <value>No install option selected.</value>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Library</value>
   </data>
   <data name="OpenFolderErrorMessageBoxTitle" xml:space="preserve">
     <value>NightlyLauncher - Open folder</value>

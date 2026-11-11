@@ -16,7 +16,7 @@ public sealed class App : Application {
         collection.AddCommonServices();
 
         var services = collection.BuildServiceProvider();
-        var vm = services.GetRequiredService<MainViewModel>();
+        var vm = services.GetRequiredService<MainWindowViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             desktop.MainWindow = new MainWindow { DataContext = vm };

@@ -13,8 +13,9 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SettingsViewModel : DialogViewModelBase {
+internal partial class SettingsViewModel : ViewModelBase {
     private readonly IConfigService _configService;
+    private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
     private readonly IStringLocalizer<SettingsViewModel> _localizer;
     private readonly List<Repository> _repositoriesToRemove = [];
@@ -22,10 +23,12 @@ internal partial class SettingsViewModel : DialogViewModelBase {
 
     public SettingsViewModel(
         IConfigService configService,
+        DialogOwner dialogOwner,
         IDialogService dialogService,
         IRepositoryService repositoryService,
         IStringLocalizer<SettingsViewModel> localizer) {
         _configService = configService;
+        _dialogOwner = dialogOwner;
         _dialogService = dialogService;
         _repositoryService = repositoryService;
         _localizer = localizer;
@@ -49,7 +52,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
         vm.Content = _localizer["UrlInputMessageBoxContent"];
         vm.TextHint = _localizer["UrlInputMessageBoxTextHint"];
 
-        var result = await _dialogService.ShowDialogAsync(this, vm);
+        var result = await _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
 
         if (result is true) {
             try {
@@ -64,7 +67,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
                     Title = _localizer["AddRepositoryMessageBoxTitle"]
                 };
 
-                await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+                await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
             }
         }
     }
@@ -79,7 +82,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
             Title = _localizer["RemoveRepositoryMessageBoxTitle"]
         };
 
-        var result = await _dialogService.ShowMessageBoxAsync(this, messageBoxSettings);
+        var result = await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
 
         if (result is true) {
             var repository = SelectedRepository!;
@@ -100,7 +103,7 @@ internal partial class SettingsViewModel : DialogViewModelBase {
     private async Task SelectFolderAsync(Action<string> callback) {
         var settings = new OpenFolderDialogSettings { Title = _localizer["OpenFolderDialogTitle"] };
 
-        var folder = await _dialogService.ShowOpenFolderDialogAsync(this, settings);
+        var folder = await _dialogService.ShowOpenFolderDialogAsync(_dialogOwner.Window ?? this, settings);
 
         if (folder is not null)
             callback(folder.LocalPath);
@@ -112,7 +115,6 @@ internal partial class SettingsViewModel : DialogViewModelBase {
             await _repositoryService.RemoveRepositoryAsync(repository, cancellationToken);
 
         await _configService.UpdateConfigAsync(Config!, cancellationToken);
-        OkCommand.Execute(null);
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
@@ -124,6 +126,4 @@ internal partial class SettingsViewModel : DialogViewModelBase {
                 .Where(repository => _repositoriesToRemove.All(removed => removed.Guid != repository.Guid))
                 .ToList()
         };
-
-    protected override bool CanSubmit() => true;
 }

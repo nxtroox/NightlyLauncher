@@ -1,27 +1,14 @@
-using System;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Input;
-using Avalonia.VisualTree;
+using FluentAvalonia.UI.Controls;
+using FluentAvalonia.UI.Windowing;
 using NightlyLauncher.ViewModels;
 
 namespace NightlyLauncher.Views.Windows;
 
-internal partial class MainWindow : Window {
+internal partial class MainWindow : FAAppWindow {
     public MainWindow() => InitializeComponent();
 
-    protected override async void OnOpened(EventArgs e) {
-        if (DataContext is MainViewModel viewModel)
-            await viewModel.InitializeAsync();
-
-        base.OnOpened(e);
-    }
-
-    private void AppListBox_DoubleTapped(object? sender, TappedEventArgs e) {
-        var clickedItem = (e.Source as Visual)?.FindAncestorOfType<ListBoxItem>();
-
-        if (clickedItem is not null && DataContext is MainViewModel viewModel &&
-            viewModel.LaunchAppCommand.CanExecute(null))
-            viewModel.LaunchAppCommand.Execute(null);
+    private void MainNav_OnSelectionChanged(object? sender, FANavigationViewSelectionChangedEventArgs e) {
+        if (e.SelectedItem is FANavigationViewItem { Tag: string page } && DataContext is MainWindowViewModel viewModel)
+            viewModel.NavigateCommand.Execute(page);
     }
 }
