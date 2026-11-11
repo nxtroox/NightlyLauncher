@@ -3,8 +3,9 @@
                  xmlns:vm="using:NightlyLauncher.ViewModels"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                 xmlns:wnd="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+                 xmlns:models="clr-namespace:NightlyLauncher.Models"
                  xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
+                 xmlns:wnd="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
                  xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
                  mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
                  x:Class="NightlyLauncher.Views.Windows.MainWindow"
@@ -15,39 +16,18 @@
     <ui:FANavigationView PaneDisplayMode="Left"
                          IsPaneOpen="False"
                          IsSettingsVisible="False"
-                         SelectionChanged="MainNav_OnSelectionChanged"
-                         x:Name="MainNav">
-        <ui:FANavigationView.MenuItems>
-            <ui:FANavigationViewItem Content="Library"
-                                     Tag="Library">
-                <ui:FANavigationViewItem.IconSource>
-                    <ic:SymbolIconSource Symbol="Library" />
-                </ui:FANavigationViewItem.IconSource>
-            </ui:FANavigationViewItem>
-            <ui:FANavigationViewItem Content="Browse Apps"
-                                     Tag="AppBrowser">
-                <ui:FANavigationViewItem.IconSource>
-                    <ic:SymbolIconSource Symbol="BuildingShop" />
-                </ui:FANavigationViewItem.IconSource>
-            </ui:FANavigationViewItem>
-        </ui:FANavigationView.MenuItems>
-        <ui:FANavigationView.FooterMenuItems>
-            <ui:FANavigationViewItem Content="Repositories"
-                                     Tag="Repositories">
-                <ui:FANavigationViewItem.IconSource>
-                    <ic:SymbolIconSource Symbol="FolderGlobe" />
-                </ui:FANavigationViewItem.IconSource>
-            </ui:FANavigationViewItem>
-            <ui:FANavigationViewItem Content="Settings"
-                                     Tag="Settings">
-                <ui:FANavigationViewItem.IconSource>
-                    <ic:SymbolIconSource Symbol="Settings" />
-                </ui:FANavigationViewItem.IconSource>
-            </ui:FANavigationViewItem>
-        </ui:FANavigationView.FooterMenuItems>
-
-        <ui:FANavigationView.Content>
-            <ui:FAFrame Content="{Binding CurrentPage}" />
-        </ui:FANavigationView.Content>
+                         Content="{Binding CurrentPage}"
+                         MenuItemsSource="{Binding MenuItems}"
+                         FooterMenuItemsSource="{Binding FooterItems}"
+                         SelectedItem="{Binding SelectedItem}">
+        <ui:FANavigationView.MenuItemTemplate>
+            <DataTemplate x:DataType="models:NavigationItem">
+                <ui:FANavigationViewItem Content="{Binding Title}">
+                    <ui:FANavigationViewItem.IconSource>
+                        <ic:SymbolIconSource Symbol="{Binding Symbol}" />
+                    </ui:FANavigationViewItem.IconSource>
+                </ui:FANavigationViewItem>
+            </DataTemplate>
+        </ui:FANavigationView.MenuItemTemplate>
     </ui:FANavigationView>
 </wnd:FAAppWindow>

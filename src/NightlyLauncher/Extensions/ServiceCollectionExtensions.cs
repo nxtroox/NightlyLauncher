@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Net.Http.Headers;
 using System.Reflection;
 using System.Text.Json;
 using HanumanInstitute.MvvmDialogs;
@@ -19,6 +20,9 @@ internal static class ServiceCollectionExtensions {
         collection.AddTransient<SelectionViewModel>();
         collection.AddTransient<SettingsViewModel>();
         collection.AddTransient<UpdaterViewModel>();
+
+        collection.AddSingleton<Func<Type, ViewModelBase>>(sp =>
+            viewModelType => (ViewModelBase)sp.GetRequiredService(viewModelType));
 
         collection.AddHttpClient<IAppUpdaterService, AppUpdaterService>(client => {
             client.DefaultRequestHeaders.UserAgent.Add(
