@@ -1,7 +1,7 @@
-﻿using Avalonia.Controls;
+﻿using FluentAvalonia.UI.Windowing;
 
 namespace NightlyLauncher.Views.Windows;
 
-internal partial class SelectionWindow : Window {
+internal partial class SelectionWindow : FAAppWindow {
     public SelectionWindow() => InitializeComponent();
 }

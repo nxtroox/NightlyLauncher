@@ -1,16 +1,17 @@
-﻿<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:NightlyLauncher.ViewModels"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
-        x:Class="NightlyLauncher.Views.Windows.UpdaterWindow"
-        x:DataType="vm:UpdaterViewModel"
-        Title="{Binding Title}"
-        Height="200"
-        Width="600"
-        WindowStartupLocation="CenterScreen"
-        WindowDecorations="None">
+﻿<wnd:FAAppWindow xmlns="https://github.com/avaloniaui"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:vm="using:NightlyLauncher.ViewModels"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:wnd="clr-namespace:FluentAvalonia.UI.Windowing;assembly=FluentAvalonia"
+                 mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="200"
+                 x:Class="NightlyLauncher.Views.Windows.UpdaterWindow"
+                 x:DataType="vm:UpdaterViewModel"
+                 Title="{Binding Title}"
+                 Height="200"
+                 Width="600"
+                 WindowStartupLocation="CenterScreen"
+                 WindowDecorations="None">
     <StackPanel VerticalAlignment="Center" Spacing="4" Margin="16">
         <TextBlock Text="{Binding StatusText}"
                    HorizontalAlignment="Center"
@@ -23,4 +24,4 @@
                      Minimum="0"
                      Maximum="100" />
     </StackPanel>
-</Window>
+</wnd:FAAppWindow>
