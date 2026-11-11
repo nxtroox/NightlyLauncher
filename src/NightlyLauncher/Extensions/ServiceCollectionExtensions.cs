@@ -51,7 +51,7 @@ internal static class ServiceCollectionExtensions {
         collection.AddSingleton<IDialogService>(sp => new DialogService(
             new DialogManager(
                 new ViewLocator(),
-                new DialogFactory().AddFluent()),
+                new DialogFactory().AddFluent(FluentMessageBoxType.ContentDialog)),
             sp.GetService));
 
         collection.AddSingleton(new JsonSerializerOptions {

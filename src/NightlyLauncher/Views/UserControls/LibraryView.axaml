@@ -43,15 +43,27 @@
             </ui:FACommandBar.PrimaryCommands>
             <ui:FACommandBar.SecondaryCommands>
                 <ui:FACommandBarButton Label="Open Apps folder"
-                                       Command="{Binding OpenAppsFolderCommand}"
-                                       IconSource="Folder" />
+                                       Command="{Binding OpenAppsFolderCommand}">
+                    <ui:FACommandBarButton.IconSource>
+                        <ic:SymbolIconSource Symbol="Folder" />
+                    </ui:FACommandBarButton.IconSource>
+                </ui:FACommandBarButton>
+
                 <ui:FACommandBarButton Label="Open Downloads folder"
-                                       Command="{Binding OpenDownloadsFolderCommand}"
-                                       IconSource="Folder" />
+                                       Command="{Binding OpenDownloadsFolderCommand}">
+                    <ui:FACommandBarButton.IconSource>
+                        <ic:SymbolIconSource Symbol="Folder" />
+                    </ui:FACommandBarButton.IconSource>
+                </ui:FACommandBarButton>
+
                 <ui:FACommandBarSeparator />
+
                 <ui:FACommandBarButton Label="Exit"
-                                       Command="{Binding ExitCommand}"
-                                       IconSource="Cancel" />
+                                       Command="{Binding ExitCommand}">
+                    <ui:FACommandBarButton.IconSource>
+                        <ic:SymbolIconSource Symbol="ArrowExit" />
+                    </ui:FACommandBarButton.IconSource>
+                </ui:FACommandBarButton>
             </ui:FACommandBar.SecondaryCommands>
         </ui:FACommandBar>
 
@@ -109,8 +121,8 @@
                         <Grid ColumnDefinitions="*,Auto">
                             <TextBlock Text="{Binding Manifest.DisplayName}" />
                             <TextBlock Grid.Column="1"
-                                       Text="{Binding LastUpdatedOn, StringFormat='{}{0:yyyy-MM-dd}', TargetNullValue='Not installed'}"
-                                       ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:HH:mm}', TargetNullValue='Never updated'}" />
+                                       Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}', TargetNullValue='Not installed'}"
+                                       ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}', TargetNullValue='Never updated'}" />
                         </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
