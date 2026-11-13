@@ -1,6 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
+using Avalonia.VisualTree;
 using NightlyLauncher.ViewModels;
 
 namespace NightlyLauncher.Views.UserControls;
@@ -16,7 +18,10 @@ internal partial class AppBrowserView : UserControl {
     }
 
     private void AppListBox_DoubleTapped(object? sender, TappedEventArgs e) {
-        if (DataContext is AppBrowserViewModel viewModel)
+        var clickedItem = (e.Source as Visual)?.FindAncestorOfType<ListBoxItem>();
+
+        if (clickedItem is not null && DataContext is AppBrowserViewModel viewModel &&
+            viewModel.AddAppCommand.CanExecute(null))
             viewModel.AddAppCommand.Execute(null);
     }
 }

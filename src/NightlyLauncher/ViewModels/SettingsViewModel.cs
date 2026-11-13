@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.UI.Controls;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
@@ -33,7 +35,7 @@ internal partial class SettingsViewModel : ViewModelBase {
         _repositoryService = repositoryService;
         _localizer = localizer;
 
-        Title = _localizer["SettingsWindowTitle"];
+        Title = _localizer["SettingsViewTitle"];
     }
 
     [ObservableProperty] public partial Config? Config { get; private set; }
@@ -48,13 +50,20 @@ internal partial class SettingsViewModel : ViewModelBase {
     private async Task AddRepository(CancellationToken cancellationToken) {
         var vm = _dialogService.CreateViewModel<InputViewModel>();
 
-        vm.Title = _localizer["AddRepositoryMessageBoxTitle"];
         vm.Content = _localizer["UrlInputMessageBoxContent"];
         vm.TextHint = _localizer["UrlInputMessageBoxTextHint"];
 
-        var result = await _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
+        var contentDialogSettings = new ContentDialogSettings {
+            CloseButtonText = "Cancel",
+            Content = vm,
+            DefaultButton = FAContentDialogButton.Primary,
+            PrimaryButtonText = "Enter",
+            Title = _localizer["AddRepositoryMessageBoxTitle"]
+        };
 
-        if (result is true) {
+        var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window ?? this, contentDialogSettings);
+
+        if (result is FAContentDialogResult.Primary) {
             try {
                 await _repositoryService.AddRepositoryAsync(new Uri(vm.Text!), cancellationToken);
                 Config = await _configService.GetConfigAsync(cancellationToken);
@@ -67,7 +76,7 @@ internal partial class SettingsViewModel : ViewModelBase {
                     Title = _localizer["AddRepositoryMessageBoxTitle"]
                 };
 
-                await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+                await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
             }
         }
     }
@@ -82,7 +91,7 @@ internal partial class SettingsViewModel : ViewModelBase {
             Title = _localizer["RemoveRepositoryMessageBoxTitle"]
         };
 
-        var result = await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+        var result = await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
 
         if (result is true) {
             var repository = SelectedRepository!;
@@ -103,7 +112,7 @@ internal partial class SettingsViewModel : ViewModelBase {
     private async Task SelectFolderAsync(Action<string> callback) {
         var settings = new OpenFolderDialogSettings { Title = _localizer["OpenFolderDialogTitle"] };
 
-        var folder = await _dialogService.ShowOpenFolderDialogAsync(_dialogOwner.Window ?? this, settings);
+        var folder = await _dialogService.ShowOpenFolderDialogAsync(_dialogOwner.Window!, settings);
 
         if (folder is not null)
             callback(folder.LocalPath);

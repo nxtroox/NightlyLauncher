@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="UpdaterWindowTitle" xml:space="preserve">
-    <value>Updater - NightlyLauncher</value>
+  <data name="UpdaterViewTitle" xml:space="preserve">
+    <value>Updater</value>
   </data>
 </root>

@@ -1,16 +1,12 @@
 ﻿using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class EditDialogViewModel(IStringLocalizer<EditDialogViewModel> localizer) : ViewModelBase {
-    public new string Title => localizer["EditDialogViewTitle", SelectedApp?.Manifest.DisplayName ?? string.Empty];
-
+internal partial class EditDialogViewModel : ObservableObject {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedInstallOption))]
-    [NotifyPropertyChangedFor(nameof(Title))]
     public partial InstalledApp? SelectedApp { get; set; }
 
     public InstallOption? SelectedInstallOption {

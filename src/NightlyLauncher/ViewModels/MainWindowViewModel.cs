@@ -31,7 +31,10 @@ internal partial class MainWindowViewModel : ViewModelBase {
 
     public new string? Title {
         get;
-        set => field = value + " - NightlyLauncher";
+        set {
+            field = value + " - NightlyLauncher";
+            OnPropertyChanged();
+        }
     }
 
     partial void OnSelectedItemChanged(NavigationItem? value) {

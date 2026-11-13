@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="AddRepositoryMessageBoxTitle" xml:space="preserve">
-    <value>NightlyLauncher - Add repository</value>
+    <value>Add repository</value>
   </data>
   <data name="OpenFolderDialogTitle" xml:space="preserve">
     <value>Select folder</value>
@@ -10,10 +10,10 @@
     <value>Are you sure that you want to remove the repository '{0}'?</value>
   </data>
   <data name="RemoveRepositoryMessageBoxTitle" xml:space="preserve">
-    <value>NightlyLauncher - Remove repository</value>
+    <value>Remove repository</value>
   </data>
-  <data name="SettingsWindowTitle" xml:space="preserve">
-    <value>Settings - NightlyLauncher</value>
+  <data name="SettingsViewTitle" xml:space="preserve">
+    <value>Settings</value>
   </data>
   <data name="UrlInputMessageBoxContent" xml:space="preserve">
     <value>Enter repository URL</value>

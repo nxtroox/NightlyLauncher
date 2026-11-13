@@ -2,12 +2,7 @@
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class InputViewModel : PromptDialogViewModelBase {
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(OkCommand))]
-    public partial string? Text { get; set; }
-
+internal partial class InputViewModel : GenericDialogViewModelBase {
+    [ObservableProperty] public partial string? Text { get; set; }
     [ObservableProperty] public partial string? TextHint { get; set; }
-
-    protected override bool CanSubmit() => !string.IsNullOrWhiteSpace(Text);
 }

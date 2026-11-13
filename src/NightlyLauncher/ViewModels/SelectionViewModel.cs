@@ -3,12 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SelectionViewModel : PromptDialogViewModelBase {
+internal partial class SelectionViewModel : GenericDialogViewModelBase {
     public ObservableCollection<object> Items { get; } = [];
-
-    [ObservableProperty]
-    [NotifyCanExecuteChangedFor(nameof(OkCommand))]
-    public partial object? SelectedItem { get; set; }
-
-    protected override bool CanSubmit() => SelectedItem is not null;
+    [ObservableProperty] public partial object? SelectedItem { get; set; }
 }

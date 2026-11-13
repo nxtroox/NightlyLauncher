@@ -5,7 +5,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.UI.Controls;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
@@ -29,23 +31,26 @@ internal partial class AppBrowserViewModel : ViewModelBase {
         _repositoryService = repositoryService;
         _localizer = localizer;
 
-        Title = localizer["AppBrowserTitle"];
+        Title = localizer["AppBrowserViewTitle"];
         SearchPlaceholderText = localizer["AppBrowserSearchPlaceholderText"];
 
         Apps.CollectionChanged += (_, _) => ApplySearchFilter();
         ApplySearchFilter();
     }
 
-    public ObservableCollection<AppManifest> Apps { get; } = [];
+    private ObservableCollection<AppManifest> Apps { get; } = [];
     public ObservableCollection<AppManifest> FilteredApps { get; } = [];
 
-    [ObservableProperty] public partial AppManifest? SelectedApp { get; set; }
-    [ObservableProperty] public partial string? SearchText { get; set; }
-    [ObservableProperty] public partial string? SearchPlaceholderText { get; set; }
+    [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(AddAppCommand))]
+    public partial AppManifest? SelectedApp { get; set; }
 
     [ObservableProperty] public partial Guid? SelectedInstallOptionGuid { get; private set; }
 
-    [RelayCommand]
+    [ObservableProperty] public partial string? SearchText { get; set; }
+    [ObservableProperty] public partial string? SearchPlaceholderText { get; set; }
+
+    [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task AddApp(CancellationToken cancellationToken) {
         var compatibleOptions = SelectedApp!.InstallOptions.Where(option =>
                 _repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
@@ -58,15 +63,21 @@ internal partial class AppBrowserViewModel : ViewModelBase {
         }
 
         var vm = _dialogService.CreateViewModel<SelectionViewModel>();
-
-        vm.Title = _localizer["SelectInstallOptionDialogTitle"];
         vm.Content = _localizer["SelectInstallOptionDialogContent"];
 
         foreach (var option in compatibleOptions)
             vm.Items.Add(option);
 
-        if (await _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm) is true &&
-            vm.SelectedItem is InstallOption installOption) {
+        var contentDialogSettings = new ContentDialogSettings {
+            CloseButtonText = "Close",
+            Content = vm,
+            DefaultButton = FAContentDialogButton.Primary,
+            PrimaryButtonText = "Select",
+            Title = _localizer["SelectInstallOptionDialogTitle"]
+        };
+
+        if (await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings) is
+                FAContentDialogResult.Primary && vm.SelectedItem is InstallOption installOption) {
             SelectedInstallOptionGuid = installOption.Guid;
             await InstallAppAsync(cancellationToken);
         }
@@ -105,13 +116,15 @@ internal partial class AppBrowserViewModel : ViewModelBase {
                 Title = _localizer["NoAppsAvailableMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
             return;
         }
 
         foreach (var app in apps)
             Apps.Add(app);
     }
+
+    private bool CanInteractWithApp() => SelectedApp is not null;
 
     private async Task LoadAppsAsync(CancellationToken cancellationToken) {
         Apps.Clear();

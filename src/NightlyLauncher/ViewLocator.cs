@@ -10,10 +10,10 @@ public sealed class ViewLocator : StrongViewLocator {
     public ViewLocator() {
         Register<AppBrowserViewModel, AppBrowserView>();
         Register<EditDialogViewModel, EditDialogView>();
-        Register<InputViewModel, InputWindow>();
+        Register<InputViewModel, InputDialogView>();
         Register<LibraryViewModel, LibraryView>();
         Register<MainWindowViewModel, MainWindow>();
-        Register<SelectionViewModel, SelectionWindow>();
+        Register<SelectionViewModel, SelectionDialogView>();
         Register<SettingsViewModel, SettingsView>();
         Register<UpdaterViewModel, UpdaterWindow>();
     }

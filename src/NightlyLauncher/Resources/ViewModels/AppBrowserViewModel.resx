@@ -3,14 +3,14 @@
   <data name="AppBrowserSearchPlaceholderText" xml:space="preserve">
     <value>Search apps</value>
   </data>
-  <data name="AppBrowserTitle" xml:space="preserve">
-    <value>Browse apps - NightlyLauncher</value>
+  <data name="AppBrowserViewTitle" xml:space="preserve">
+    <value>Browse apps</value>
   </data>
   <data name="NoAppsAvailableMessageBoxContent" xml:space="preserve">
     <value>No new apps are available for download.</value>
   </data>
   <data name="NoAppsAvailableMessageBoxTitle" xml:space="preserve">
-    <value>NightlyLauncher - Add apps</value>
+    <value>Add apps</value>
   </data>
   <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
     <value>No install option selected.</value>

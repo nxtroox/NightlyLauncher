@@ -51,7 +51,7 @@ internal partial class LibraryViewModel : ViewModelBase {
         _repositoryService = repositoryService;
         _updaterService = updaterService;
 
-        Title = _localizer["LibraryTitle"];
+        Title = _localizer["LibraryViewTitle"];
     }
 
     public ObservableCollection<InstalledApp> Apps { get; } = [];
@@ -73,7 +73,7 @@ internal partial class LibraryViewModel : ViewModelBase {
             Content = vm,
             DefaultButton = FAContentDialogButton.Primary,
             PrimaryButtonText = _localizer["EditAppContentDialogPrimaryButtonText"],
-            Title = vm.Title
+            Title = _localizer["EditDialogViewTitle", SelectedApp!.Manifest.DisplayName]
         };
 
         var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings);
@@ -101,7 +101,7 @@ internal partial class LibraryViewModel : ViewModelBase {
                 vm.ProgressValue = report.Percentage;
         });
 
-        var dialogTask = _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
+        var dialogTask = _dialogService.ShowDialogAsync(_dialogOwner.Window!, vm);
 
         try {
             var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
@@ -117,7 +117,7 @@ internal partial class LibraryViewModel : ViewModelBase {
                 };
 
                 shouldUpdate =
-                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings) is true;
+                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings) is true;
             }
 
             if (shouldUpdate)
@@ -133,9 +133,9 @@ internal partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
         } finally {
-            vm.OkCommand.Execute(null);
+            vm.Close();
             await dialogTask;
         }
 
@@ -162,7 +162,7 @@ internal partial class LibraryViewModel : ViewModelBase {
         };
 
         var removeAppResult =
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, removeAppMessageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
             if (Directory.Exists(_pathService.GetInstallPath(SelectedApp))) {
@@ -175,7 +175,7 @@ internal partial class LibraryViewModel : ViewModelBase {
                 };
 
                 var removeAppDataResult =
-                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this,
+                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!,
                         removeAppDataMessageBoxSettings);
 
                 if (removeAppDataResult is true)
@@ -198,7 +198,7 @@ internal partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["RepositoryUpdateErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
         }, cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
@@ -231,7 +231,7 @@ internal partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["OpenFolderErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window ?? this, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
         }
     }
 }
