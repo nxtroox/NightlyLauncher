@@ -3,6 +3,12 @@
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
     <value>NightlyLauncher - Update {0}</value>
   </data>
+  <data name="EditAppContentDialogCloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="EditAppContentDialogPrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="LibraryTitle" xml:space="preserve">
     <value>Library</value>
   </data>

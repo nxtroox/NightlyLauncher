@@ -8,7 +8,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.UI.Controls;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
@@ -63,12 +65,19 @@ internal partial class LibraryViewModel : ViewModelBase {
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task EditApp(CancellationToken cancellationToken) {
-        // TODO: fix
-        var vm = _dialogService.CreateViewModel<EditViewModel>();
+        var vm = _dialogService.CreateViewModel<EditDialogViewModel>();
         vm.SelectedApp = SelectedApp!;
 
-        var result = await _dialogService.ShowDialogAsync(_dialogOwner.Window ?? this, vm);
-        if (result is not true) return;
+        var contentDialogSettings = new ContentDialogSettings {
+            CloseButtonText = _localizer["EditAppContentDialogCloseButtonText"],
+            Content = vm,
+            DefaultButton = FAContentDialogButton.Primary,
+            PrimaryButtonText = _localizer["EditAppContentDialogPrimaryButtonText"],
+            Title = vm.Title
+        };
+
+        var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings);
+        if (result != FAContentDialogResult.Primary) return;
 
         await _databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
         await LoadApps(cancellationToken);

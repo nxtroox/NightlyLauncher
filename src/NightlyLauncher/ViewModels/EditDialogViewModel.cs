@@ -5,10 +5,13 @@ using NightlyLauncher.Models;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class EditViewModel : DialogViewModelBase {
-    public EditViewModel(IStringLocalizer<EditViewModel> localizer) => Title = localizer["EditWindowTitle"];
+internal partial class EditDialogViewModel(IStringLocalizer<EditDialogViewModel> localizer) : ViewModelBase {
+    public new string Title => localizer["EditDialogViewTitle", SelectedApp?.Manifest.DisplayName ?? string.Empty];
 
-    [ObservableProperty] public partial InstalledApp? SelectedApp { get; set; }
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectedInstallOption))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    public partial InstalledApp? SelectedApp { get; set; }
 
     public InstallOption? SelectedInstallOption {
         get => SelectedApp?.Manifest.InstallOptions.FirstOrDefault(option =>
@@ -24,8 +27,4 @@ internal partial class EditViewModel : DialogViewModelBase {
             SelectedApp = app with { SelectedInstallOptionGuid = value.Guid };
         }
     }
-
-    partial void OnSelectedAppChanged(InstalledApp? value) => OnPropertyChanged(nameof(SelectedInstallOption));
-
-    protected override bool CanSubmit() => true;
 }

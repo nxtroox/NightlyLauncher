@@ -1,0 +1,33 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
+             x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.EditDialogView"
+             x:DataType="vm:EditDialogViewModel">
+    <ScrollViewer>
+        <StackPanel Spacing="8">
+            <StackPanel Spacing="4">
+                <TextBlock Text="Selected install option:" />
+                <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
+                          SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
+                          PlaceholderText="Select an installation option">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"
+                                       ToolTip.Tip="{Binding Guid}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Spacing="4">
+                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
+                          Content="Prompt on update" />
+                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
+                          Content="Portable mode" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

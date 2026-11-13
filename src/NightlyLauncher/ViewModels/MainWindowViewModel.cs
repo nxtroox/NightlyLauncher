@@ -18,7 +18,7 @@ internal partial class MainWindowViewModel : ViewModelBase {
     }
 
     [ObservableProperty] public partial NavigationItem? SelectedItem { get; set; }
-    [ObservableProperty] public partial ViewModelBase CurrentPage { get; set; }
+    [ObservableProperty] public partial ViewModelBase? CurrentPage { get; set; }
 
     public ObservableCollection<NavigationItem> MenuItems { get; } = [
         new("Library", Symbol.Library, typeof(LibraryViewModel)),

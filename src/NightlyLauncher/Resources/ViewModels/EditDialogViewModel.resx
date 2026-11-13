@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="EditDialogViewTitle" xml:space="preserve">
+    <value>Edit {0}</value>
+  </data>
+</root>
