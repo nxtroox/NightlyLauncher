@@ -50,18 +50,18 @@ internal partial class SettingsViewModel : ViewModelBase {
     private async Task AddRepository(CancellationToken cancellationToken) {
         var vm = _dialogService.CreateViewModel<InputViewModel>();
 
-        vm.Content = _localizer["UrlInputMessageBoxContent"];
-        vm.TextHint = _localizer["UrlInputMessageBoxTextHint"];
+        vm.Content = _localizer["UrlInputContentDialogContent"];
+        vm.TextHint = _localizer["UrlInputContentDialogTextHint"];
 
         var contentDialogSettings = new ContentDialogSettings {
-            CloseButtonText = "Cancel",
+            CloseButtonText = _localizer["UrlInputContentDialogCloseButtonText"],
             Content = vm,
             DefaultButton = FAContentDialogButton.Primary,
-            PrimaryButtonText = "Enter",
+            PrimaryButtonText = _localizer["UrlInputContentDialogPrimaryButtonText"],
             Title = _localizer["AddRepositoryMessageBoxTitle"]
         };
 
-        var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window ?? this, contentDialogSettings);
+        var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings);
 
         if (result is FAContentDialogResult.Primary) {
             try {

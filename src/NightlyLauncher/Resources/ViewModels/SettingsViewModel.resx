@@ -15,10 +15,16 @@
   <data name="SettingsViewTitle" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="UrlInputMessageBoxContent" xml:space="preserve">
+  <data name="UrlInputContentDialogCloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UrlInputContentDialogContent" xml:space="preserve">
     <value>Enter repository URL</value>
   </data>
-  <data name="UrlInputMessageBoxTextHint" xml:space="preserve">
+  <data name="UrlInputContentDialogHint" xml:space="preserve">
     <value>https://example.com/repo.json</value>
+  </data>
+  <data name="UrlInputContentDialogPrimaryButtonText" xml:space="preserve">
+    <value>Submit</value>
   </data>
 </root>

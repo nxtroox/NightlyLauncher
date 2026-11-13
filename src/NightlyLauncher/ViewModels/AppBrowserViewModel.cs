@@ -63,17 +63,17 @@ internal partial class AppBrowserViewModel : ViewModelBase {
         }
 
         var vm = _dialogService.CreateViewModel<SelectionViewModel>();
-        vm.Content = _localizer["SelectInstallOptionDialogContent"];
+        vm.Content = _localizer["SelectInstallOptionContentDialogContent"];
 
         foreach (var option in compatibleOptions)
             vm.Items.Add(option);
 
         var contentDialogSettings = new ContentDialogSettings {
-            CloseButtonText = "Close",
+            CloseButtonText = _localizer["SelectInstallOptionContentCloseButtonText"],
             Content = vm,
             DefaultButton = FAContentDialogButton.Primary,
-            PrimaryButtonText = "Select",
-            Title = _localizer["SelectInstallOptionDialogTitle"]
+            PrimaryButtonText = _localizer["SelectInstallOptionContentDialogPrimaryButtonText"],
+            Title = _localizer["SelectInstallOptionContentDialogTitle"]
         };
 
         if (await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings) is

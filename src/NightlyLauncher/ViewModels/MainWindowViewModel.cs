@@ -2,17 +2,30 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentIcons.Common;
+using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
 internal partial class MainWindowViewModel : ViewModelBase {
+    private readonly IStringLocalizer<MainWindowViewModel> _localizer;
     private readonly Func<Type, ViewModelBase> _viewModelFactory;
 
-    public MainWindowViewModel(Func<Type, ViewModelBase> viewModelFactory, DialogOwner dialogOwner) {
+    public MainWindowViewModel(Func<Type, ViewModelBase> viewModelFactory,
+        IStringLocalizer<MainWindowViewModel> localizer, DialogOwner dialogOwner) {
         _viewModelFactory = viewModelFactory;
+        _localizer = localizer;
         dialogOwner.Window = this;
+
+        MenuItems = [
+            new NavigationItem(_localizer["LibraryTitle"], Symbol.Library, typeof(LibraryViewModel)),
+            new NavigationItem(_localizer["AppBrowserTitle"], Symbol.BuildingShop, typeof(AppBrowserViewModel))
+        ];
+
+        FooterItems = [
+            new NavigationItem(_localizer["SettingsTitle"], Symbol.Settings, typeof(SettingsViewModel))
+        ];
 
         SelectedItem = MenuItems[0];
     }
@@ -20,19 +33,14 @@ internal partial class MainWindowViewModel : ViewModelBase {
     [ObservableProperty] public partial NavigationItem? SelectedItem { get; set; }
     [ObservableProperty] public partial ViewModelBase? CurrentPage { get; set; }
 
-    public ObservableCollection<NavigationItem> MenuItems { get; } = [
-        new("Library", Symbol.Library, typeof(LibraryViewModel)),
-        new("Browse Apps", Symbol.BuildingShop, typeof(AppBrowserViewModel))
-    ];
+    public ObservableCollection<NavigationItem> MenuItems { get; }
 
-    public ObservableCollection<NavigationItem> FooterItems { get; } = [
-        new("Settings", Symbol.Settings, typeof(SettingsViewModel))
-    ];
+    public ObservableCollection<NavigationItem> FooterItems { get; }
 
     public new string? Title {
         get;
         set {
-            field = value + " - NightlyLauncher";
+            field = $"{value} - {_localizer["AppName"]}";
             OnPropertyChanged();
         }
     }

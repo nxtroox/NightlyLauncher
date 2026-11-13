@@ -15,8 +15,14 @@
   <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
     <value>No install option selected.</value>
   </data>
-  <data name="SelectInstallOptionDialogContent" xml:space="preserve">
+  <data name="SelectInstallOptionContentCloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SelectInstallOptionContentDialogContent" xml:space="preserve">
     <value>Select an install option</value>
+  </data>
+  <data name="SelectInstallOptionContentPrimaryButtonText" xml:space="preserve">
+    <value>Submit</value>
   </data>
   <data name="SelectInstallOptionDialogTitle" xml:space="preserve">
     <value>NightlyLauncher - Select install option</value>
