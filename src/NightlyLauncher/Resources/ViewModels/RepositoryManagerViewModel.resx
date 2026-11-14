@@ -9,6 +9,9 @@
   <data name="RemoveRepositoryConfirmationMessageBoxTitle" xml:space="preserve">
     <value>Remove {0}?</value>
   </data>
+  <data name="RemoveRepositoryErrorMessageBoxTitle" xml:space="preserve">
+    <value>Unable to remove {0}</value>
+  </data>
   <data name="RepositoryManagerViewTitle" xml:space="preserve">
     <value>Manage Repositories</value>
   </data>

@@ -11,32 +11,30 @@
     <StackPanel Margin="16" Spacing="4">
         <TextBlock Text="Repositories" />
 
-        <ScrollViewer>
-            <ListBox ItemsSource="{Binding Config?.Repositories}"
-                     SelectedItem="{Binding SelectedRepository}"
-                     x:Name="RepositoryListBox">
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding DisplayName}"
-                                   ToolTip.Tip="{Binding UpdateUri}" />
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="ContextFlyout">
-                            <ui:FAMenuFlyout>
-                                <ui:FAMenuFlyoutItem Text="Remove"
-                                                     Command="{Binding #RepositoryListBox.((vm:RepositoryManagerViewModel)DataContext)?.RemoveRepositoryCommand}">
-                                    <ui:FAMenuFlyoutItem.IconSource>
-                                        <ic:SymbolIconSource Symbol="Delete" />
-                                    </ui:FAMenuFlyoutItem.IconSource>
-                                </ui:FAMenuFlyoutItem>
-                            </ui:FAMenuFlyout>
-                        </Setter>
-                    </Style>
-                </ListBox.Styles>
-            </ListBox>
-        </ScrollViewer>
+        <ListBox ItemsSource="{Binding Config?.Repositories}"
+                 SelectedItem="{Binding SelectedRepository}"
+                 x:Name="RepositoryListBox">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}"
+                               ToolTip.Tip="{Binding UpdateUri}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="ContextFlyout">
+                        <ui:FAMenuFlyout>
+                            <ui:FAMenuFlyoutItem Text="Remove"
+                                                 Command="{Binding #RepositoryListBox.((vm:RepositoryManagerViewModel)DataContext)?.RemoveRepositoryCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Delete" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
+                        </ui:FAMenuFlyout>
+                    </Setter>
+                </Style>
+            </ListBox.Styles>
+        </ListBox>
 
         <Button Content="Add repository"
                 Command="{Binding AddRepositoryCommand}" />

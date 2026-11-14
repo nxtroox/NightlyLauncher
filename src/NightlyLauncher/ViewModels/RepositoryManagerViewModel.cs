@@ -81,7 +81,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
 
     [RelayCommand(CanExecute = nameof(CanModifyRepository))]
     private async Task RemoveRepository(CancellationToken cancellationToken) {
-        var messageBoxSettings = new MessageBoxSettings {
+        var confirmationMessageBoxSettings = new MessageBoxSettings {
             Button = MessageBoxButton.YesNo,
             Content = _localizer["RemoveRepositoryConfirmationMessageBoxContent"],
             DefaultValue = false,
@@ -89,7 +89,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
             Title = _localizer["RemoveRepositoryConfirmationMessageBoxTitle", SelectedRepository!.DisplayName]
         };
 
-        var result = await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
+        var result = await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, confirmationMessageBoxSettings);
 
         if (result is true) {
             var repositoryToRemove = SelectedRepository!;
@@ -99,8 +99,21 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
                     .ToList()
             };
 
-            await _repositoryService.RemoveRepositoryAsync(repositoryToRemove, cancellationToken); // todo: catch errors
-            SelectedRepository = null;
+            try {
+                await _repositoryService.RemoveRepositoryAsync(repositoryToRemove, cancellationToken);
+                SelectedRepository = null;
+            } catch (Exception ex) {
+                var errorMessageBoxSettings = new MessageBoxSettings {
+                    Button = MessageBoxButton.Ok,
+                    Content = ex.Message,
+                    DefaultValue = true,
+                    Icon = MessageBoxImage.Error,
+                    Title = _localizer["RemoveRepositoryErrorMessageBoxTitle", repositoryToRemove.DisplayName]
+                };
+
+                await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, errorMessageBoxSettings);
+                Config = await _configService.GetConfigAsync(cancellationToken);
+            }
         }
     }
 }
