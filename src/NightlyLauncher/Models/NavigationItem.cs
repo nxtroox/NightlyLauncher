@@ -4,6 +4,6 @@ using FluentIcons.Common;
 namespace NightlyLauncher.Models;
 
 internal sealed record NavigationItem(
-    string Title,
+    string Label,
     Symbol Symbol,
     Type TargetViewModelType);

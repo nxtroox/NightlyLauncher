@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AddRepositoryErrorMessageBoxTitle" xml:space="preserve">
+    <value>Unable to add repository</value>
+  </data>
+  <data name="RemoveRepositoryConfirmationMessageBoxContent" xml:space="preserve">
+    <value>This action cannot be undone. The repository and all of its app entries will be permanently removed. Any apps and their data will remain untouched.</value>
+  </data>
+  <data name="RemoveRepositoryConfirmationMessageBoxTitle" xml:space="preserve">
+    <value>Remove {0}?</value>
+  </data>
+  <data name="RepositoryManagerViewTitle" xml:space="preserve">
+    <value>Manage Repositories</value>
+  </data>
+  <data name="UrlInputContentDialogCloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UrlInputContentDialogTextHint" xml:space="preserve">
+    <value>https://example.com/repo.json</value>
+  </data>
+  <data name="UrlInputContentDialogTitle" xml:space="preserve">
+    <value>Enter repository URL</value>
+  </data>
+  <data name="UrlInputContentDialogPrimaryButtonText" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+</root>

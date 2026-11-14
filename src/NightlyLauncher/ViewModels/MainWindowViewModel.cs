@@ -19,12 +19,14 @@ internal partial class MainWindowViewModel : ViewModelBase {
         dialogOwner.Window = this;
 
         MenuItems = [
-            new NavigationItem(_localizer["LibraryTitle"], Symbol.Library, typeof(LibraryViewModel)),
-            new NavigationItem(_localizer["AppBrowserTitle"], Symbol.BuildingShop, typeof(AppBrowserViewModel))
+            new NavigationItem(_localizer["LibraryLabel"], Symbol.Library, typeof(LibraryViewModel)),
+            new NavigationItem(_localizer["AppBrowserLabel"], Symbol.BuildingShop, typeof(AppBrowserViewModel))
         ];
 
         FooterItems = [
-            new NavigationItem(_localizer["SettingsTitle"], Symbol.Settings, typeof(SettingsViewModel))
+            new NavigationItem(_localizer["RepositoryManagerLabel"], Symbol.FolderGlobe,
+                typeof(RepositoryManagerViewModel)),
+            new NavigationItem(_localizer["SettingsLabel"], Symbol.Settings, typeof(SettingsViewModel))
         ];
 
         SelectedItem = MenuItems[0];

@@ -4,7 +4,7 @@
     <value>Search apps</value>
   </data>
   <data name="AppBrowserViewTitle" xml:space="preserve">
-    <value>Browse apps</value>
+    <value>Browse Apps</value>
   </data>
   <data name="NoAppsAvailableMessageBoxContent" xml:space="preserve">
     <value>No new apps are available for download.</value>

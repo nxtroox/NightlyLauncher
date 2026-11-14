@@ -22,7 +22,7 @@
                          SelectedItem="{Binding SelectedItem}">
         <ui:FANavigationView.MenuItemTemplate>
             <DataTemplate x:DataType="models:NavigationItem">
-                <ui:FANavigationViewItem Content="{Binding Title}">
+                <ui:FANavigationViewItem Content="{Binding Label}">
                     <ui:FANavigationViewItem.IconSource>
                         <ic:SymbolIconSource Symbol="{Binding Symbol}" />
                     </ui:FANavigationViewItem.IconSource>

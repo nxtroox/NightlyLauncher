@@ -27,36 +27,6 @@
                             Command="{Binding SelectDownloadPathCommand}" />
                 </Grid>
             </StackPanel>
-
-            <StackPanel Spacing="4">
-                <TextBlock Text="Repositories" />
-
-                <ScrollViewer>
-                    <ListBox ItemsSource="{Binding Config?.Repositories}"
-                             SelectedItem="{Binding SelectedRepository}"
-                             x:Name="RepositoryListBox">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding DisplayName}"
-                                           ToolTip.Tip="{Binding UpdateUri}" />
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                        <ListBox.Styles>
-                            <Style Selector="ListBoxItem">
-                                <Setter Property="ContextMenu">
-                                    <ContextMenu>
-                                        <MenuItem Header="Remove"
-                                                  Command="{Binding #RepositoryListBox.((vm:SettingsViewModel)DataContext)?.RemoveRepositoryCommand}" />
-                                    </ContextMenu>
-                                </Setter>
-                            </Style>
-                        </ListBox.Styles>
-                    </ListBox>
-                </ScrollViewer>
-
-                <Button Content="Add repository"
-                        Command="{Binding AddRepositoryCommand}" />
-            </StackPanel>
         </StackPanel>
 
         <Button Grid.Row="1" Content="Save"

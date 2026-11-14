@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <data name="AppBrowserTitle" xml:space="preserve">
+  <data name="AppBrowserLabel" xml:space="preserve">
     <value>App Browser</value>
   </data>
   <data name="AppName" xml:space="preserve">
     <value>NightlyLauncher</value>
   </data>
-  <data name="LibraryTitle" xml:space="preserve">
+  <data name="LibraryLabel" xml:space="preserve">
     <value>Library</value>
   </data>
-  <data name="SettingsTitle" xml:space="preserve">
+  <data name="RepositoryManagerLabel" xml:space="preserve">
+    <value>Repositories</value>
+  </data>
+  <data name="SettingsLabel" xml:space="preserve">
     <value>Settings</value>
   </data>
 </root>

@@ -5,11 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
              x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.InputDialogView"
-             x:DataType="vm:InputViewModel">
-    <StackPanel Spacing="8">
-        <TextBlock Text="{Binding Content}" />
-
-        <TextBox Text="{Binding Text}"
-                 PlaceholderText="{Binding TextHint}" />
-    </StackPanel>
+             x:DataType="vm:InputDialogViewModel">
+    <TextBox Text="{Binding Text}"
+             PlaceholderText="{Binding TextHint}" />
 </UserControl>
