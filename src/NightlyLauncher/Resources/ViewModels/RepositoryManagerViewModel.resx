@@ -4,7 +4,7 @@
     <value>Unable to add repository</value>
   </data>
   <data name="RemoveRepositoryConfirmationMessageBoxContent" xml:space="preserve">
-    <value>This action cannot be undone. The repository and all of its app entries will be permanently removed. Any apps and their data will remain untouched.</value>
+    <value>This action cannot be undone. The repository will be permanently removed. Any app entries and their data will remain untouched.</value>
   </data>
   <data name="RemoveRepositoryConfirmationMessageBoxTitle" xml:space="preserve">
     <value>Remove {0}?</value>

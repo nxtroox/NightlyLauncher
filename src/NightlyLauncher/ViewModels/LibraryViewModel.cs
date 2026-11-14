@@ -148,9 +148,6 @@ internal partial class LibraryViewModel : ViewModelBase {
     [RelayCommand]
     private Task OpenAppsFolder() => OpenFolderAsync(_pathService.AppPath);
 
-    [RelayCommand]
-    private Task OpenDownloadsFolder() => OpenFolderAsync(_pathService.DownloadPath);
-
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task RemoveApp(CancellationToken cancellationToken) {
         var removeAppMessageBoxSettings = new MessageBoxSettings {

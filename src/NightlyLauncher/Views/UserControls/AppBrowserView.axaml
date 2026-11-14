@@ -32,7 +32,8 @@
             </ListBox.Styles>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}" />
+                    <TextBlock Text="{Binding DisplayName}"
+                               VerticalAlignment="Center" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>

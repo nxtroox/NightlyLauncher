@@ -5,19 +5,44 @@
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
              xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.RepositoryManagerView"
              x:DataType="vm:RepositoryManagerViewModel">
-    <StackPanel Margin="16" Spacing="4">
-        <TextBlock Text="Repositories" />
+    <Grid RowDefinitions="Auto,*" Margin="16" RowSpacing="8">
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding Title}"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
 
-        <ListBox ItemsSource="{Binding Config?.Repositories}"
+            <ui:FACommandBar Grid.Column="1" DefaultLabelPosition="Right">
+                <ui:FACommandBar.PrimaryCommands>
+                    <ui:FACommandBarButton Label="Add repository"
+                                           Command="{Binding AddRepositoryCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Add" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+
+                    <ui:FACommandBarSeparator />
+
+                    <ui:FACommandBarButton Label="Remove"
+                                           Command="{Binding RemoveRepositoryCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Delete" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+                </ui:FACommandBar.PrimaryCommands>
+            </ui:FACommandBar>
+        </Grid>
+
+        <ListBox Grid.Row="1" ItemsSource="{Binding Config?.Repositories}"
                  SelectedItem="{Binding SelectedRepository}"
                  x:Name="RepositoryListBox">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <TextBlock Text="{Binding DisplayName}"
-                               ToolTip.Tip="{Binding UpdateUri}" />
+                               ToolTip.Tip="{Binding UpdateUri}"
+                               VerticalAlignment="Center" />
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.Styles>
@@ -35,8 +60,5 @@
                 </Style>
             </ListBox.Styles>
         </ListBox>
-
-        <Button Content="Add repository"
-                Command="{Binding AddRepositoryCommand}" />
-    </StackPanel>
+    </Grid>
 </UserControl>

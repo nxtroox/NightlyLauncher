@@ -8,125 +8,105 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.LibraryView"
              x:DataType="vm:LibraryViewModel">
-    <Grid Margin="16" RowDefinitions="Auto,*" RowSpacing="8">
-        <ui:FACommandBar DefaultLabelPosition="Right">
-            <ui:FACommandBar.PrimaryCommands>
-                <ui:FACommandBarButton Label="Update repositories"
-                                       Command="{Binding UpdateRepositoriesCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="ArrowClockwise" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
+    <Grid RowDefinitions="Auto,*" Margin="16" RowSpacing="8">
+        <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="{Binding Title}"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center" />
 
-                <ui:FACommandBarSeparator />
+            <ui:FACommandBar Grid.Column="1"
+                             DefaultLabelPosition="Right">
+                <ui:FACommandBar.PrimaryCommands>
+                    <ui:FACommandBarButton Label="Update repositories"
+                                           Command="{Binding UpdateRepositoriesCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="ArrowClockwise" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+                </ui:FACommandBar.PrimaryCommands>
+                <ui:FACommandBar.SecondaryCommands>
+                    <ui:FACommandBarButton Label="Open Apps folder"
+                                           Command="{Binding OpenAppsFolderCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Folder" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
 
-                <ui:FACommandBarButton Label="Edit"
-                                       Command="{Binding EditAppCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="Edit" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
+                    <ui:FACommandBarSeparator />
 
-                <ui:FACommandBarButton Label="Open folder"
-                                       Command="{Binding OpenAppFolderCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="Folder" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
+                    <ui:FACommandBarButton Label="Exit"
+                                           Command="{Binding ExitCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="ArrowExit" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+                </ui:FACommandBar.SecondaryCommands>
+            </ui:FACommandBar>
+        </Grid>
 
-                <ui:FACommandBarButton Label="Remove"
-                                       Command="{Binding RemoveAppCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="Delete" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
-            </ui:FACommandBar.PrimaryCommands>
-            <ui:FACommandBar.SecondaryCommands>
-                <ui:FACommandBarButton Label="Open Apps folder"
-                                       Command="{Binding OpenAppsFolderCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="Folder" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
+        <ListBox Grid.Row="1"
+                 ItemsSource="{Binding Apps}"
+                 SelectedItem="{Binding SelectedApp}"
+                 DoubleTapped="AppListBox_DoubleTapped"
+                 x:Name="AppListBox">
+            <ListBox.KeyBindings>
+                <KeyBinding Command="{Binding LaunchAppCommand}"
+                            Gesture="Enter" />
+            </ListBox.KeyBindings>
+            <ListBox.Styles>
+                <Style Selector="ListBoxItem">
+                    <Setter Property="ContextFlyout">
+                        <ui:FAMenuFlyout>
+                            <ui:FAMenuFlyoutItem Text="Launch"
+                                                 Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.LaunchAppCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Play" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
 
-                <ui:FACommandBarButton Label="Open Downloads folder"
-                                       Command="{Binding OpenDownloadsFolderCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="Folder" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
+                            <ui:FAMenuFlyoutSeparator />
 
-                <ui:FACommandBarSeparator />
+                            <ui:FAMenuFlyoutItem Text="Edit"
+                                                 Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.EditAppCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Edit" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
 
-                <ui:FACommandBarButton Label="Exit"
-                                       Command="{Binding ExitCommand}">
-                    <ui:FACommandBarButton.IconSource>
-                        <ic:SymbolIconSource Symbol="ArrowExit" />
-                    </ui:FACommandBarButton.IconSource>
-                </ui:FACommandBarButton>
-            </ui:FACommandBar.SecondaryCommands>
-        </ui:FACommandBar>
+                            <ui:FAMenuFlyoutItem Text="Open folder"
+                                                 Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.OpenAppFolderCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Folder" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
 
+                            <ui:FAMenuFlyoutSeparator />
 
-        <ScrollViewer Grid.Row="1">
-            <ListBox DoubleTapped="AppListBox_DoubleTapped"
-                     ItemsSource="{Binding Apps}"
-                     SelectedItem="{Binding SelectedApp}"
-                     x:Name="AppListBox">
-                <ListBox.KeyBindings>
-                    <KeyBinding Command="{Binding LaunchAppCommand}"
-                                Gesture="Enter" />
-                </ListBox.KeyBindings>
-                <ListBox.Styles>
-                    <Style Selector="ListBoxItem">
-                        <Setter Property="ContextFlyout">
-                            <ui:FAMenuFlyout>
-                                <ui:FAMenuFlyoutItem Text="Launch"
-                                                     Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.LaunchAppCommand}">
-                                    <ui:FAMenuFlyoutItem.IconSource>
-                                        <ic:SymbolIconSource Symbol="Play" />
-                                    </ui:FAMenuFlyoutItem.IconSource>
-                                </ui:FAMenuFlyoutItem>
-
-                                <ui:FAMenuFlyoutSeparator />
-
-                                <ui:FAMenuFlyoutItem Text="Edit"
-                                                     Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.EditAppCommand}">
-                                    <ui:FAMenuFlyoutItem.IconSource>
-                                        <ic:SymbolIconSource Symbol="Edit" />
-                                    </ui:FAMenuFlyoutItem.IconSource>
-                                </ui:FAMenuFlyoutItem>
-
-                                <ui:FAMenuFlyoutItem Text="Open folder"
-                                                     Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.OpenAppFolderCommand}">
-                                    <ui:FAMenuFlyoutItem.IconSource>
-                                        <ic:SymbolIconSource Symbol="Folder" />
-                                    </ui:FAMenuFlyoutItem.IconSource>
-                                </ui:FAMenuFlyoutItem>
-
-                                <ui:FAMenuFlyoutSeparator />
-
-                                <ui:FAMenuFlyoutItem Text="Remove"
-                                                     Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.RemoveAppCommand}">
-                                    <ui:FAMenuFlyoutItem.IconSource>
-                                        <ic:SymbolIconSource Symbol="Delete" />
-                                    </ui:FAMenuFlyoutItem.IconSource>
-                                </ui:FAMenuFlyoutItem>
-                            </ui:FAMenuFlyout>
-                        </Setter>
-                    </Style>
-                </ListBox.Styles>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <Grid ColumnDefinitions="*,Auto">
+                            <ui:FAMenuFlyoutItem Text="Remove"
+                                                 Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.RemoveAppCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Delete" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
+                        </ui:FAMenuFlyout>
+                    </Setter>
+                </Style>
+            </ListBox.Styles>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnDefinitions="*,Auto">
+                        <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding Manifest.DisplayName}" />
-                            <TextBlock Grid.Column="1"
-                                       Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}', TargetNullValue='Not installed'}"
-                                       ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}', TargetNullValue='Never updated'}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
-        </ScrollViewer>
+                            <TextBlock Text="{Binding LocalVersion}"
+                                       IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                        </StackPanel>
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}', TargetNullValue='Not installed'}"
+                                   ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}', TargetNullValue='Never updated'}" />
+                    </Grid>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
     </Grid>
 </UserControl>
