@@ -8,6 +8,7 @@ namespace NightlyLauncher;
 
 public sealed class ViewLocator : StrongViewLocator {
     public ViewLocator() {
+        Register<AboutDialogViewModel, AboutDialogView>();
         Register<AppBrowserViewModel, AppBrowserView>();
         Register<EditDialogViewModel, EditDialogView>();
         Register<InputDialogViewModel, InputDialogView>();

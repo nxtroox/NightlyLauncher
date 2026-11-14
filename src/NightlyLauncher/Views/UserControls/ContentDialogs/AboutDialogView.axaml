@@ -1,0 +1,47 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
+             x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.AboutDialogView"
+             x:DataType="vm:AboutDialogViewModel">
+    <StackPanel Spacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+            <Image Source="/Assets/NightlyLauncher.ico"
+                   MaxWidth="32" />
+
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="NightlyLauncher"
+                           FontWeight="SemiBold" />
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="by "
+                               FontWeight="Light" />
+
+                    <HyperlinkButton Content="nxtroox"
+                                     NavigateUri="{Binding AuthorUri}"
+                                     FontWeight="Light"
+                                     Padding="0" />
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+
+        <StackPanel Spacing="4">
+            <TextBlock Text="Libraries" />
+
+            <ItemsControl ItemsSource="{Binding Libraries}"
+                          x:Name="LibraryItemsControl">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <HyperlinkButton Content="{Binding}"
+                                         Command="{Binding #LibraryItemsControl.((vm:AboutDialogViewModel)DataContext)?.OpenLibraryCommand}"
+                                         CommandParameter="{Binding}"
+                                         FontWeight="Light"
+                                         Padding="0" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </StackPanel>
+</UserControl>

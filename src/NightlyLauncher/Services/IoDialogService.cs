@@ -1,18 +1,34 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
-using Microsoft.Extensions.Localization;
+using System.IO;
+using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 
 namespace NightlyLauncher.Services;
 
-internal sealed class IoDialogService(IStringLocalizer<IoDialogService> localizer) : IIoDialogService {
-    public void OpenFolder(string path) {
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            Process.Start("explorer.exe", path);
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
-            Process.Start("open", path);
-        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            Process.Start("xdg-open", path);
-        else throw new NotImplementedException(localizer["CurrentOperatingSystemNotImplementedExceptionMessage"]);
+internal sealed class IoDialogService : IIoDialogService {
+    public Task<bool> OpenFolderAsync(string path) {
+        var topLevel = GetTopLevel();
+
+        return topLevel is null
+            ? throw new InvalidOperationException()
+            : topLevel.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
     }
+
+    public Task<bool> OpenUriAsync(Uri uri) {
+        var topLevel = GetTopLevel();
+
+        return topLevel is null
+            ? throw new InvalidOperationException()
+            : topLevel.Launcher.LaunchUriAsync(uri);
+    }
+
+    private static TopLevel? GetTopLevel() =>
+        Application.Current?.ApplicationLifetime switch {
+            IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
+            ISingleViewApplicationLifetime singleView => TopLevel.GetTopLevel(singleView.MainView),
+            _ => null
+        };
 }

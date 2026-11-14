@@ -23,6 +23,30 @@
                         </ui:FACommandBarButton.IconSource>
                     </ui:FACommandBarButton>
                 </ui:FACommandBar.PrimaryCommands>
+                <ui:FACommandBar.SecondaryCommands>
+                    <ui:FACommandBarButton Label="Report issues"
+                                           Command="{Binding OpenIssuesPageCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Bug" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+
+                    <ui:FACommandBarButton Label="Source code"
+                                           Command="{Binding OpenSourceCodePageCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Branch" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+
+                    <ui:FACommandBarSeparator />
+
+                    <ui:FACommandBarButton Label="About NightlyLauncher"
+                                           Command="{Binding OpenAboutDialogCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Info" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
+                </ui:FACommandBar.SecondaryCommands>
             </ui:FACommandBar>
         </Grid>
 

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="AboutContentDialogPrimaryButtonText" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="OpenFolderDialogTitle" xml:space="preserve">
     <value>Select folder</value>
   </data>

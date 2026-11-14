@@ -218,7 +218,7 @@ internal partial class LibraryViewModel : ViewModelBase {
 
     private async Task OpenFolderAsync(string path) {
         try {
-            _ioDialogService.OpenFolder(path);
+            await _ioDialogService.OpenFolderAsync(path);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,

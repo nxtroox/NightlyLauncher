@@ -3,7 +3,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using FluentAvalonia.UI.Controls;
 using HanumanInstitute.MvvmDialogs;
+using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
@@ -15,23 +17,51 @@ internal partial class SettingsViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
+    private readonly IIoDialogService _ioDialogService;
     private readonly IStringLocalizer<SettingsViewModel> _localizer;
 
     public SettingsViewModel(
         IConfigService configService,
         DialogOwner dialogOwner,
         IDialogService dialogService,
-        IRepositoryService repositoryService,
+        IIoDialogService ioDialogService,
         IStringLocalizer<SettingsViewModel> localizer) {
         _configService = configService;
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
+        _ioDialogService = ioDialogService;
         _localizer = localizer;
 
         Title = _localizer["SettingsViewTitle"];
     }
 
     [ObservableProperty] public partial Config? Config { get; private set; }
+
+    [RelayCommand]
+    private Task<FAContentDialogResult> OpenAboutDialog() {
+        var vm = _dialogService.CreateViewModel<AboutDialogViewModel>();
+
+        var contentDialogSettings = new ContentDialogSettings {
+            Content = vm,
+            DefaultButton = FAContentDialogButton.Primary,
+            PrimaryButtonText = _localizer["AboutContentDialogPrimaryButtonText"],
+            Title = vm.Title ?? string.Empty
+        };
+
+        return _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings);
+    }
+
+    [RelayCommand]
+    private Task<bool> OpenIssuesPage() =>
+        _ioDialogService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher/issues/new"));
+
+    [RelayCommand]
+    private Task<bool> OpenSourceCodePage() =>
+        _ioDialogService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher"));
+
+    [RelayCommand]
+    private Task Save(CancellationToken cancellationToken) =>
+        _configService.UpdateConfigAsync(Config!, cancellationToken);
 
     [RelayCommand]
     private Task SelectAppPath() =>
@@ -49,10 +79,6 @@ internal partial class SettingsViewModel : ViewModelBase {
         if (folder is not null)
             callback(folder.LocalPath);
     }
-
-    [RelayCommand]
-    private async Task Save(CancellationToken cancellationToken) =>
-        await _configService.UpdateConfigAsync(Config!, cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
         Config = await _configService.GetConfigAsync(cancellationToken);
