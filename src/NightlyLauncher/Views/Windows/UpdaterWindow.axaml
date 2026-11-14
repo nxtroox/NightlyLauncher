@@ -8,6 +8,7 @@
                  x:Class="NightlyLauncher.Views.Windows.UpdaterWindow"
                  x:DataType="vm:UpdaterViewModel"
                  Title="{Binding Title}"
+                 Icon="/Assets/NightlyLauncher.ico"
                  Height="200"
                  Width="600"
                  WindowStartupLocation="CenterScreen"
