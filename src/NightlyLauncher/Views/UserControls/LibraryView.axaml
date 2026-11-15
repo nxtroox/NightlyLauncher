@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
              xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
+             xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.LibraryView"
              x:DataType="vm:LibraryViewModel">
@@ -17,7 +18,7 @@
             <ui:FACommandBar Grid.Column="1"
                              DefaultLabelPosition="Right">
                 <ui:FACommandBar.PrimaryCommands>
-                    <ui:FACommandBarButton Label="Update repositories"
+                    <ui:FACommandBarButton Label="{loc:T UpdateRepositoriesCommandBarButtonLabel}"
                                            Command="{Binding UpdateRepositoriesCommand}">
                         <ui:FACommandBarButton.IconSource>
                             <ic:SymbolIconSource Symbol="ArrowClockwise" />
@@ -25,7 +26,7 @@
                     </ui:FACommandBarButton>
                 </ui:FACommandBar.PrimaryCommands>
                 <ui:FACommandBar.SecondaryCommands>
-                    <ui:FACommandBarButton Label="Open Apps folder"
+                    <ui:FACommandBarButton Label="{loc:T OpenAppsFolderCommandBarButtonLabel}"
                                            Command="{Binding OpenAppsFolderCommand}">
                         <ui:FACommandBarButton.IconSource>
                             <ic:SymbolIconSource Symbol="Folder" />
@@ -34,7 +35,7 @@
 
                     <ui:FACommandBarSeparator />
 
-                    <ui:FACommandBarButton Label="Exit"
+                    <ui:FACommandBarButton Label="{loc:T ExitCommandBarButtonLabel}"
                                            Command="{Binding ExitCommand}">
                         <ui:FACommandBarButton.IconSource>
                             <ic:SymbolIconSource Symbol="ArrowExit" />
@@ -57,7 +58,7 @@
                 <Style Selector="ListBoxItem">
                     <Setter Property="ContextFlyout">
                         <ui:FAMenuFlyout>
-                            <ui:FAMenuFlyoutItem Text="Launch"
+                            <ui:FAMenuFlyoutItem Text="{loc:T LaunchAppLabel}"
                                                  Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.LaunchAppCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
                                     <ic:SymbolIconSource Symbol="Play" />
@@ -66,14 +67,14 @@
 
                             <ui:FAMenuFlyoutSeparator />
 
-                            <ui:FAMenuFlyoutItem Text="Edit"
+                            <ui:FAMenuFlyoutItem Text="{loc:T EditAppLabel}"
                                                  Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.EditAppCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
                                     <ic:SymbolIconSource Symbol="Edit" />
                                 </ui:FAMenuFlyoutItem.IconSource>
                             </ui:FAMenuFlyoutItem>
 
-                            <ui:FAMenuFlyoutItem Text="Open folder"
+                            <ui:FAMenuFlyoutItem Text="{loc:T OpenAppFolderLabel}"
                                                  Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.OpenAppFolderCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
                                     <ic:SymbolIconSource Symbol="Folder" />
@@ -82,7 +83,7 @@
 
                             <ui:FAMenuFlyoutSeparator />
 
-                            <ui:FAMenuFlyoutItem Text="Remove"
+                            <ui:FAMenuFlyoutItem Text="{loc:T RemoveAppLabel}"
                                                  Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.RemoveAppCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
                                     <ic:SymbolIconSource Symbol="Delete" />
@@ -102,8 +103,9 @@
                         </StackPanel>
                         <TextBlock Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}', TargetNullValue='Not installed'}"
-                                   ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}', TargetNullValue='Never updated'}" />
+                                   Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}'}"
+                                   IsVisible="{Binding LastUpdatedOn, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                   ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}'}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>

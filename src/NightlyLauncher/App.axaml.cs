@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Extensions;
+using NightlyLauncher.Localization;
 using NightlyLauncher.ViewModels;
 using NightlyLauncher.Views.Windows;
 
@@ -16,6 +17,8 @@ public sealed class App : Application {
         collection.AddCommonServices();
 
         var services = collection.BuildServiceProvider();
+        LocalizationManager.Instance = services.GetRequiredService<LocalizationManager>();
+
         var vm = services.GetRequiredService<MainWindowViewModel>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

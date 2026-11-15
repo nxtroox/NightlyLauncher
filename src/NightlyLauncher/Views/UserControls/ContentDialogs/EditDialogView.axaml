@@ -3,16 +3,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+             xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
              x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.EditDialogView"
              x:DataType="vm:EditDialogViewModel">
     <ScrollViewer>
         <StackPanel Spacing="8">
             <StackPanel Spacing="4">
-                <TextBlock Text="Selected install option:" />
+                <TextBlock Text="{loc:T SelectedInstallOptionHeading}" />
                 <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
                           SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
-                          PlaceholderText="Select an installation option">
+                          PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplayName}"
@@ -24,9 +25,9 @@
 
             <StackPanel Spacing="4">
                 <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
-                          Content="Prompt on update" />
+                          Content="{loc:T UpdatePromptLabel}" />
                 <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
-                          Content="Portable mode" />
+                          Content="{loc:T PortableLabel}" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

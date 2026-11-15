@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AboutCommandBarButtonLabel" xml:space="preserve">
+    <value>NightlyLauncher</value>
+  </data>
+  <data name="AppPathLabel" xml:space="preserve">
+    <value>App path</value>
+  </data>
+  <data name="DownloadPathLabel" xml:space="preserve">
+    <value>Download path</value>
+  </data>
+  <data name="IssuesCommandBarButtonLabel" xml:space="preserve">
+    <value>Report issues</value>
+  </data>
+  <data name="SaveCommandBarButtonLabel" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SelectFolderLabel" xml:space="preserve">
+    <value>Select folder</value>
+  </data>
+  <data name="SourceCodeCommandBarButtonLabel" xml:space="preserve">
+    <value>Source code</value>
+  </data>
+</root>

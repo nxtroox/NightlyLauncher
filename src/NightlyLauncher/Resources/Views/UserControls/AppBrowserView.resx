@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AddAppLabel" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SearchPlaceholderText" xml:space="preserve">
+    <value>Search apps</value>
+  </data>
+</root>

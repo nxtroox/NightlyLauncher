@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="AppName" xml:space="preserve">
+    <value>NightlyLauncher</value>
+  </data>
+  <data name="AuthorName" xml:space="preserve">
+    <value>nxtroox</value>
+  </data>
+  <data name="By" xml:space="preserve">
+    <value>by </value>
+  </data>
+  <data name="LibrariesHeading" xml:space="preserve">
+    <value>Libraries</value>
+  </data>
+</root>

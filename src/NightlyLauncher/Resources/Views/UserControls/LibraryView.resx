@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="EditAppLabel" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ExitCommandBarButtonLabel" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="LaunchAppLabel" xml:space="preserve">
+    <value>Launch</value>
+  </data>
+  <data name="OpenAppFolderLabel" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="OpenAppsFolderCommandBarButtonLabel" xml:space="preserve">
+    <value>Open Apps folder</value>
+  </data>
+  <data name="RemoveAppLabel" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="UpdateRepositoriesCommandBarButtonLabel" xml:space="preserve">
+    <value>Update repositories</value>
+  </data>
+</root>

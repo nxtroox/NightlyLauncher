@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
+             xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
              x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.AboutDialogView"
              x:DataType="vm:AboutDialogViewModel">
@@ -12,14 +13,14 @@
                    MaxWidth="32" />
 
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="NightlyLauncher"
+                <TextBlock Text="{loc:T AppName}"
                            FontWeight="SemiBold" />
 
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="by "
+                    <TextBlock Text="{loc:T By}"
                                FontWeight="Light" />
 
-                    <HyperlinkButton Content="nxtroox"
+                    <HyperlinkButton Content="{loc:T AuthorName}"
                                      NavigateUri="{Binding AuthorUri}"
                                      FontWeight="Light"
                                      Padding="0" />
@@ -28,7 +29,7 @@
         </StackPanel>
 
         <StackPanel Spacing="4">
-            <TextBlock Text="Libraries" />
+            <TextBlock Text="{loc:T LibrariesHeading}" />
 
             <ItemsControl ItemsSource="{Binding Libraries}"
                           x:Name="LibraryItemsControl">

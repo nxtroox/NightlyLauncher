@@ -32,7 +32,6 @@ internal partial class AppBrowserViewModel : ViewModelBase {
         _localizer = localizer;
 
         Title = localizer["AppBrowserViewTitle"];
-        SearchPlaceholderText = localizer["AppBrowserSearchPlaceholderText"];
 
         Apps.CollectionChanged += (_, _) => ApplySearchFilter();
         ApplySearchFilter();
@@ -46,9 +45,7 @@ internal partial class AppBrowserViewModel : ViewModelBase {
     public partial AppManifest? SelectedApp { get; set; }
 
     [ObservableProperty] public partial Guid? SelectedInstallOptionGuid { get; private set; }
-
     [ObservableProperty] public partial string? SearchText { get; set; }
-    [ObservableProperty] public partial string? SearchPlaceholderText { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task AddApp(CancellationToken cancellationToken) {

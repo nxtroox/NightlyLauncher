@@ -5,6 +5,7 @@
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
              xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
+             xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.RepositoryManagerView"
              x:DataType="vm:RepositoryManagerViewModel">
@@ -16,7 +17,7 @@
 
             <ui:FACommandBar Grid.Column="1" DefaultLabelPosition="Right">
                 <ui:FACommandBar.PrimaryCommands>
-                    <ui:FACommandBarButton Label="Add repository"
+                    <ui:FACommandBarButton Label="{loc:T AddRepositoryCommandBarButtonLabel}"
                                            Command="{Binding AddRepositoryCommand}">
                         <ui:FACommandBarButton.IconSource>
                             <ic:SymbolIconSource Symbol="Add" />
@@ -25,7 +26,7 @@
 
                     <ui:FACommandBarSeparator />
 
-                    <ui:FACommandBarButton Label="Remove"
+                    <ui:FACommandBarButton Label="{loc:T RemoveRepositoryLabel}"
                                            Command="{Binding RemoveRepositoryCommand}">
                         <ui:FACommandBarButton.IconSource>
                             <ic:SymbolIconSource Symbol="Delete" />
@@ -49,7 +50,7 @@
                 <Style Selector="ListBoxItem">
                     <Setter Property="ContextFlyout">
                         <ui:FAMenuFlyout>
-                            <ui:FAMenuFlyoutItem Text="Remove"
+                            <ui:FAMenuFlyoutItem Text="{loc:T RemoveRepositoryLabel}"
                                                  Command="{Binding #RepositoryListBox.((vm:RepositoryManagerViewModel)DataContext)?.RemoveRepositoryCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
                                     <ic:SymbolIconSource Symbol="Delete" />

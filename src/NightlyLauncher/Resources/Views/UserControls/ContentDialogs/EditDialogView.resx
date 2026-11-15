@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="SelectedInstallOptionComboboxPlaceholderText" xml:space="preserve">
+    <value>Select an installation option</value>
+  </data>
+  <data name="SelectedInstallOptionHeading" xml:space="preserve">
+    <value>Selected install option:</value>
+  </data>
+  <data name="PortableLabel" xml:space="preserve">
+    <value>Portable mode</value>
+  </data>
+  <data name="UpdatePromptLabel" xml:space="preserve">
+    <value>Portable mode</value>
+  </data>
+</root>
