@@ -19,7 +19,7 @@
                    VerticalAlignment="Bottom" />
 
         <ProgressBar Value="{Binding ProgressValue}"
-                     Height="32"
+                     Height="24"
                      VerticalAlignment="Top"
                      IsIndeterminate="{Binding ProgressIsIndeterminate}"
                      Minimum="0"

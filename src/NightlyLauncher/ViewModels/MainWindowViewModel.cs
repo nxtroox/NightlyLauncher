@@ -36,7 +36,6 @@ internal partial class MainWindowViewModel : ViewModelBase {
     [ObservableProperty] public partial ViewModelBase? CurrentPage { get; set; }
 
     public ObservableCollection<NavigationItem> MenuItems { get; }
-
     public ObservableCollection<NavigationItem> FooterItems { get; }
 
     public new string? Title {
