@@ -1,8 +1,8 @@
 <Application xmlns="https://github.com/avaloniaui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             x:Class="NightlyLauncher.App"
              xmlns:local="using:NightlyLauncher"
              xmlns:styling="clr-namespace:FluentAvalonia.Styling;assembly=FluentAvalonia"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="NightlyLauncher.App"
              RequestedThemeVariant="Default">
 
     <Application.DataTemplates>
