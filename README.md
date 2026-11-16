@@ -20,13 +20,12 @@ You can download the latest version from the [releases page](https://github.com/
 > [!TIP]
 > You can configure everything from the UI and do not need to edit config files manually.
 
-> [!TIP]
-> Check out the [documentation](docs) if you have any questions.
-
 1. Add a repository. *(Open sidebar menu -> 'Repositories' -> 'Add')*
 2. Add an app. *(Open sidebar menu -> 'App Browser' -> Double click on the app you want to install)*
 3. (optional) Configure the app. *(Open sidebar menu -> 'Library' -> Right click on the app -> 'Edit')*
 4. The app will always update automatically when you launch it. *(Open sidebar menu -> 'Library' -> Double click an app to launch it)*
+
+Check out the [documentation](docs) if you have any questions.
 
 ## :scroll: License
 
