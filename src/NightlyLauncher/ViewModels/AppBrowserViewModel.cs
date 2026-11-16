@@ -44,8 +44,9 @@ internal partial class AppBrowserViewModel : ViewModelBase {
     [NotifyCanExecuteChangedFor(nameof(AddAppCommand))]
     public partial AppManifest? SelectedApp { get; set; }
 
-    [ObservableProperty] public partial Guid? SelectedInstallOptionGuid { get; private set; }
     [ObservableProperty] public partial string? SearchText { get; set; }
+
+    private Guid? SelectedInstallOptionGuid { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task AddApp(CancellationToken cancellationToken) {
@@ -123,9 +124,9 @@ internal partial class AppBrowserViewModel : ViewModelBase {
 
     private bool CanInteractWithApp() => SelectedApp is not null;
 
-    private async Task LoadAppsAsync(CancellationToken cancellationToken) {
+    private Task LoadAppsAsync(CancellationToken cancellationToken) {
         Apps.Clear();
-        await InitializeAsync(cancellationToken);
+        return InitializeAsync(cancellationToken);
     }
 
     private async Task InstallAppAsync(CancellationToken cancellationToken) {

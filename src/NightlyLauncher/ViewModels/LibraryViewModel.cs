@@ -185,8 +185,8 @@ internal partial class LibraryViewModel : ViewModelBase {
     }
 
     [RelayCommand]
-    private async Task UpdateRepositories(CancellationToken cancellationToken) =>
-        await _repositoryService.UpdateRepositoriesAsync(async exception => {
+    private Task UpdateRepositories(CancellationToken cancellationToken) =>
+        _repositoryService.UpdateRepositoriesAsync(async exception => {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
                 Content = exception.Message,

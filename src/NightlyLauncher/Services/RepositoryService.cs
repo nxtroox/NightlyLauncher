@@ -117,11 +117,11 @@ internal class RepositoryService(
         _repositories.AddRange(config.Repositories);
     }
 
-    private async Task<Repository?> GetRepositoryAsync(Uri uri, CancellationToken cancellationToken) =>
-        await httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
+    private Task<Repository?> GetRepositoryAsync(Uri uri, CancellationToken cancellationToken) =>
+        httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
 
-    private async Task UpdateConfig(CancellationToken cancellationToken) =>
-        await configService.UpdateConfigAsync(configService.Config with { Repositories = _repositories },
+    private Task UpdateConfig(CancellationToken cancellationToken) =>
+        configService.UpdateConfigAsync(configService.Config with { Repositories = _repositories },
             cancellationToken);
 
     private OperatingSystem GetCurrentOperatingSystem() =>
