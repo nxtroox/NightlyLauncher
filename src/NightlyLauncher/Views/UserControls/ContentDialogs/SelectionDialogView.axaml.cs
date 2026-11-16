@@ -2,6 +2,6 @@
 
 namespace NightlyLauncher.Views.UserControls.ContentDialogs;
 
-internal partial class SelectionDialogView : UserControl {
+internal sealed partial class SelectionDialogView : UserControl {
     public SelectionDialogView() => InitializeComponent();
 }

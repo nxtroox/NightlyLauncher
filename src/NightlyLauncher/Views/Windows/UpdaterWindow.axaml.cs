@@ -2,6 +2,6 @@
 
 namespace NightlyLauncher.Views.Windows;
 
-internal partial class UpdaterWindow : FAAppWindow {
+internal sealed partial class UpdaterWindow : FAAppWindow {
     public UpdaterWindow() => InitializeComponent();
 }

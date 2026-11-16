@@ -4,7 +4,7 @@ using NightlyLauncher.ViewModels;
 
 namespace NightlyLauncher.Views.UserControls;
 
-internal partial class RepositoryManagerView : UserControl {
+internal sealed partial class RepositoryManagerView : UserControl {
     public RepositoryManagerView() => InitializeComponent();
 
     protected override async void OnLoaded(RoutedEventArgs e) {

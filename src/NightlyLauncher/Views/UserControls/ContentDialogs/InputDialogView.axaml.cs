@@ -2,6 +2,6 @@
 
 namespace NightlyLauncher.Views.UserControls.ContentDialogs;
 
-internal partial class InputDialogView : UserControl {
+internal sealed partial class InputDialogView : UserControl {
     public InputDialogView() => InitializeComponent();
 }

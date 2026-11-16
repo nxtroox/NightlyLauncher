@@ -7,7 +7,7 @@ using NightlyLauncher.ViewModels;
 
 namespace NightlyLauncher.Views.UserControls;
 
-internal partial class LibraryView : UserControl {
+internal sealed partial class LibraryView : UserControl {
     public LibraryView() => InitializeComponent();
 
     protected override async void OnLoaded(RoutedEventArgs e) {
