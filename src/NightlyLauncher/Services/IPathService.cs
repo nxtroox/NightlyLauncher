@@ -6,5 +6,6 @@ internal interface IPathService {
     string AppPath { get; }
     string DatabasePath { get; }
     string DownloadPath { get; }
-    string GetInstallPath(InstalledApp app);
+    string RepositoryCachePath { get; }
+    string GetAppPath(InstalledApp app);
 }

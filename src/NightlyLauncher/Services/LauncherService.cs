@@ -27,7 +27,7 @@ internal sealed class LauncherService(
         progress.Report(new ProgressReport(-1,
             localizer["LaunchingAppProgressReportStatusText", app.Manifest.DisplayName]));
 
-        var executablePath = Path.Combine(pathService.GetInstallPath(app), option.LaunchOptions.ExecutablePath);
+        var executablePath = Path.Combine(pathService.GetAppPath(app), option.LaunchOptions.ExecutablePath);
 
         var startInfo = new ProcessStartInfo { FileName = executablePath, UseShellExecute = true };
 

@@ -22,7 +22,7 @@ internal sealed class AppUpdaterService(
     IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
     public void DeleteAppData(InstalledApp app) {
         try {
-            Directory.Delete(pathService.GetInstallPath(app), true);
+            Directory.Delete(pathService.GetAppPath(app), true);
         } catch (DirectoryNotFoundException) {
             /* ignore */
         }
@@ -47,7 +47,7 @@ internal sealed class AppUpdaterService(
 
             progress.Report(new ProgressReport(-1, localizer["UpdatingProgressReportStatusText"]));
 
-            var installPath = pathService.GetInstallPath(app);
+            var installPath = pathService.GetAppPath(app);
             Directory.CreateDirectory(installPath);
 
             await ExtractArchive(archivePath, installPath, cancellationToken);
@@ -87,7 +87,7 @@ internal sealed class AppUpdaterService(
 
         if (portablePath is null) return;
 
-        var path = Path.Combine(pathService.GetInstallPath(app), portablePath.Path);
+        var path = Path.Combine(pathService.GetAppPath(app), portablePath.Path);
         var disabledPath = path + ".disabled";
         var (source, destination) = app.Options.Portable ? (disabledPath, path) : (path, disabledPath);
 

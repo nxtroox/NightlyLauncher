@@ -48,7 +48,7 @@ internal sealed class ConfigService(
             stream, jsonSerializerOptions, cancellationToken) ?? new Config();
     }
 
-    // this is here so that DataBaseService and ConfigService don't depend on each other
+    // this is here so that PathService and ConfigService don't depend on each other
     private static string GetConfigPath() {
         var appDataConfig = Path.Combine(Environment.GetFolderPath(
             Environment.SpecialFolder.ApplicationData), "NightlyLauncher", "config.json");

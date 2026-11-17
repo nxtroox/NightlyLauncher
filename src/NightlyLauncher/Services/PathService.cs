@@ -21,7 +21,9 @@ internal sealed class PathService(IConfigService configService) : IPathService {
 
     public string DownloadPath => ParseRootedPath(configService.Config.DownloadPath, true);
 
-    public string GetInstallPath(InstalledApp app) =>
+    public string RepositoryCachePath => Path.Combine(LocalPath, "repositories.json");
+
+    public string GetAppPath(InstalledApp app) =>
         Path.Combine(ParseRootedPath(configService.Config.AppPath, true),
             app.Manifest.Guid + "_" + app.InstallOptionGuid);
 

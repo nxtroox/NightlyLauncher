@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
@@ -14,7 +16,9 @@ namespace NightlyLauncher.Services;
 internal sealed class RepositoryService(
     IConfigService configService,
     HttpClient httpClient,
-    IStringLocalizer<RepositoryService> localizer)
+    JsonSerializerOptions jsonSerializerOptions,
+    IStringLocalizer<RepositoryService> localizer,
+    IPathService pathService)
     : IRepositoryService {
     private List<Repository>? _repositories;
 
@@ -44,15 +48,19 @@ internal sealed class RepositoryService(
             }
         }
 
-        if (updated)
+        if (updated) {
             await UpdateConfig(cancellationToken);
+            await WriteRepositoriesAsync(cancellationToken);
+        }
     }
 
     public async Task AddRepositoryAsync(Uri uri, CancellationToken cancellationToken = default) {
         await LoadRepositoriesIfNeededAsync(cancellationToken);
 
         await AddRepositoryCoreAsync(uri, cancellationToken);
+
         await UpdateConfig(cancellationToken);
+        await WriteRepositoriesAsync(cancellationToken);
     }
 
     public async Task RemoveRepositoryAsync(Repository repository, CancellationToken cancellationToken = default) {
@@ -63,6 +71,7 @@ internal sealed class RepositoryService(
         if (found is not null) {
             _repositories!.Remove(found);
             await UpdateConfig(cancellationToken);
+            await WriteRepositoriesAsync(cancellationToken);
         } else
             throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.DisplayName]);
     }
@@ -130,6 +139,18 @@ internal sealed class RepositoryService(
 
     private Task<Repository?> GetRepositoryAsync(Uri uri, CancellationToken cancellationToken) =>
         httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
+
+    private async Task WriteRepositoriesAsync(CancellationToken cancellationToken) {
+        var path = pathService.RepositoryCachePath;
+
+        var directory = Path.GetDirectoryName(path);
+
+        if (directory is not null)
+            Directory.CreateDirectory(directory);
+
+        await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
+        await JsonSerializer.SerializeAsync(stream, _repositories, jsonSerializerOptions, cancellationToken);
+    }
 
     private Task UpdateConfig(CancellationToken cancellationToken) =>
         configService.UpdateConfigAsync(

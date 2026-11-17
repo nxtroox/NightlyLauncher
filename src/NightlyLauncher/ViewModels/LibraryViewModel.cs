@@ -140,7 +140,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private Task OpenAppFolder() => OpenFolderAsync(_pathService.GetInstallPath(SelectedApp!));
+    private Task OpenAppFolder() => OpenFolderAsync(_pathService.GetAppPath(SelectedApp!));
 
     [RelayCommand]
     private Task OpenAppsFolder() => OpenFolderAsync(_pathService.AppPath);
@@ -159,7 +159,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
-            if (Directory.Exists(_pathService.GetInstallPath(SelectedApp))) {
+            if (Directory.Exists(_pathService.GetAppPath(SelectedApp))) {
                 var removeAppDataMessageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
                     DefaultValue = false,
