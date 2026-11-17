@@ -41,9 +41,13 @@
                  x:Name="RepositoryListBox">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DisplayName}"
-                               ToolTip.Tip="{Binding UpdateUri}"
-                               VerticalAlignment="Center" />
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding DisplayName}"
+                                   ToolTip.Tip="{Binding UpdateUri}" />
+                        <TextBlock Text="{Binding Guid}"
+                                   FontWeight="Light"
+                                   FontSize="10" />
+                    </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
             <ListBox.Styles>

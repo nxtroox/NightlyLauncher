@@ -99,7 +99,9 @@
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding Manifest.DisplayName}" />
                             <TextBlock Text="{Binding LocalVersion}"
-                                       IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+                                       IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                       FontWeight="Light"
+                                       FontSize="10" />
                         </StackPanel>
                         <TextBlock Grid.Column="1"
                                    VerticalAlignment="Center"
