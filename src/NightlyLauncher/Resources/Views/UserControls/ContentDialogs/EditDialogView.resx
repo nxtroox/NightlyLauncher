@@ -10,6 +10,6 @@
     <value>Portable mode</value>
   </data>
   <data name="UpdatePromptLabel" xml:space="preserve">
-    <value>Portable mode</value>
+    <value>Prompt on update</value>
   </data>
 </root>

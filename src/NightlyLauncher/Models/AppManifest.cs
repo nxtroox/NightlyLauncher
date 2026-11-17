@@ -6,6 +6,6 @@ namespace NightlyLauncher.Models;
 internal sealed record AppManifest(
     Guid Guid,
     string DisplayName,
-    IEnumerable<InstallOption> InstallOptions,
+    IReadOnlyList<InstallOption> InstallOptions,
     bool UpdatePrompt = false,
     bool Portable = false);

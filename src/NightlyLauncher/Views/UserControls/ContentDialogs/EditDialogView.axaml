@@ -1,4 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:conv="clr-namespace:NightlyLauncher.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,7 +14,8 @@
                 <TextBlock Text="{loc:T SelectedInstallOptionHeading}" />
                 <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
                           SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
-                          PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}">
+                          PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
+                          IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding DisplayName}"
