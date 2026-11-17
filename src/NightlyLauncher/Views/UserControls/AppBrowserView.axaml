@@ -15,7 +15,7 @@
         <ListBox Grid.Row="1"
                  DoubleTapped="AppListBox_DoubleTapped"
                  ItemsSource="{Binding FilteredApps}"
-                 SelectedItem="{Binding SelectedApp}"
+                 SelectedItem="{Binding SelectedManifest}"
                  x:Name="AppListBox">
             <ListBox.KeyBindings>
                 <KeyBinding Command="{Binding AddAppCommand}"

@@ -3,12 +3,12 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using FluentIcons.Common;
 using Microsoft.Extensions.Localization;
-using NightlyLauncher.Models;
+using NightlyLauncher.Models.UI;
 using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class MainWindowViewModel : ViewModelBase {
+internal sealed partial class MainWindowViewModel : ViewModelBase {
     private readonly IStringLocalizer<MainWindowViewModel> _localizer;
     private readonly Func<Type, ViewModelBase> _viewModelFactory;
 

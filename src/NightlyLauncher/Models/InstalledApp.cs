@@ -4,7 +4,7 @@ namespace NightlyLauncher.Models;
 
 internal sealed record InstalledApp(
     AppManifest Manifest,
-    Guid SelectedInstallOptionGuid,
+    Guid InstallOptionGuid,
+    AppOptions Options,
     string? LocalVersion = null,
-    string? LatestVersion = null,
     DateTime? LastUpdatedOn = null);

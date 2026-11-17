@@ -5,7 +5,7 @@ using Microsoft.Extensions.Localization;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class UpdaterViewModel : ViewModelBase, IModalDialogViewModel, ICloseable {
+internal sealed partial class UpdaterViewModel : ViewModelBase, IModalDialogViewModel, ICloseable {
     public UpdaterViewModel(IStringLocalizer<UpdaterViewModel> localizer) => Title = localizer["UpdaterViewTitle"];
 
     [ObservableProperty] public partial string? StatusText { get; set; }

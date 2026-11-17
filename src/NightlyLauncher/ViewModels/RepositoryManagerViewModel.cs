@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
         Title = _localizer["RepositoryManagerViewTitle"];
     }
 
-    [ObservableProperty] public partial Config? Config { get; private set; }
+    [ObservableProperty] public partial List<Repository>? Repositories { get; private set; }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveRepositoryCommand))]
@@ -43,7 +44,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
     private bool CanModifyRepository => SelectedRepository is not null;
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
-        Config = await _configService.GetConfigAsync(cancellationToken);
+        Repositories = await _repositoryService.GetRepositoriesAsync(cancellationToken);
 
     [RelayCommand]
     private async Task AddRepository(CancellationToken cancellationToken) {
@@ -64,7 +65,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
         if (result is FAContentDialogResult.Primary) {
             try {
                 await _repositoryService.AddRepositoryAsync(new Uri(vm.Text!), cancellationToken);
-                Config = await _configService.GetConfigAsync(cancellationToken);
+                await InitializeAsync(cancellationToken);
             } catch (Exception ex) {
                 var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.Ok,
@@ -94,10 +95,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
         if (result is true) {
             var repositoryToRemove = SelectedRepository!;
 
-            Config = Config! with {
-                Repositories = Config.Repositories?.Where(repository => repositoryToRemove.Guid != repository.Guid)
-                    .ToList()
-            };
+            Repositories = Repositories?.Where(repository => repositoryToRemove.Guid != repository.Guid).ToList();
 
             try {
                 await _repositoryService.RemoveRepositoryAsync(repositoryToRemove, cancellationToken);
@@ -112,7 +110,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
                 };
 
                 await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, errorMessageBoxSettings);
-                Config = await _configService.GetConfigAsync(cancellationToken);
+                await InitializeAsync(cancellationToken);
             }
         }
     }

@@ -8,25 +8,23 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
-using OperatingSystem = NightlyLauncher.Models.OperatingSystem;
 
 namespace NightlyLauncher.Services;
 
-internal class RepositoryService(
+internal sealed class RepositoryService(
     IConfigService configService,
     HttpClient httpClient,
     IStringLocalizer<RepositoryService> localizer)
     : IRepositoryService {
-    private List<Repository> _repositories = [];
+    private List<Repository>? _repositories;
 
     public async Task UpdateRepositoriesAsync(Func<Exception, Task> errorCallback,
         CancellationToken cancellationToken = default) {
-        await GetRepositoriesAsync(cancellationToken);
+        await LoadRepositoriesIfNeededAsync(cancellationToken);
 
         var updated = false;
-        for (var index = 0; index < _repositories.Count; index++) {
+        for (var index = 0; index < _repositories!.Count; index++) {
             var repo = _repositories[index];
-            if (repo.UpdateUri is null) continue;
 
             try {
                 var updatedRepository = await GetRepositoryAsync(repo.UpdateUri, cancellationToken);
@@ -51,67 +49,74 @@ internal class RepositoryService(
     }
 
     public async Task AddRepositoryAsync(Uri uri, CancellationToken cancellationToken = default) {
-        await GetRepositoriesAsync(cancellationToken);
+        await LoadRepositoriesIfNeededAsync(cancellationToken);
 
-        var repo = await GetRepositoryAsync(uri, cancellationToken);
-
-        if (repo is not null) {
-            if (_repositories.Any(r => r.UpdateUri == repo.UpdateUri || r.Guid == repo.Guid))
-                throw new InvalidOperationException(localizer["RepositoryAlreadyInstalledExceptionMessage"]);
-
-            _repositories.Add(repo);
-            await UpdateConfig(cancellationToken);
-        } else
-            throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
+        await AddRepositoryCoreAsync(uri, cancellationToken);
+        await UpdateConfig(cancellationToken);
     }
 
     public async Task RemoveRepositoryAsync(Repository repository, CancellationToken cancellationToken = default) {
-        await GetRepositoriesAsync(cancellationToken);
+        await LoadRepositoriesIfNeededAsync(cancellationToken);
 
-        var found = _repositories.FirstOrDefault(r => r.Guid == repository.Guid);
+        var found = _repositories!.FirstOrDefault(r => r.Guid == repository.Guid);
 
         if (found is not null) {
-            _repositories.Remove(found);
+            _repositories!.Remove(found);
             await UpdateConfig(cancellationToken);
         } else
             throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.DisplayName]);
     }
 
     public async Task<List<AppManifest>> GetAvailableAppsAsync(CancellationToken cancellationToken = default) {
-        await GetRepositoriesAsync(cancellationToken);
+        await LoadRepositoriesIfNeededAsync(cancellationToken);
 
         return [
-            .. _repositories.SelectMany(repo => repo.Apps)
+            .. _repositories!.SelectMany(repo => repo.Apps)
                 .Where(manifest => manifest.InstallOptions.Any(option =>
-                    CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture)))
+                    CheckAppCompatibility(option.Platform.OsType, option.Platform.Architecture)))
         ];
     }
 
-    public bool CheckAppCompatibility(OperatingSystem requestedOperatingSystem, Architecture requestedArchitecture) {
+    public async Task<List<Repository>> GetRepositoriesAsync(CancellationToken cancellationToken = default) {
+        await LoadRepositoriesIfNeededAsync(cancellationToken);
+        return _repositories!;
+    }
+
+    public bool CheckAppCompatibility(OsType requestedOsType, Architecture requestedArchitecture) {
         var os = GetCurrentOperatingSystem();
-        if (os != requestedOperatingSystem) return false;
+        if (os != requestedOsType) return false;
 
         var osArchitecture = RuntimeInformation.OSArchitecture;
 
-        if (os is not OperatingSystem.MacOs && osArchitecture is Architecture.X64 &&
+        if (os is not OsType.MacOs && osArchitecture is Architecture.X64 &&
             requestedArchitecture is Architecture.X86)
             return true;
 
-        if (os is not OperatingSystem.Linux && osArchitecture is Architecture.Arm64 &&
+        if (os is not OsType.Linux && osArchitecture is Architecture.Arm64 &&
             requestedArchitecture is Architecture.X64)
             return true;
 
-        if (os is OperatingSystem.Windows && osArchitecture is Architecture.Arm64 &&
+        if (os is OsType.Windows && osArchitecture is Architecture.Arm64 &&
             requestedArchitecture is Architecture.X86)
             return true;
 
         return osArchitecture == requestedArchitecture;
     }
 
-    private async Task GetRepositoriesAsync(CancellationToken cancellationToken) {
-        if (_repositories.Count == 0)
-            await LoadRepositoriesAsync(cancellationToken);
+    private async Task AddRepositoryCoreAsync(Uri uri, CancellationToken cancellationToken) {
+        var repo = await GetRepositoryAsync(uri, cancellationToken);
+
+        if (repo is not null) {
+            if (_repositories!.Any(r => r.UpdateUri == repo.UpdateUri || r.Guid == repo.Guid))
+                throw new InvalidOperationException(localizer["RepositoryAlreadyInstalledExceptionMessage"]);
+
+            _repositories!.Add(repo);
+        } else
+            throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
     }
+
+    private Task LoadRepositoriesIfNeededAsync(CancellationToken cancellationToken) =>
+        _repositories is null ? LoadRepositoriesAsync(cancellationToken) : Task.CompletedTask;
 
     private async Task LoadRepositoriesAsync(CancellationToken cancellationToken) {
         _repositories = [];
@@ -119,19 +124,21 @@ internal class RepositoryService(
         var config = await configService.GetConfigAsync(cancellationToken);
         if (config.Repositories is null or []) return;
 
-        _repositories.AddRange(config.Repositories);
+        foreach (var uri in config.Repositories)
+            await AddRepositoryCoreAsync(uri, cancellationToken);
     }
 
     private Task<Repository?> GetRepositoryAsync(Uri uri, CancellationToken cancellationToken) =>
         httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
 
     private Task UpdateConfig(CancellationToken cancellationToken) =>
-        configService.UpdateConfigAsync(configService.Config with { Repositories = _repositories },
+        configService.UpdateConfigAsync(
+            configService.Config with { Repositories = [.. _repositories!.Select(repository => repository.UpdateUri)] },
             cancellationToken);
 
-    private OperatingSystem GetCurrentOperatingSystem() =>
-        System.OperatingSystem.IsWindows() ? OperatingSystem.Windows
-        : System.OperatingSystem.IsMacOS() ? OperatingSystem.MacOs
-        : System.OperatingSystem.IsLinux() ? OperatingSystem.Linux
+    private OsType GetCurrentOperatingSystem() =>
+        OperatingSystem.IsWindows() ? OsType.Windows
+        : OperatingSystem.IsMacOS() ? OsType.MacOs
+        : OperatingSystem.IsLinux() ? OsType.Linux
         : throw new PlatformNotSupportedException(localizer["UnsupportedOperatingSystemExceptionMessage"]);
 }

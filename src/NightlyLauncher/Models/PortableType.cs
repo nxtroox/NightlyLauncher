@@ -1,6 +1,6 @@
 ﻿namespace NightlyLauncher.Models;
 
-internal enum PortablePathType {
+internal enum PortableType {
     File,
     Folder
 }

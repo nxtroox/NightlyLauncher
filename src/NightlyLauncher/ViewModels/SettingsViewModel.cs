@@ -13,7 +13,7 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class SettingsViewModel : ViewModelBase {
+internal sealed partial class SettingsViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;

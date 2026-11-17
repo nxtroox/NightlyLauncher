@@ -15,7 +15,7 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class AppBrowserViewModel : ViewModelBase {
+internal sealed partial class AppBrowserViewModel : ViewModelBase {
     private readonly IDatabaseService _databaseService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
@@ -42,7 +42,7 @@ internal partial class AppBrowserViewModel : ViewModelBase {
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddAppCommand))]
-    public partial AppManifest? SelectedApp { get; set; }
+    public partial AppManifest? SelectedManifest { get; set; }
 
     [ObservableProperty] public partial string? SearchText { get; set; }
 
@@ -50,8 +50,8 @@ internal partial class AppBrowserViewModel : ViewModelBase {
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task AddApp(CancellationToken cancellationToken) {
-        var compatibleOptions = SelectedApp!.InstallOptions.Where(option =>
-                _repositoryService.CheckAppCompatibility(option.Platform.OperatingSystem, option.Platform.Architecture))
+        var compatibleOptions = SelectedManifest!.InstallOptions.Where(option =>
+                _repositoryService.CheckAppCompatibility(option.Platform.OsType, option.Platform.Architecture))
             .ToList();
 
         if (compatibleOptions.Count is 1) {
@@ -93,8 +93,8 @@ internal partial class AppBrowserViewModel : ViewModelBase {
         foreach (var app in matches)
             FilteredApps.Add(app);
 
-        if (SelectedApp is not null && !FilteredApps.Contains(SelectedApp))
-            SelectedApp = null;
+        if (SelectedManifest is not null && !FilteredApps.Contains(SelectedManifest))
+            SelectedManifest = null;
     }
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
@@ -122,7 +122,7 @@ internal partial class AppBrowserViewModel : ViewModelBase {
             Apps.Add(app);
     }
 
-    private bool CanInteractWithApp() => SelectedApp is not null;
+    private bool CanInteractWithApp() => SelectedManifest is not null;
 
     private Task LoadAppsAsync(CancellationToken cancellationToken) {
         Apps.Clear();
@@ -130,9 +130,10 @@ internal partial class AppBrowserViewModel : ViewModelBase {
     }
 
     private async Task InstallAppAsync(CancellationToken cancellationToken) {
-        var app = new InstalledApp(SelectedApp!,
-            SelectedInstallOptionGuid ??
-            throw new InvalidOperationException(_localizer["NoInstallOptionSelectedExceptionMessage"]));
+        var app = new InstalledApp(SelectedManifest!,
+            SelectedInstallOptionGuid ?? throw new InvalidOperationException(
+                _localizer["NoInstallOptionSelectedExceptionMessage"]),
+            SelectedManifest!.DefaultOptions ?? new AppOptions());
 
         await _databaseService.UpdateAppAsync(app, cancellationToken);
         await LoadAppsAsync(cancellationToken);

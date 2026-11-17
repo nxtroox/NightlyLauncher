@@ -4,23 +4,23 @@ using NightlyLauncher.Models;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class EditDialogViewModel : ObservableObject {
+internal sealed partial class EditDialogViewModel : ObservableObject {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedInstallOption))]
     public partial InstalledApp? SelectedApp { get; set; }
 
     public InstallOption? SelectedInstallOption {
         get => SelectedApp?.Manifest.InstallOptions.FirstOrDefault(option =>
-            option.Guid == SelectedApp.SelectedInstallOptionGuid);
+            option.Guid == SelectedApp.InstallOptionGuid);
 
         set {
             if (SelectedApp is not { } app ||
                 value is null || app.Manifest.InstallOptions.All(option => option.Guid != value.Guid) ||
-                app.SelectedInstallOptionGuid == value.Guid) {
+                app.InstallOptionGuid == value.Guid) {
                 return;
             }
 
-            SelectedApp = app with { SelectedInstallOptionGuid = value.Guid };
+            SelectedApp = app with { InstallOptionGuid = value.Guid };
         }
     }
 }

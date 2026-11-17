@@ -54,13 +54,13 @@ internal sealed class DatabaseService(
     }
 
     public InstallOption FindInstallOption(InstalledApp app) {
-        var option = app.Manifest.InstallOptions.FirstOrDefault(o => o.Guid == app.SelectedInstallOptionGuid);
+        var option = app.Manifest.InstallOptions.FirstOrDefault(o => o.Guid == app.InstallOptionGuid);
 
         if (option is not null) return option;
 
-        var optionName = string.IsNullOrWhiteSpace(app.SelectedInstallOptionGuid.ToString())
+        var optionName = string.IsNullOrWhiteSpace(app.InstallOptionGuid.ToString())
             ? localizer["UnknownInstallOptionPlaceholder"]
-            : app.SelectedInstallOptionGuid.ToString();
+            : app.InstallOptionGuid.ToString();
 
         throw new InvalidOperationException(localizer["SelectedInstallOptionNotFoundExceptionMessage", optionName]);
     }

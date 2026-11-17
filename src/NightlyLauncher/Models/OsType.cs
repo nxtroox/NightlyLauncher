@@ -1,6 +1,6 @@
 ﻿namespace NightlyLauncher.Models;
 
-internal enum OperatingSystem {
+internal enum OsType {
     Windows,
     MacOs,
     Linux

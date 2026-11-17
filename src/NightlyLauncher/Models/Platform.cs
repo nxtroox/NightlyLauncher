@@ -2,6 +2,6 @@
 
 namespace NightlyLauncher.Models;
 
-internal record Platform(
-    OperatingSystem OperatingSystem,
+internal readonly record struct Platform(
+    OsType OsType,
     Architecture Architecture);

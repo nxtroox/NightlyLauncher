@@ -5,6 +5,6 @@ namespace NightlyLauncher.Models;
 
 internal record Repository(
     Guid Guid,
-    List<AppManifest> Apps,
     string DisplayName,
-    Uri? UpdateUri = null);
+    Uri UpdateUri,
+    IReadOnlyList<AppManifest> Apps);

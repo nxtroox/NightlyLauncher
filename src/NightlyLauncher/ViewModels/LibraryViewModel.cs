@@ -18,7 +18,7 @@ using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class LibraryViewModel : ViewModelBase {
+internal sealed partial class LibraryViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly IDatabaseService _databaseService;
     private readonly DialogOwner _dialogOwner;

@@ -2,6 +2,6 @@
 
 namespace NightlyLauncher.Models;
 
-internal sealed record LaunchCommand(
+internal sealed record LaunchOptions(
     string ExecutablePath,
-    List<string>? Arguments = null);
+    IReadOnlyList<string>? Arguments = null);

@@ -28,9 +28,9 @@
             </StackPanel>
 
             <StackPanel Spacing="4">
-                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.UpdatePrompt}"
+                <CheckBox IsChecked="{Binding SelectedApp?.Options.UpdatePrompt}"
                           Content="{loc:T UpdatePromptLabel}" />
-                <CheckBox IsChecked="{Binding SelectedApp?.Manifest.Portable}"
+                <CheckBox IsChecked="{Binding SelectedApp?.Options.Portable}"
                           Content="{loc:T PortableLabel}" />
             </StackPanel>
         </StackPanel>

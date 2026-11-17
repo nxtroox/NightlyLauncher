@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentIcons.Common;
 
-namespace NightlyLauncher.Models;
+namespace NightlyLauncher.Models.UI;
 
 internal sealed record NavigationItem(
     string Label,

@@ -2,7 +2,7 @@
 
 namespace NightlyLauncher.ViewModels;
 
-internal partial class InputDialogViewModel : ObservableObject {
+internal sealed partial class InputDialogViewModel : ObservableObject {
     [ObservableProperty] public partial string? Text { get; set; }
     [ObservableProperty] public partial string? TextHint { get; set; }
 }

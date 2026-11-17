@@ -1,5 +1,5 @@
 ﻿namespace NightlyLauncher.Models;
 
-internal sealed record ProgressReport(
+internal readonly record struct ProgressReport(
     int Percentage,
     string StatusText);

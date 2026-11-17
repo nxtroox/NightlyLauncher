@@ -57,8 +57,7 @@ internal sealed class AppUpdaterService(
             var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
 
             await databaseService.UpdateAppAsync(
-                new InstalledApp(app.Manifest, app.SelectedInstallOptionGuid, latestVersion, latestVersion,
-                    DateTime.UtcNow), cancellationToken);
+                app with { LastUpdatedOn = DateTime.UtcNow, LocalVersion = latestVersion }, cancellationToken);
 
             progress.Report(new ProgressReport(100, localizer["UpdateCompleteProgressReportStatusText"]));
         } finally {
@@ -71,16 +70,8 @@ internal sealed class AppUpdaterService(
         CancellationToken cancellationToken = default) {
         progress.Report(new ProgressReport(-1, localizer["CheckingForUpdatesProgressReportStatusText"]));
 
-        if (app.LocalVersion != app.LatestVersion) {
-            progress.Report(new ProgressReport(-1, localizer["UpdateFoundProgressReportStatusText"]));
-            return true;
-        }
-
         var option = databaseService.FindInstallOption(app);
         var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
-
-        if (app.LatestVersion != latestVersion)
-            await databaseService.UpdateAppAsync(app with { LatestVersion = latestVersion }, cancellationToken);
 
         if (app.LocalVersion != latestVersion) {
             progress.Report(new ProgressReport(-1, localizer["UpdateFoundProgressReportStatusText"]));
@@ -98,17 +89,17 @@ internal sealed class AppUpdaterService(
 
         var path = Path.Combine(pathService.GetInstallPath(app), portablePath.Path);
         var disabledPath = path + ".disabled";
-        var (source, destination) = app.Manifest.Portable ? (disabledPath, path) : (path, disabledPath);
+        var (source, destination) = app.Options.Portable ? (disabledPath, path) : (path, disabledPath);
 
-        if (portablePath.PortablePathType is PortablePathType.Folder) {
+        if (portablePath.PortableType is PortableType.Folder) {
             if (Directory.Exists(source))
                 Directory.Move(source, destination);
-            else if (app.Manifest.Portable)
+            else if (app.Options.Portable)
                 Directory.CreateDirectory(path);
         } else {
             if (File.Exists(source))
                 File.Move(source, destination);
-            else if (app.Manifest.Portable)
+            else if (app.Options.Portable)
                 await File.WriteAllBytesAsync(path, [], cancellationToken);
         }
     }
@@ -127,7 +118,7 @@ internal sealed class AppUpdaterService(
     }
 
     private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
-        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitUri, cancellationToken);
+        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitApiUri, cancellationToken);
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHashExceptionMessage"]);
     }
 

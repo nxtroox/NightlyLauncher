@@ -27,10 +27,13 @@ internal sealed class LauncherService(
         progress.Report(new ProgressReport(-1,
             localizer["LaunchingAppProgressReportStatusText", app.Manifest.DisplayName]));
 
-        var executablePath = Path.Combine(pathService.GetInstallPath(app), option.LaunchCommand.ExecutablePath);
+        var executablePath = Path.Combine(pathService.GetInstallPath(app), option.LaunchOptions.ExecutablePath);
 
         var startInfo = new ProcessStartInfo { FileName = executablePath, UseShellExecute = true };
-        option.LaunchCommand.Arguments?.ForEach(a => startInfo.ArgumentList.Add(a));
+
+        if (option.LaunchOptions.Arguments is not null)
+            foreach (var argument in option.LaunchOptions.Arguments)
+                startInfo.ArgumentList.Add(argument);
 
         Process.Start(startInfo);
     }

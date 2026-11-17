@@ -7,5 +7,4 @@ internal sealed record AppManifest(
     Guid Guid,
     string DisplayName,
     IReadOnlyList<InstallOption> InstallOptions,
-    bool UpdatePrompt = false,
-    bool Portable = false);
+    AppOptions? DefaultOptions = null);

@@ -5,8 +5,8 @@ namespace NightlyLauncher.Models;
 internal sealed record InstallOption(
     Guid Guid,
     Uri DownloadUri,
-    Uri LatestCommitUri,
-    LaunchCommand LaunchCommand,
+    Uri LatestCommitApiUri,
+    LaunchOptions LaunchOptions,
     string DisplayName,
     Platform Platform,
-    PortablePath? PortablePath = null);
+    PortableOptions? PortablePath = null);
