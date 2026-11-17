@@ -2,6 +2,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:models="clr-namespace:NightlyLauncher.Models"
+             xmlns:ui="clr-namespace:FluentAvalonia.UI.Controls;assembly=FluentAvalonia"
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
@@ -10,14 +11,14 @@
     <StackPanel Spacing="8">
         <TextBlock Text="{Binding Content}" />
 
-        <ComboBox ItemsSource="{Binding Items}"
-                  SelectedItem="{Binding SelectedItem}">
-            <ComboBox.ItemTemplate>
-                <DataTemplate DataType="{x:Type models:InstallOption}">
+        <ui:FAComboBox ItemsSource="{Binding Items}"
+                       SelectedItem="{Binding SelectedItem}">
+            <ui:FAComboBox.ItemTemplate>
+                <DataTemplate DataType="models:InstallOption">
                     <TextBlock Text="{Binding DisplayName}"
                                ToolTip.Tip="{Binding Guid}" />
                 </DataTemplate>
-            </ComboBox.ItemTemplate>
-        </ComboBox>
+            </ui:FAComboBox.ItemTemplate>
+        </ui:FAComboBox>
     </StackPanel>
 </UserControl>

@@ -3,8 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
              xmlns:vm="clr-namespace:NightlyLauncher.ViewModels"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:NightlyLauncher.Models"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="450"
              x:Class="NightlyLauncher.Views.UserControls.ContentDialogs.EditDialogView"
              x:DataType="vm:EditDialogViewModel">
@@ -12,17 +14,17 @@
         <StackPanel Spacing="8">
             <StackPanel Spacing="4">
                 <TextBlock Text="{loc:T SelectedInstallOptionHeading}" />
-                <ComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
-                          SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
-                          PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
-                          IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
+                <ui:FAComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
+                               SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
+                               PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
+                               IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
+                    <ui:FAComboBox.ItemTemplate>
+                        <DataTemplate DataType="models:InstallOption">
                             <TextBlock Text="{Binding DisplayName}"
                                        ToolTip.Tip="{Binding Guid}" />
                         </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                    </ui:FAComboBox.ItemTemplate>
+                </ui:FAComboBox>
             </StackPanel>
 
             <StackPanel Spacing="4">
