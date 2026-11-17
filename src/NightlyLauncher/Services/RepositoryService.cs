@@ -36,8 +36,13 @@ internal class RepositoryService(
                                            localizer["RepositoryNotFetchedExceptionMessage"]);
 
                 updated = true;
-            } catch (Exception ex) {
-                await errorCallback(ex);
+            } catch (Exception exception) {
+                var detailedException = new InvalidOperationException(
+                    localizer["RepositoryNotUpdatedExceptionMessage",
+                        repo.DisplayName,
+                        exception.Message]);
+
+                await errorCallback(detailedException);
             }
         }
 
