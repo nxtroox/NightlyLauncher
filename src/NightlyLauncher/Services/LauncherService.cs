@@ -3,6 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
 
@@ -14,7 +18,7 @@ internal sealed class LauncherService(
     IDatabaseService databaseService,
     IAppUpdaterService updaterService)
     : ILauncherService {
-    public async Task LaunchAppAsync(InstalledApp app, IProgress<ProgressReport> progress,
+    public async Task StartAppAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
         var option = databaseService.FindInstallOption(app);
 
@@ -30,4 +34,27 @@ internal sealed class LauncherService(
 
         Process.Start(startInfo);
     }
+
+    public Task<bool> OpenFolderAsync(string path) {
+        var topLevel = GetTopLevel();
+
+        return topLevel is null
+            ? throw new InvalidOperationException()
+            : topLevel.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
+    }
+
+    public Task<bool> OpenUriAsync(Uri uri) {
+        var topLevel = GetTopLevel();
+
+        return topLevel is null
+            ? throw new InvalidOperationException()
+            : topLevel.Launcher.LaunchUriAsync(uri);
+    }
+
+    private static TopLevel? GetTopLevel() =>
+        Application.Current?.ApplicationLifetime switch {
+            IClassicDesktopStyleApplicationLifetime desktop => desktop.MainWindow,
+            ISingleViewApplicationLifetime singleView => TopLevel.GetTopLevel(singleView.MainView),
+            _ => null
+        };
 }

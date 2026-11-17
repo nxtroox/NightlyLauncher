@@ -17,19 +17,19 @@ internal partial class SettingsViewModel : ViewModelBase {
     private readonly IConfigService _configService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
-    private readonly IIoDialogService _ioDialogService;
+    private readonly ILauncherService _launcherService;
     private readonly IStringLocalizer<SettingsViewModel> _localizer;
 
     public SettingsViewModel(
         IConfigService configService,
         DialogOwner dialogOwner,
         IDialogService dialogService,
-        IIoDialogService ioDialogService,
+        ILauncherService launcherService,
         IStringLocalizer<SettingsViewModel> localizer) {
         _configService = configService;
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
-        _ioDialogService = ioDialogService;
+        _launcherService = launcherService;
         _localizer = localizer;
 
         Title = _localizer["SettingsViewTitle"];
@@ -53,11 +53,11 @@ internal partial class SettingsViewModel : ViewModelBase {
 
     [RelayCommand]
     private Task<bool> OpenIssuesPage() =>
-        _ioDialogService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher/issues/new"));
+        _launcherService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher/issues/new"));
 
     [RelayCommand]
     private Task<bool> OpenSourceCodePage() =>
-        _ioDialogService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher"));
+        _launcherService.OpenUriAsync(new Uri("https://github.com/nxtroox/NightlyLauncher"));
 
     [RelayCommand]
     private Task Save(CancellationToken cancellationToken) =>

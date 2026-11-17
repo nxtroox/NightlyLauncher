@@ -8,10 +8,10 @@ using NightlyLauncher.Services;
 namespace NightlyLauncher.ViewModels;
 
 internal sealed partial class AboutDialogViewModel : ViewModelBase {
-    private readonly IIoDialogService _ioDialogService;
+    private readonly ILauncherService _launcherService;
 
-    public AboutDialogViewModel(IStringLocalizer<AboutDialogViewModel> localizer, IIoDialogService dialogService) {
-        _ioDialogService = dialogService;
+    public AboutDialogViewModel(IStringLocalizer<AboutDialogViewModel> localizer, ILauncherService launcherService) {
+        _launcherService = launcherService;
 
         Title = localizer["AboutDialogViewTitle"];
         AuthorUri = new Uri("https://github.com/nxtroox");
@@ -35,5 +35,5 @@ internal sealed partial class AboutDialogViewModel : ViewModelBase {
 
     [RelayCommand]
     private Task<bool> OpenLibrary(string nuGetPackageName) =>
-        _ioDialogService.OpenUriAsync(new Uri("https://www.nuget.org/packages/" + nuGetPackageName));
+        _launcherService.OpenUriAsync(new Uri("https://www.nuget.org/packages/" + nuGetPackageName));
 }

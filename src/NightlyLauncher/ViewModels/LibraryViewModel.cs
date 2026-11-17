@@ -23,7 +23,6 @@ internal partial class LibraryViewModel : ViewModelBase {
     private readonly IDatabaseService _databaseService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
-    private readonly IIoDialogService _ioDialogService;
     private readonly ILauncherService _launcherService;
     private readonly IStringLocalizer<LibraryViewModel> _localizer;
     private readonly IPathService _pathService;
@@ -35,7 +34,6 @@ internal partial class LibraryViewModel : ViewModelBase {
         DialogOwner dialogOwner,
         IDialogService dialogService,
         ILauncherService launcherService,
-        IIoDialogService ioDialogService,
         IStringLocalizer<LibraryViewModel> localizer,
         IPathService pathService,
         IRepositoryService repositoryService,
@@ -45,7 +43,6 @@ internal partial class LibraryViewModel : ViewModelBase {
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
         _launcherService = launcherService;
-        _ioDialogService = ioDialogService;
         _localizer = localizer;
         _pathService = pathService;
         _repositoryService = repositoryService;
@@ -107,7 +104,7 @@ internal partial class LibraryViewModel : ViewModelBase {
             var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
             var shouldUpdate = SelectedApp!.LastUpdatedOn is null || needsUpdate;
 
-            if (shouldUpdate && SelectedApp.LastUpdatedOn is not null && SelectedApp.Manifest.UpdatePrompt) {
+            if (shouldUpdate && SelectedApp.LastUpdatedOn is not null && SelectedApp.Options.UpdatePrompt) {
                 var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
                     Content = _localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.DisplayName],
@@ -123,7 +120,7 @@ internal partial class LibraryViewModel : ViewModelBase {
             if (shouldUpdate)
                 await _updaterService.UpdateAsync(SelectedApp, progress, cancellationToken);
 
-            await _launcherService.LaunchAppAsync(SelectedApp, progress, cancellationToken);
+            await _launcherService.StartAppAsync(SelectedApp, progress, cancellationToken);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
@@ -218,7 +215,7 @@ internal partial class LibraryViewModel : ViewModelBase {
 
     private async Task OpenFolderAsync(string path) {
         try {
-            await _ioDialogService.OpenFolderAsync(path);
+            await _launcherService.OpenFolderAsync(path);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
