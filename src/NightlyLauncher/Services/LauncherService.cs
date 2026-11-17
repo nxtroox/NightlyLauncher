@@ -15,24 +15,21 @@ namespace NightlyLauncher.Services;
 internal sealed class LauncherService(
     IPathService pathService,
     IStringLocalizer<LauncherService> localizer,
-    IDatabaseService databaseService,
     IAppUpdaterService updaterService)
     : ILauncherService {
     public async Task StartAppAsync(InstalledApp app, IProgress<ProgressReport> progress,
         CancellationToken cancellationToken = default) {
-        var option = databaseService.FindInstallOption(app);
-
         await updaterService.ApplyPortableAsync(app, cancellationToken);
 
         progress.Report(new ProgressReport(-1,
             localizer["LaunchingAppProgressReportStatusText", app.Manifest.DisplayName]));
 
-        var executablePath = Path.Combine(pathService.GetAppPath(app), option.LaunchOptions.ExecutablePath);
+        var executablePath = Path.Combine(pathService.GetAppPath(app), app.Options.LaunchOptions.ExecutablePath);
 
         var startInfo = new ProcessStartInfo { FileName = executablePath, UseShellExecute = true };
 
-        if (option.LaunchOptions.Arguments is not null)
-            foreach (var argument in option.LaunchOptions.Arguments)
+        if (app.Options.LaunchOptions.Arguments is not null)
+            foreach (var argument in app.Options.LaunchOptions.Arguments)
                 startInfo.ArgumentList.Add(argument);
 
         Process.Start(startInfo);

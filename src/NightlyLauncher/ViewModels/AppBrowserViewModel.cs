@@ -130,10 +130,13 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
     }
 
     private async Task InstallAppAsync(CancellationToken cancellationToken) {
+        var option =
+            SelectedManifest!.InstallOptions.FirstOrDefault(option => option.Guid == SelectedInstallOptionGuid);
+
         var app = new InstalledApp(SelectedManifest!,
-            SelectedInstallOptionGuid ?? throw new InvalidOperationException(
-                _localizer["NoInstallOptionSelectedExceptionMessage"]),
-            SelectedManifest!.DefaultOptions ?? new AppOptions());
+            SelectedInstallOptionGuid ??
+            throw new InvalidOperationException(_localizer["NoInstallOptionSelectedExceptionMessage"]),
+            option!.AppOptions);
 
         await _databaseService.UpdateAppAsync(app, cancellationToken);
         await LoadAppsAsync(cancellationToken);

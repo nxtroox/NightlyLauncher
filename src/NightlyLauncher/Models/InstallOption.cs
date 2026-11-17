@@ -6,7 +6,7 @@ internal sealed record InstallOption(
     Guid Guid,
     Uri DownloadUri,
     Uri LatestCommitApiUri,
-    LaunchOptions LaunchOptions,
     string DisplayName,
     Platform Platform,
+    AppOptions AppOptions,
     PortableOptions? PortablePath = null);
