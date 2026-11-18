@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Net.Http.Headers;
 using System.Reflection;
-using System.Text.Json;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Localization;
+using NightlyLauncher.Serialization;
 using NightlyLauncher.Services;
 using NightlyLauncher.ViewModels;
 
@@ -55,9 +55,7 @@ internal static class ServiceCollectionExtensions {
                 new DialogFactory().AddFluent(FluentMessageBoxType.ContentDialog)),
             sp.GetService));
 
-        collection.AddSingleton(new JsonSerializerOptions {
-            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower, WriteIndented = true
-        });
+        collection.AddSingleton(AppJsonContext.Default.Options);
 
         collection.AddLocalization(options => options.ResourcesPath = "Resources");
         collection.AddSingleton<LocalizationManager>();
