@@ -19,7 +19,7 @@
     <value>Install option</value>
   </data>
   <data name="SelectedInstallOptionDescription" xml:space="preserve">
-    <value>May show incompatible options</value>
+    <value>List includes incompatible options</value>
   </data>
   <data name="UpdatePromptContent" xml:space="preserve">
     <value>Prompt on update</value>

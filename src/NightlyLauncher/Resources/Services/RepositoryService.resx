@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="RepositoryGuidIsNullExceptionMessage" xml:space="preserve">
+    <value>Repository GUID is not set.</value>
+  </data>
   <data name="RepositoryAlreadyInstalledExceptionMessage" xml:space="preserve">
     <value>Repository is already installed.</value>
   </data>
