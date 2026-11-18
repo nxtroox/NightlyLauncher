@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="AppOptionsHeading" xml:space="preserve">
+    <value>App options</value>
+  </data>
+  <data name="LaunchOptionsHeading" xml:space="preserve">
+    <value>Launch options</value>
+  </data>
+  <data name="PortableContent" xml:space="preserve">
+    <value>Portable mode</value>
+  </data>
+  <data name="PortableDescription" xml:space="preserve">
+    <value>Does not delete any files when toggled</value>
+  </data>
   <data name="SelectedInstallOptionComboboxPlaceholderText" xml:space="preserve">
     <value>Select an installation option</value>
   </data>
-  <data name="SelectedInstallOptionHeading" xml:space="preserve">
-    <value>Selected install option:</value>
+  <data name="SelectedInstallOptionContent" xml:space="preserve">
+    <value>Install option</value>
   </data>
-  <data name="PortableLabel" xml:space="preserve">
-    <value>Portable mode</value>
+  <data name="SelectedInstallOptionDescription" xml:space="preserve">
+    <value>May show incompatible options</value>
   </data>
-  <data name="UpdatePromptLabel" xml:space="preserve">
+  <data name="UpdatePromptContent" xml:space="preserve">
     <value>Prompt on update</value>
+  </data>
+  <data name="UpdatePromptDescription" xml:space="preserve">
+    <value>Allows to run app without updating</value>
   </data>
 </root>

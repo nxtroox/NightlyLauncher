@@ -1,6 +1,7 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:conv="clr-namespace:NightlyLauncher.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
              xmlns:loc="clr-namespace:NightlyLauncher.Localization"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="using:FluentAvalonia.UI.Controls"
@@ -12,27 +13,57 @@
              x:DataType="vm:EditDialogViewModel">
     <ScrollViewer>
         <StackPanel Spacing="8">
-            <StackPanel Spacing="4">
-                <TextBlock Text="{loc:T SelectedInstallOptionHeading}" />
-                <ui:FAComboBox ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
-                               SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
-                               PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
-                               IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
-                    <ui:FAComboBox.ItemTemplate>
-                        <DataTemplate DataType="models:InstallOption">
-                            <TextBlock Text="{Binding DisplayName}"
-                                       ToolTip.Tip="{Binding Guid}" />
-                        </DataTemplate>
-                    </ui:FAComboBox.ItemTemplate>
-                </ui:FAComboBox>
-            </StackPanel>
+            <TextBlock Text="{loc:T AppOptionsHeading}"
+                       FontWeight="SemiBold" />
 
             <StackPanel Spacing="4">
-                <CheckBox IsChecked="{Binding SelectedApp?.Options.UpdatePrompt}"
-                          Content="{loc:T UpdatePromptLabel}" />
-                <CheckBox IsChecked="{Binding SelectedApp?.Options.Portable}"
-                          Content="{loc:T PortableLabel}" />
+                <ui:FASettingsExpanderItem Content="{loc:T SelectedInstallOptionContent}"
+                                           Description="{loc:T SelectedInstallOptionDescription}">
+                    <ui:FASettingsExpanderItem.IconSource>
+                        <ic:SymbolIconSource Symbol="ArrowClockwise" />
+                    </ui:FASettingsExpanderItem.IconSource>
+
+                    <ui:FASettingsExpanderItem.Footer>
+                        <ui:FAComboBox Grid.Column="1"
+                                       ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
+                                       SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
+                                       PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
+                                       IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
+                            <ui:FAComboBox.ItemTemplate>
+                                <DataTemplate DataType="models:InstallOption">
+                                    <TextBlock Text="{Binding DisplayName}"
+                                               ToolTip.Tip="{Binding Guid}" />
+                                </DataTemplate>
+                            </ui:FAComboBox.ItemTemplate>
+                        </ui:FAComboBox>
+                    </ui:FASettingsExpanderItem.Footer>
+                </ui:FASettingsExpanderItem>
+
+                <ui:FASettingsExpanderItem Content="{loc:T PortableContent}"
+                                           Description="{loc:T PortableDescription}">
+                    <ui:FASettingsExpanderItem.IconSource>
+                        <ic:SymbolIconSource Symbol="Folder" />
+                    </ui:FASettingsExpanderItem.IconSource>
+
+                    <ui:FASettingsExpanderItem.Footer>
+                        <ToggleSwitch IsChecked="{Binding SelectedApp?.Options.Portable}" />
+                    </ui:FASettingsExpanderItem.Footer>
+                </ui:FASettingsExpanderItem>
             </StackPanel>
+
+            <TextBlock Text="{loc:T LaunchOptionsHeading}"
+                       FontWeight="SemiBold" />
+
+            <ui:FASettingsExpanderItem Content="{loc:T UpdatePromptContent}"
+                                       Description="{loc:T UpdatePromptDescription}">
+                <ui:FASettingsExpanderItem.IconSource>
+                    <ic:SymbolIconSource Symbol="Window" />
+                </ui:FASettingsExpanderItem.IconSource>
+
+                <ui:FASettingsExpanderItem.Footer>
+                    <ToggleSwitch IsChecked="{Binding SelectedApp?.Options.UpdatePrompt}" />
+                </ui:FASettingsExpanderItem.Footer>
+            </ui:FASettingsExpanderItem>
         </StackPanel>
     </ScrollViewer>
 </UserControl>
