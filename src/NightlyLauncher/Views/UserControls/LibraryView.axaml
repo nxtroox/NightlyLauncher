@@ -1,4 +1,5 @@
 ﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:cnv="clr-namespace:NightlyLauncher.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:ic="clr-namespace:FluentIcons.Avalonia.Fluent;assembly=FluentIcons.Avalonia.Fluent"
              xmlns:loc="clr-namespace:NightlyLauncher.Localization"
@@ -9,6 +10,10 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.LibraryView"
              x:DataType="vm:LibraryViewModel">
+    <UserControl.Resources>
+        <cnv:SubstringConverter x:Key="SubstringConverter" />
+    </UserControl.Resources>
+
     <Grid RowDefinitions="Auto,*" Margin="16" RowSpacing="8">
         <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="{Binding Title}"
@@ -98,10 +103,11 @@
                     <Grid ColumnDefinitions="*,Auto">
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding Manifest.DisplayName}" />
-                            <TextBlock Text="{Binding LocalVersion}"
-                                       IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                       FontWeight="Light"
-                                       FontSize="10" />
+                            <TextBlock
+                                Text="{Binding LocalVersion, Converter={StaticResource SubstringConverter}, ConverterParameter=7}"
+                                IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                FontWeight="Light"
+                                FontSize="10" />
                         </StackPanel>
                         <TextBlock Grid.Column="1"
                                    VerticalAlignment="Center"
