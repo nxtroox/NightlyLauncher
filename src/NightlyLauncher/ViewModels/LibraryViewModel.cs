@@ -19,7 +19,6 @@ using NightlyLauncher.Services;
 namespace NightlyLauncher.ViewModels;
 
 internal sealed partial class LibraryViewModel : ViewModelBase {
-    private readonly IConfigService _configService;
     private readonly IDatabaseService _databaseService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
@@ -29,8 +28,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     private readonly IRepositoryService _repositoryService;
     private readonly IAppUpdaterService _updaterService;
 
-    public LibraryViewModel(IConfigService configService,
-        IDatabaseService databaseService,
+    public LibraryViewModel(IDatabaseService databaseService,
         DialogOwner dialogOwner,
         IDialogService dialogService,
         ILauncherService launcherService,
@@ -38,7 +36,6 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         IPathService pathService,
         IRepositoryService repositoryService,
         IAppUpdaterService updaterService) {
-        _configService = configService;
         _databaseService = databaseService;
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
@@ -77,7 +74,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         if (result != FAContentDialogResult.Primary) return;
 
         await _databaseService.UpdateAppAsync(vm.SelectedApp, cancellationToken);
-        await LoadApps(cancellationToken);
+        await LoadAppsAsync(cancellationToken);
     }
 
     [RelayCommand]
@@ -136,7 +133,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             await dialogTask;
         }
 
-        await LoadApps(cancellationToken);
+        await LoadAppsAsync(cancellationToken);
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
@@ -177,7 +174,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             }
 
             await _databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
-            await LoadApps(cancellationToken);
+            await LoadAppsAsync(cancellationToken);
         }
     }
 
@@ -195,14 +192,12 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
         }, cancellationToken);
 
-    internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
-        await _configService.GetConfigAsync(cancellationToken);
-        await LoadApps(cancellationToken);
-    }
+    internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
+        await LoadAppsAsync(cancellationToken);
 
     private bool CanInteractWithApp() => SelectedApp is not null;
 
-    private async Task LoadApps(CancellationToken cancellationToken) {
+    private async Task LoadAppsAsync(CancellationToken cancellationToken) {
         var selectedGuid = SelectedApp?.Manifest.Guid;
         var installedApps = await _databaseService.GetInstalledAppsAsync(cancellationToken);
 

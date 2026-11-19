@@ -6,6 +6,6 @@ namespace NightlyLauncher.Services;
 
 internal interface IConfigService {
     Config Config { get; }
-    Task<Config> GetConfigAsync(CancellationToken cancellationToken = default);
-    Task UpdateConfigAsync(Config config, CancellationToken cancellationToken = default);
+    Task InitializeAsync(CancellationToken cancellationToken = default);
+    Task UpdateAsync(Config updatedConfig, CancellationToken cancellationToken = default);
 }

@@ -33,6 +33,7 @@ internal sealed partial class SettingsViewModel : ViewModelBase {
         _localizer = localizer;
 
         Title = _localizer["SettingsViewTitle"];
+        Config = _configService.Config;
     }
 
     [ObservableProperty] public partial Config? Config { get; private set; }
@@ -61,7 +62,7 @@ internal sealed partial class SettingsViewModel : ViewModelBase {
 
     [RelayCommand]
     private Task Save(CancellationToken cancellationToken) =>
-        _configService.UpdateConfigAsync(Config!, cancellationToken);
+        _configService.UpdateAsync(Config!, cancellationToken);
 
     [RelayCommand]
     private Task SelectAppPath() =>
@@ -79,7 +80,4 @@ internal sealed partial class SettingsViewModel : ViewModelBase {
         if (folder is not null)
             callback(folder.LocalPath);
     }
-
-    internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
-        Config = await _configService.GetConfigAsync(cancellationToken);
 }

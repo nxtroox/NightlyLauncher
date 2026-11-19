@@ -11,51 +11,104 @@ namespace NightlyLauncher.Services;
 internal sealed class ConfigService(
     JsonSerializerOptions jsonSerializerOptions,
     IStringLocalizer<ConfigService> localizer) : IConfigService {
-    private Config? _cachedConfig;
+    private readonly string _configPath = GetConfigPath();
+    private readonly SemaphoreSlim _gate = new(1, 1);
+
+    private Config? _config;
 
     public Config Config =>
-        _cachedConfig ?? throw new InvalidOperationException(localizer["ConfigNotLoadedExceptionMessage"]);
+        _config ?? throw new InvalidOperationException(localizer["ConfigNotInitializedExceptionMessage"]);
 
-    public async Task<Config> GetConfigAsync(CancellationToken cancellationToken) =>
-        _cachedConfig ??= await LoadAsync(GetConfigPath(), cancellationToken);
+    public async Task UpdateAsync(Config updatedConfig, CancellationToken cancellationToken = default) {
+        await _gate.WaitAsync(cancellationToken);
 
-    public async Task UpdateConfigAsync(Config config, CancellationToken cancellationToken = default) {
-        _cachedConfig = config;
-        await WriteConfigAsync(config, GetConfigPath(), cancellationToken);
+        try {
+            _config = updatedConfig;
+            await SaveAsync(cancellationToken);
+        } finally {
+            _gate.Release();
+        }
     }
 
-    private async Task WriteConfigAsync(Config config, string path, CancellationToken cancellationToken) {
-        var directory = Path.GetDirectoryName(path);
+    public async Task InitializeAsync(CancellationToken cancellationToken = default) {
+        await _gate.WaitAsync(cancellationToken);
 
-        if (directory is not null)
-            Directory.CreateDirectory(directory);
-
-        await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
-        await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
+        try {
+            _config ??= await LoadAsync(_configPath, cancellationToken);
+        } finally {
+            _gate.Release();
+        }
     }
 
     private async Task<Config> LoadAsync(string path, CancellationToken cancellationToken) {
-        if (!File.Exists(path)) {
-            var config = new Config();
-            await WriteConfigAsync(config, path, cancellationToken);
+        if (!File.Exists(path))
+            return new Config();
 
-            return config;
-        }
+        await using var stream = new FileStream(
+            path,
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            4096,
+            true);
 
-        await using var stream = File.OpenRead(path);
-
-        return await JsonSerializer.DeserializeAsync<Config>(
-            stream, jsonSerializerOptions, cancellationToken) ?? new Config();
+        return await JsonSerializer.DeserializeAsync<Config>(stream, jsonSerializerOptions, cancellationToken) ??
+               new Config();
     }
 
-    // this is here so that PathService and ConfigService don't depend on each other
-    private static string GetConfigPath() {
-        var appDataConfig = Path.Combine(Environment.GetFolderPath(
-            Environment.SpecialFolder.ApplicationData), "NightlyLauncher", "config.json");
+    private async Task SaveAsync(CancellationToken cancellationToken) {
+        await _gate.WaitAsync(cancellationToken);
 
-        var exeConfig = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
+        try {
+            if (_config is null)
+                throw new InvalidOperationException(localizer["ConfigNotInitializedExceptionMessage"]);
+
+            await WriteAsync(_config!, _configPath, cancellationToken);
+        } finally {
+            _gate.Release();
+        }
+    }
+
+    private async Task WriteAsync(Config config, string path, CancellationToken cancellationToken = default) {
+        var directory = Path.GetDirectoryName(path);
+
+        if (!string.IsNullOrEmpty(directory))
+            Directory.CreateDirectory(directory);
+
+        var tempPath = path + "." + Guid.NewGuid() + ".tmp";
+
+        try {
+            await using var stream = new FileStream(
+                tempPath,
+                FileMode.CreateNew,
+                FileAccess.Write,
+                FileShare.None,
+                4096,
+                true);
+
+            await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
+
+            await stream.FlushAsync(cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            File.Move(tempPath, path, true);
+        } finally {
+            if (File.Exists(tempPath))
+                File.Delete(tempPath);
+        }
+    }
+
+    private static string GetConfigPath() {
+        var portableConfig = Path.Combine(
+            AppDomain.CurrentDomain.BaseDirectory, "config.json");
+
+        var appDataConfig = Path.Combine(
+            Environment.GetFolderPath(
+                Environment.SpecialFolder.ApplicationData),
+            "NightlyLauncher",
             "config.json");
 
-        return File.Exists(exeConfig) ? exeConfig : appDataConfig;
+        return File.Exists(portableConfig) ? portableConfig : appDataConfig;
     }
 }

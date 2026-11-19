@@ -134,7 +134,7 @@ internal sealed class RepositoryService(
     private async Task LoadRepositoriesAsync(CancellationToken cancellationToken) {
         _repositories = [];
 
-        var config = await configService.GetConfigAsync(cancellationToken);
+        var config = configService.Config;
         if (config.Repositories is null or []) return;
 
         foreach (var entry in config.Repositories)
@@ -167,8 +167,7 @@ internal sealed class RepositoryService(
     }
 
     private Task UpdateConfig(CancellationToken cancellationToken) =>
-        configService.UpdateConfigAsync(
-            configService.Config with {
+        configService.UpdateAsync(configService.Config with {
                 Repositories = [
                     .. _repositories!.Select(repository => new RepositoryEntry(repository.UpdateUri, repository.Guid))
                 ]

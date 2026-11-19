@@ -4,6 +4,7 @@ using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Extensions;
 using NightlyLauncher.Localization;
+using NightlyLauncher.Services;
 using NightlyLauncher.ViewModels;
 using NightlyLauncher.Views.Windows;
 
@@ -19,10 +20,20 @@ public sealed class App : Application {
         var services = collection.BuildServiceProvider();
         LocalizationManager.Instance = services.GetRequiredService<LocalizationManager>();
 
-        var vm = services.GetRequiredService<MainWindowViewModel>();
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+            desktop.Startup += async (_, _) => {
+                try {
+                    var configService = services.GetRequiredService<IConfigService>();
+                    await configService.InitializeAsync();
 
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            desktop.MainWindow = new MainWindow { DataContext = vm };
+                    var vm = services.GetRequiredService<MainWindowViewModel>();
+                    desktop.MainWindow = new MainWindow { DataContext = vm };
+                } catch {
+                    desktop.Shutdown(-1);
+                }
+            };
+        }
+
 
         base.OnFrameworkInitializationCompleted();
     }
