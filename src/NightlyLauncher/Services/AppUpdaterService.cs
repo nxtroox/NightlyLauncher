@@ -127,7 +127,11 @@ internal sealed class AppUpdaterService(
         var downloadPath = pathService.DownloadPath;
         Directory.CreateDirectory(downloadPath);
 
-        var fullPath = Path.Combine(downloadPath, Path.GetFileName(uri.LocalPath));
+        var fileName = Path.GetFileName(uri.LocalPath);
+        if (string.IsNullOrEmpty(fileName))
+            fileName = localizer["UnknownFileName"];
+
+        var fullPath = Path.Combine(downloadPath, fileName);
         var tempPath = fullPath + ".tmp";
 
         try {
@@ -138,7 +142,7 @@ internal sealed class AppUpdaterService(
             var contentLength = response.Content.Headers.ContentLength;
 
             if (contentLength is null or 0)
-                progress.Report(new ProgressReport(-1, localizer["DownloadingUpdateProgressReportStatusText"]));
+                progress.Report(new ProgressReport(-1, localizer["DownloadingFileProgressReportStatusText", fileName]));
 
             await using var source = await response.Content.ReadAsStreamAsync(cancellationToken);
             await using (var target = new FileStream(tempPath,
@@ -165,7 +169,7 @@ internal sealed class AppUpdaterService(
                             Stopwatch.GetElapsedTime(lastReport) > TimeSpan.FromMilliseconds(500)) {
                             progress.Report(new ProgressReport(
                                 Math.Clamp((int)(totalRead * 100 / contentLength.Value), 0, 100),
-                                localizer["DownloadingUpdateProgressReportStatusText"]));
+                                localizer["DownloadingFileProgressReportStatusText", fileName]));
                             lastReport = Stopwatch.GetTimestamp();
                         }
                     }
@@ -173,7 +177,8 @@ internal sealed class AppUpdaterService(
                     if (contentLength.HasValue && totalRead != contentLength.Value)
                         throw new IOException(localizer["DownloadIncompleteExceptionMessage"]);
 
-                    progress.Report(new ProgressReport(100, localizer["DownloadingUpdateProgressReportStatusText"]));
+                    progress.Report(new ProgressReport(100,
+                        localizer["DownloadingFileProgressReportStatusText", fileName]));
                 } finally {
                     ArrayPool<byte>.Shared.Return(buffer);
                 }

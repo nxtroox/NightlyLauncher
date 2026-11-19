@@ -9,14 +9,17 @@
   <data name="DownloadIncompleteExceptionMessage" xml:space="preserve">
     <value>Download is incomplete.</value>
   </data>
-  <data name="DownloadingUpdateProgressReportStatusText" xml:space="preserve">
-    <value>Downloading update...</value>
+  <data name="DownloadingFileProgressReportStatusText" xml:space="preserve">
+    <value>Downloading {0}...</value>
   </data>
   <data name="EmptyCommitHashExceptionMessage" xml:space="preserve">
     <value>Commit hash is either empty or broken.</value>
   </data>
   <data name="NoUpdateFoundProgressReportStatusText" xml:space="preserve">
     <value>No update found!</value>
+  </data>
+  <data name="UnknownFileName" xml:space="preserve">
+    <value>file(s)</value>
   </data>
   <data name="UnsupportedArchiveFileTypeExceptionMessage" xml:space="preserve">
     <value>Unsupported archive file type.</value>
