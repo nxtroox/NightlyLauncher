@@ -27,6 +27,14 @@ You can download the latest version from the [releases page](https://github.com/
 
 Check out the [documentation](docs) if you have any questions.
 
+## :robot: AI Disclaimer
+
+This project was created by human developers. It was **not** vibe coded.
+
+However, AI was used to answer questions, suggest improvements and for debugging purposes, helping to speed up the development process.
+
+All AI-generated content was and will continue to be manually reviewed, tested and improved by humans (who actually know what they are doing).
+
 ## :scroll: License
 
 This project is licensed under the [GPL-3.0 License](LICENSE).
