@@ -145,7 +145,7 @@ internal sealed class RepositoryService(
         httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
 
     private async Task<Repository?> GetRepositoryFromFileAsync(Guid guid, CancellationToken cancellationToken) {
-        var path = Path.Combine(pathService.RepositoriesPath, $"{guid.ToString()}.json");
+        var path = Path.Combine(pathService.RepositoryPath, $"{guid.ToString()}.json");
         await using var stream = File.OpenRead(path);
         return await JsonSerializer.DeserializeAsync<Repository>(stream, jsonSerializerOptions, cancellationToken);
     }
@@ -153,7 +153,7 @@ internal sealed class RepositoryService(
     private async Task WriteRepositoriesAsync(CancellationToken cancellationToken) {
         if (_repositories is null || _repositories.Count is 0) return;
 
-        var repositoryCachePath = pathService.RepositoriesPath;
+        var repositoryCachePath = pathService.RepositoryPath;
 
         var directory = Path.GetDirectoryName(repositoryCachePath);
         if (directory is not null)

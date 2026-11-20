@@ -14,6 +14,7 @@ using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
+using NightlyLauncher.Models.UI;
 using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;
@@ -48,26 +49,26 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         Title = _localizer["LibraryViewTitle"];
     }
 
-    public ObservableCollection<InstalledApp> Apps { get; } = [];
+    public ObservableCollection<InstalledAppWithIcon> Apps { get; } = [];
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(EditAppCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchAppCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenAppFolderCommand))]
     [NotifyCanExecuteChangedFor(nameof(RemoveAppCommand))]
-    public partial InstalledApp? SelectedApp { get; set; }
+    public partial InstalledAppWithIcon? SelectedApp { get; set; }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
     private async Task EditApp(CancellationToken cancellationToken) {
         var vm = _dialogService.CreateViewModel<EditDialogViewModel>();
-        vm.SelectedApp = SelectedApp!;
+        vm.SelectedApp = SelectedApp!.App;
 
         var contentDialogSettings = new ContentDialogSettings {
             CloseButtonText = _localizer["EditAppContentDialogCloseButtonText"],
             Content = vm,
             DefaultButton = FAContentDialogButton.Primary,
             PrimaryButtonText = _localizer["EditAppContentDialogPrimaryButtonText"],
-            Title = _localizer["EditDialogViewTitle", SelectedApp!.Manifest.DisplayName]
+            Title = _localizer["EditDialogViewTitle", SelectedApp!.App.Manifest.DisplayName]
         };
 
         var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings);
@@ -98,16 +99,16 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         var dialogTask = _dialogService.ShowDialogAsync(_dialogOwner.Window!, vm);
 
         try {
-            var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!, progress, cancellationToken);
-            var shouldUpdate = SelectedApp!.LastUpdatedOn is null || needsUpdate;
+            var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!.App, progress, cancellationToken);
+            var shouldUpdate = SelectedApp!.App.LastUpdatedOn is null || needsUpdate;
 
-            if (shouldUpdate && SelectedApp.LastUpdatedOn is not null && SelectedApp.Options.UpdatePrompt) {
+            if (shouldUpdate && SelectedApp!.App.LastUpdatedOn is not null && SelectedApp!.App.Options.UpdatePrompt) {
                 var messageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
-                    Content = _localizer["UpdatePromptMessageBoxContent", SelectedApp.Manifest.DisplayName],
+                    Content = _localizer["UpdatePromptMessageBoxContent", SelectedApp!.App.Manifest.DisplayName],
                     Icon = MessageBoxImage.Information,
                     DefaultValue = false,
-                    Title = _localizer["UpdatePromptMessageBoxTitle", SelectedApp.Manifest.DisplayName]
+                    Title = _localizer["UpdatePromptMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName]
                 };
 
                 shouldUpdate =
@@ -115,16 +116,16 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             }
 
             if (shouldUpdate)
-                await _updaterService.UpdateAsync(SelectedApp, progress, cancellationToken);
+                await _updaterService.UpdateAsync(SelectedApp!.App, progress, cancellationToken);
 
-            await _launcherService.StartAppAsync(SelectedApp, progress, cancellationToken);
+            await _launcherService.StartAppAsync(SelectedApp!.App, progress, cancellationToken);
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,
                 Content = ex.Message,
                 Icon = MessageBoxImage.Error,
                 DefaultValue = true,
-                Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.Manifest.DisplayName]
+                Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName]
             };
 
             await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
@@ -137,7 +138,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private Task OpenAppFolder() => OpenFolderAsync(_pathService.GetAppPath(SelectedApp!));
+    private Task OpenAppFolder() => OpenFolderAsync(_pathService.GetAppPath(SelectedApp?.App!));
 
     [RelayCommand]
     private Task OpenAppsFolder() => OpenFolderAsync(_pathService.AppPath);
@@ -148,21 +149,23 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
             Button = MessageBoxButton.YesNo,
             DefaultValue = false,
             Icon = MessageBoxImage.Warning,
-            Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.Manifest.DisplayName],
-            Content = _localizer["RemoveAppMessageBoxContent", SelectedApp.Manifest.DisplayName]
+            Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName],
+            Content = _localizer["RemoveAppMessageBoxContent", SelectedApp!.App.Manifest.DisplayName]
         };
 
         var removeAppResult =
             await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
-            if (Directory.Exists(_pathService.GetAppPath(SelectedApp))) {
+            if (Directory.Exists(_pathService.GetAppPath(SelectedApp!.App)) || Directory
+                    .EnumerateFiles(_pathService.IconPath, SelectedApp!.App.Manifest.Guid + "*").ToList()
+                    .Any(File.Exists)) {
                 var removeAppDataMessageBoxSettings = new MessageBoxSettings {
                     Button = MessageBoxButton.YesNo,
                     DefaultValue = false,
                     Icon = MessageBoxImage.Warning,
-                    Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp.Manifest.DisplayName],
-                    Content = _localizer["RemoveAppDataMessageBoxContent", SelectedApp.Manifest.DisplayName]
+                    Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName],
+                    Content = _localizer["RemoveAppDataMessageBoxContent", SelectedApp!.App.Manifest.DisplayName]
                 };
 
                 var removeAppDataResult =
@@ -170,10 +173,10 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                         removeAppDataMessageBoxSettings);
 
                 if (removeAppDataResult is true)
-                    _updaterService.DeleteAppData(SelectedApp);
+                    _updaterService.DeleteAppData(SelectedApp!.App);
             }
 
-            await _databaseService.RemoveAppAsync(SelectedApp, cancellationToken);
+            await _databaseService.RemoveAppAsync(SelectedApp!.App, cancellationToken);
             await LoadAppsAsync(cancellationToken);
         }
     }
@@ -198,14 +201,26 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     private bool CanInteractWithApp() => SelectedApp is not null;
 
     private async Task LoadAppsAsync(CancellationToken cancellationToken) {
-        var selectedGuid = SelectedApp?.Manifest.Guid;
+        var selectedGuid = SelectedApp?.App.Manifest.Guid;
         var installedApps = await _databaseService.GetInstalledAppsAsync(cancellationToken);
 
         Apps.Clear();
-        foreach (var app in installedApps)
+
+        var appsWithIcons = installedApps
+            .Select(app => new InstalledAppWithIcon(
+                app,
+                app.Manifest.IconUri is not null
+                    ? Directory.EnumerateFiles(_pathService.IconPath, app.Manifest.Guid + "*")
+                        .FirstOrDefault()
+                    : null
+            ));
+
+        foreach (var app in appsWithIcons)
             Apps.Add(app);
 
-        SelectedApp = selectedGuid is { } guid ? Apps.FirstOrDefault(app => app.Manifest.Guid == guid) : null;
+        SelectedApp = selectedGuid is not null
+            ? Apps.FirstOrDefault(app => app.App.Manifest.Guid == selectedGuid)
+            : null;
     }
 
     private async Task OpenFolderAsync(string path) {

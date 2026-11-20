@@ -22,6 +22,10 @@ internal sealed class AppUpdaterService(
     IStringLocalizer<AppUpdaterService> localizer) : IAppUpdaterService {
     public void DeleteAppData(InstalledApp app) {
         try {
+            var icons = Directory.EnumerateFiles(pathService.IconPath, app.Manifest.Guid + "*");
+            foreach (var icon in icons)
+                File.Delete(icon);
+
             Directory.Delete(pathService.GetAppPath(app), true);
         } catch (DirectoryNotFoundException) {
             /* ignore */
@@ -41,9 +45,16 @@ internal sealed class AppUpdaterService(
         var archivePath = Path.Combine(pathService.DownloadPath, Path.GetFileName(option.DownloadUri.LocalPath));
 
         try {
-            await DownloadFileAsync(
-                option.DownloadUri, progress,
-                cancellationToken);
+            await DownloadFileAsync(option.DownloadUri, pathService.DownloadPath, progress, cancellationToken);
+
+            if (app.Manifest.IconUri is not null) {
+                var fileName = app.Manifest.Guid + Path.GetExtension(app.Manifest.IconUri.LocalPath);
+                var iconPath = Path.Combine(pathService.IconPath, fileName);
+
+                if (!Path.Exists(iconPath))
+                    await DownloadFileAsync(app.Manifest.IconUri, pathService.IconPath, progress, cancellationToken,
+                        fileName);
+            }
 
             progress.Report(new ProgressReport(-1, localizer["UpdatingProgressReportStatusText"]));
 
@@ -122,14 +133,15 @@ internal sealed class AppUpdaterService(
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHashExceptionMessage"]);
     }
 
-    private async Task DownloadFileAsync(Uri uri, IProgress<ProgressReport> progress,
-        CancellationToken cancellationToken) {
-        var downloadPath = pathService.DownloadPath;
+    private async Task DownloadFileAsync(Uri uri, string downloadPath, IProgress<ProgressReport> progress,
+        CancellationToken cancellationToken, string? fileName = null) {
         Directory.CreateDirectory(downloadPath);
 
-        var fileName = Path.GetFileName(uri.LocalPath);
-        if (string.IsNullOrEmpty(fileName))
-            fileName = localizer["UnknownFileName"];
+        if (fileName is null) {
+            fileName = Path.GetFileName(uri.LocalPath);
+            if (string.IsNullOrEmpty(fileName))
+                fileName = localizer["UnknownFileName"];
+        }
 
         var fullPath = Path.Combine(downloadPath, fileName);
         var tempPath = fullPath + ".tmp";

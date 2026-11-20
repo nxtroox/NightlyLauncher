@@ -12,6 +12,7 @@
              x:DataType="vm:LibraryViewModel">
     <UserControl.Resources>
         <cnv:SubstringConverter x:Key="SubstringConverter" />
+        <cnv:StringToBitmapConverter x:Key="StringToBitmapConverter" />
     </UserControl.Resources>
 
     <Grid RowDefinitions="Auto,*" Margin="16" RowSpacing="8">
@@ -101,19 +102,28 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnDefinitions="*,Auto">
-                        <StackPanel VerticalAlignment="Center">
-                            <TextBlock Text="{Binding Manifest.DisplayName}" />
-                            <TextBlock
-                                Text="{Binding LocalVersion, Converter={StaticResource SubstringConverter}, ConverterParameter=7}"
-                                IsVisible="{Binding LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                                FontWeight="Light"
-                                FontSize="10" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <ic:SymbolIcon Symbol="AppGeneric"
+                                           IsVisible="{Binding IconPath, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
+
+                            <Image Source="{Binding IconPath, Converter={StaticResource StringToBitmapConverter}}"
+                                   MaxHeight="24" />
+
+                            <StackPanel VerticalAlignment="Center">
+                                <TextBlock Text="{Binding App.Manifest.DisplayName}" />
+                                <TextBlock
+                                    Text="{Binding App.LocalVersion, Converter={StaticResource SubstringConverter}, ConverterParameter=7}"
+                                    IsVisible="{Binding App.LocalVersion, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                    FontWeight="Light"
+                                    FontSize="10" />
+                            </StackPanel>
                         </StackPanel>
+
                         <TextBlock Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   Text="{Binding LastUpdatedOn, StringFormat='{}{0:d}'}"
-                                   IsVisible="{Binding LastUpdatedOn, Converter={x:Static ObjectConverters.IsNotNull}}"
-                                   ToolTip.Tip="{Binding LastUpdatedOn, StringFormat='{}{0:t}'}" />
+                                   Text="{Binding App.LastUpdatedOn, StringFormat='{}{0:d}'}"
+                                   IsVisible="{Binding App.LastUpdatedOn, Converter={x:Static ObjectConverters.IsNotNull}}"
+                                   ToolTip.Tip="{Binding App.LastUpdatedOn, StringFormat='{}{0:t}'}" />
                     </Grid>
                 </DataTemplate>
             </ListBox.ItemTemplate>
