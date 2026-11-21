@@ -7,6 +7,7 @@ on:
     paths:
       - 'src/**'
       - '!src/NightlyLauncher.RepositoryGenerator/**'
+      - 'installer/setup.iss'
       - '**.slnx'
       - 'global.json'
       - '.github/workflows/build.yml'
@@ -15,14 +16,23 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
       - name: Publish NightlyLauncher
         run: dotnet publish src/NightlyLauncher/NightlyLauncher.csproj -r win-x64 -o publish
-      - name: Upload files
+      - name: Upload Binaries
         uses: actions/upload-artifact@v7
         with:
           name: NightlyLauncher-win-x64
           path: publish
+      - name: Compile Installer
+        uses: Minionguyjpro/Inno-Setup-Action@v1.3.0
+        with:
+          path: installer/setup.iss
+      - name: Upload Installer
+        uses: actions/upload-artifact@v7
+        with:
+          path: installer/Output/NightlyLauncherSetup-win-x64.exe
+          archive: false
