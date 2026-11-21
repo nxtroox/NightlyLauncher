@@ -36,7 +36,7 @@ internal sealed class LauncherService(
         var topLevel = GetTopLevel();
 
         return topLevel is null
-            ? throw new InvalidOperationException()
+            ? throw new InvalidOperationException(localizer["TopLevelNotInitializedExceptionMessage"])
             : topLevel.Launcher.LaunchDirectoryInfoAsync(new DirectoryInfo(path));
     }
 
@@ -44,7 +44,7 @@ internal sealed class LauncherService(
         var topLevel = GetTopLevel();
 
         return topLevel is null
-            ? throw new InvalidOperationException()
+            ? throw new InvalidOperationException(localizer["TopLevelNotInitializedExceptionMessage"])
             : topLevel.Launcher.LaunchUriAsync(uri);
     }
 
