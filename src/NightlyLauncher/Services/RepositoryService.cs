@@ -3,13 +3,13 @@ using System.Text.Json;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Core.Models;
 using NightlyLauncher.Models;
+using NightlyLauncher.Serialization;
 
 namespace NightlyLauncher.Services;
 
 internal sealed class RepositoryService(
     IConfigService configService,
     HttpClient httpClient,
-    JsonSerializerOptions jsonSerializerOptions,
     IStringLocalizer<RepositoryService> localizer,
     IPathService pathService)
     : IRepositoryService {
@@ -135,12 +135,13 @@ internal sealed class RepositoryService(
     }
 
     private Task<Repository?> GetRepositoryFromUriAsync(Uri uri, CancellationToken cancellationToken) =>
-        httpClient.GetFromJsonAsync<Repository>(uri, cancellationToken);
+        httpClient.GetFromJsonAsync<Repository>(uri, AppJsonContext.Default.Repository, cancellationToken);
 
     private async Task<Repository?> GetRepositoryFromFileAsync(Guid guid, CancellationToken cancellationToken) {
         var path = Path.Combine(pathService.RepositoryPath, $"{guid.ToString()}.json");
         await using var stream = File.OpenRead(path);
-        return await JsonSerializer.DeserializeAsync<Repository>(stream, jsonSerializerOptions, cancellationToken);
+        return await JsonSerializer.DeserializeAsync<Repository>(stream, AppJsonContext.Default.Repository,
+            cancellationToken);
     }
 
     private async Task WriteRepositoriesAsync(CancellationToken cancellationToken) {
@@ -155,7 +156,8 @@ internal sealed class RepositoryService(
         foreach (var path in _repositories.Select(repository =>
                      Path.Combine(repositoryCachePath, $"{repository.Guid.ToString()}.json"))) {
             await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
-            await JsonSerializer.SerializeAsync(stream, _repositories, jsonSerializerOptions, cancellationToken);
+            await JsonSerializer.SerializeAsync(stream, _repositories, AppJsonContext.Default.ListRepository,
+                cancellationToken);
         }
     }
 

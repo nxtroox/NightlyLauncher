@@ -4,7 +4,6 @@ using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
 using NightlyLauncher.Localization;
-using NightlyLauncher.Serialization;
 using NightlyLauncher.Services;
 using NightlyLauncher.ViewModels;
 
@@ -53,8 +52,6 @@ internal static class ServiceCollectionExtensions {
                 new ViewLocator(),
                 new DialogFactory().AddFluent(FluentMessageBoxType.ContentDialog)),
             sp.GetService));
-
-        collection.AddSingleton(AppJsonContext.Default.Options);
 
         collection.AddLocalization(options => options.ResourcesPath = "Resources");
         collection.AddSingleton<LocalizationManager>();

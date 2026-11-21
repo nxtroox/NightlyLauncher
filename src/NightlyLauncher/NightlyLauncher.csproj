@@ -3,6 +3,8 @@
     <OutputType>WinExe</OutputType>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets/NightlyLauncher.ico</ApplicationIcon>
+    <PublishAot>true</PublishAot>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>

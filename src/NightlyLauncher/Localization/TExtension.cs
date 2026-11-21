@@ -1,12 +1,9 @@
-﻿using Avalonia.Data;
-using Avalonia.Markup.Xaml;
+﻿using Avalonia.Markup.Xaml;
 
 namespace NightlyLauncher.Localization;
 
-public class TExtension(string key) : MarkupExtension {
-    private string Key { get; } = key;
-
-    public Type? Source { get; set; }
+public sealed class TExtension(string key) : MarkupExtension {
+    private Type? Source { get; }
 
     public override object ProvideValue(IServiceProvider serviceProvider) {
         var type = Source
@@ -14,6 +11,6 @@ public class TExtension(string key) : MarkupExtension {
                    .GetType()
                    ?? throw new InvalidOperationException("No resource type found.");
 
-        return new Binding($"[{Key}]") { Source = LocalizationManager.Instance.For(type), Mode = BindingMode.OneWay };
+        return LocalizationManager.Instance.Get(type, key);
     }
 }

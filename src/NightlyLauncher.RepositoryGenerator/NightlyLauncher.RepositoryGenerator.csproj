@@ -5,13 +5,8 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <UseSystemResourceKeys>true</UseSystemResourceKeys>
-    <StackTraceSupport>false</StackTraceSupport>
-    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
-
     <InvariantGlobalization>true</InvariantGlobalization>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-
     <OptimizationPreference>Speed</OptimizationPreference>
   </PropertyGroup>
 

@@ -1,11 +1,11 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Models;
+using NightlyLauncher.Serialization;
 
 namespace NightlyLauncher.Services;
 
 internal sealed class ConfigService(
-    JsonSerializerOptions jsonSerializerOptions,
     IStringLocalizer<ConfigService> localizer) : IConfigService {
     private readonly string _configPath = GetConfigPath();
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -48,8 +48,8 @@ internal sealed class ConfigService(
             4096,
             true);
 
-        return await JsonSerializer.DeserializeAsync<Config>(stream, jsonSerializerOptions, cancellationToken) ??
-               new Config();
+        return await JsonSerializer.DeserializeAsync<Config>(stream, AppJsonContext.Default.Config,
+            cancellationToken) ?? new Config();
     }
 
     private async Task SaveAsync(CancellationToken cancellationToken) {
@@ -75,7 +75,7 @@ internal sealed class ConfigService(
                              FileShare.None,
                              4096,
                              true)) {
-                await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
+                await JsonSerializer.SerializeAsync(stream, config, AppJsonContext.Default.Config, cancellationToken);
                 await stream.FlushAsync(cancellationToken);
             }
 

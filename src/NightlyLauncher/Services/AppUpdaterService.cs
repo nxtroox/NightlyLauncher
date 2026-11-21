@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.Formats.Tar;
 using System.IO.Compression;
-using System.Text.Json.Serialization;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Core.Models;
 using NightlyLauncher.Models;
+using NightlyLauncher.Models.UI;
+using NightlyLauncher.Serialization;
 
 namespace NightlyLauncher.Services;
 
@@ -124,7 +125,8 @@ internal sealed class AppUpdaterService(
     }
 
     private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
-        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitApiUri, cancellationToken);
+        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitApiUri,
+            AppJsonContext.Default.CommitResponse, cancellationToken);
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHashExceptionMessage"]);
     }
 
@@ -203,7 +205,4 @@ internal sealed class AppUpdaterService(
             throw;
         }
     }
-
-    private sealed record CommitResponse(
-        [property: JsonPropertyName("sha")] string? Sha);
 }

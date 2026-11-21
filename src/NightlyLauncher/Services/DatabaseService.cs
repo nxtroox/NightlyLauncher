@@ -1,12 +1,12 @@
 ﻿using System.Text.Json;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Core.Models;
+using NightlyLauncher.Serialization;
 
 namespace NightlyLauncher.Services;
 
 internal sealed class DatabaseService(
     IPathService pathService,
-    JsonSerializerOptions jsonSerializerOptions,
     IStringLocalizer<DatabaseService> localizer)
     : IDatabaseService {
     private List<InstalledApp>? _installedApps;
@@ -18,7 +18,7 @@ internal sealed class DatabaseService(
         try {
             await using var stream = File.Open(pathService.DatabasePath, FileMode.Open, FileAccess.Read);
             _installedApps = await JsonSerializer.DeserializeAsync<List<InstalledApp>>(
-                stream, jsonSerializerOptions, cancellationToken) ?? [];
+                stream, AppJsonContext.Default.ListInstalledApp, cancellationToken) ?? [];
         } catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException) {
             _installedApps = [];
         }
@@ -66,7 +66,8 @@ internal sealed class DatabaseService(
             Directory.CreateDirectory(directory);
 
         await using var stream = File.Open(pathService.DatabasePath, FileMode.Create, FileAccess.Write);
-        await JsonSerializer.SerializeAsync(stream, _installedApps, jsonSerializerOptions, cancellationToken);
+        await JsonSerializer.SerializeAsync(stream, _installedApps, AppJsonContext.Default.ListInstalledApp,
+            cancellationToken);
     }
 
     private async Task<InstalledApp?> FindAppAsync(InstalledApp app, CancellationToken cancellationToken) {
