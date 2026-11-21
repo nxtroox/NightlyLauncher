@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.ViewModels;

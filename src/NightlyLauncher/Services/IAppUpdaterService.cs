@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using NightlyLauncher.Models;
+﻿using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 

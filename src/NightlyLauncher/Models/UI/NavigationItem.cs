@@ -1,5 +1,4 @@
-﻿using System;
-using FluentIcons.Common;
+﻿using FluentIcons.Common;
 
 namespace NightlyLauncher.Models.UI;
 

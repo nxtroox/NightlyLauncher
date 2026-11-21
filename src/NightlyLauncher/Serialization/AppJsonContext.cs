@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Serialization;

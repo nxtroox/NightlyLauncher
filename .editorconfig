@@ -181,3 +181,7 @@ end_of_line = lf
 
 [*.{cmd,bat}]
 end_of_line = crlf
+
+# Preserve space inside empty xml/xaml tag in Rider
+[*.{xaml,xml}]
+ij_xml_space_inside_empty_tag = true

@@ -1,5 +1,4 @@
-﻿using System;
-using Avalonia.Data;
+﻿using Avalonia.Data;
 using Avalonia.Markup.Xaml;
 
 namespace NightlyLauncher.Localization;

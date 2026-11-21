@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Models;
 
 internal record Repository(
     Guid Guid,

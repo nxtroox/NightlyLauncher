@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Models;
 
 internal sealed record InstalledApp(
     AppManifest Manifest,

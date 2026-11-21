@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Models;
 
 internal sealed record Config(
     string AppPath = "Apps",
