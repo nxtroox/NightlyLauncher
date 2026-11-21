@@ -26,24 +26,20 @@ internal sealed class DatabaseService(
         return _installedApps;
     }
 
-    public async Task RemoveAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
-        var found = await FindAppAsync(app, cancellationToken);
-
-        if (found is not null) {
-            _installedApps!.Remove(found);
-            await WriteDatabaseAsync(cancellationToken);
-        } else
-            throw new KeyNotFoundException(localizer["AppNotFoundExceptionMessage", app.Manifest.Guid]);
-    }
-
     public async Task UpdateAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        int? index = null;
+
         try {
-            await RemoveAppAsync(app, cancellationToken);
+            index = await RemoveAppAsync(app, cancellationToken);
         } catch (KeyNotFoundException) {
             /* ignore */
         }
 
-        _installedApps!.Add(app);
+        if (index is { } i)
+            _installedApps!.Insert(i, app);
+        else
+            _installedApps!.Add(app);
+
         await WriteDatabaseAsync(cancellationToken);
     }
 
@@ -57,6 +53,19 @@ internal sealed class DatabaseService(
             : app.InstallOptionGuid.ToString();
 
         throw new InvalidOperationException(localizer["SelectedInstallOptionNotFoundExceptionMessage", optionName]);
+    }
+
+    public async Task<int> RemoveAppAsync(InstalledApp app, CancellationToken cancellationToken = default) {
+        var found = await FindAppAsync(app, cancellationToken);
+
+        if (found is null) throw new KeyNotFoundException(localizer["AppNotFoundExceptionMessage", app.Manifest.Guid]);
+
+        var index = _installedApps!.IndexOf(found);
+
+        _installedApps!.Remove(found);
+        await WriteDatabaseAsync(cancellationToken);
+
+        return index;
     }
 
     private async Task WriteDatabaseAsync(CancellationToken cancellationToken) {
