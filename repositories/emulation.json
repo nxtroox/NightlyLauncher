@@ -1,0 +1,36 @@
+{
+  "guid": "90c67dcd-8897-4a92-959a-0c293d9850e3",
+  "display_name": "NightlyLauncher Emulation",
+  "update_uri": "https://raw.githubusercontent.com/nxtroox/NightlyLauncher/main/repositories/emulation.json",
+  "apps": [
+    {
+      "guid": "860fe852-e59a-459c-af6c-789faa8533a5",
+      "display_name": "Cemu",
+      "install_options": [
+        {
+          "guid": "2194f0bf-26d1-4c19-9cb8-5a1a5cf120e5",
+          "download_uri": "https://nightly.link/cemu-project/Cemu/workflows/build_check/main/cemu-bin-windows-x64.zip",
+          "latest_commit_api_uri": "https://api.github.com/repos/cemu-project/Cemu/commits/main",
+          "display_name": "Nightly (Windows (x64))",
+          "platform": {
+            "os_type": 0,
+            "architecture": 1
+          },
+          "app_options": {
+            "launch_options": {
+              "executable_path": "Cemu.exe",
+              "arguments": null
+            },
+            "portable": true,
+            "update_prompt": false
+          },
+          "portable_path": {
+            "path": "portable",
+            "portable_type": 1
+          }
+        }
+      ],
+      "icon_uri": "https://raw.githubusercontent.com/cemu-project/Cemu/main/dist/linux/info.cemu.Cemu.png"
+    }
+  ]
+}
