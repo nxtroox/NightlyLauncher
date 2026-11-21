@@ -53,24 +53,71 @@
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Spacing="8">
-                <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:T AppPathLabel}" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                        <TextBox Text="{Binding Config?.AppPath}" />
-                        <Button Grid.Column="1"
-                                Content="{loc:T SelectFolderLabel}"
-                                Command="{Binding SelectAppPathCommand}" />
-                    </Grid>
-                </StackPanel>
+                <TextBlock Text="{loc:T PathOptionsHeading}"
+                           FontWeight="SemiBold" />
 
                 <StackPanel Spacing="4">
-                    <TextBlock Text="{loc:T DownloadPathLabel}" />
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
-                        <TextBox Text="{Binding Config?.DownloadPath}" />
-                        <Button Grid.Column="1"
-                                Content="{loc:T SelectFolderLabel}"
-                                Command="{Binding SelectDownloadPathCommand}" />
-                    </Grid>
+                    <ui:FASettingsExpander Header="{loc:T AppPathHeader}"
+                                           IsExpanded="True">
+                        <ui:FASettingsExpander.IconSource>
+                            <ic:SymbolIconSource Symbol="Folder" />
+                        </ui:FASettingsExpander.IconSource>
+
+                        <ui:FASettingsExpander.Footer>
+                            <Button Command="{Binding OpenAppsFolderCommand}"
+                                    ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
+                                <ic:SymbolIcon Symbol="OpenFolder" />
+                            </Button>
+                        </ui:FASettingsExpander.Footer>
+
+                        <ui:FASettingsExpanderItem Content="{Binding Config?.AppPath}"
+                                                   Description="{loc:T AppPathDescription}">
+                            <ui:FASettingsExpanderItem.Footer>
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Button Command="{Binding SelectAppPathCommand}"
+                                            ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
+                                        <ic:SymbolIcon Symbol="FolderSearch" />
+                                    </Button>
+
+                                    <Button Command="{Binding ChangeAppPathCommand}"
+                                            ToolTip.Tip="{loc:T EditPathButtonTooltip}">
+                                        <ic:SymbolIcon Symbol="Edit" />
+                                    </Button>
+                                </StackPanel>
+                            </ui:FASettingsExpanderItem.Footer>
+                        </ui:FASettingsExpanderItem>
+                    </ui:FASettingsExpander>
+
+                    <ui:FASettingsExpander Header="{loc:T DownloadPathHeader}"
+                                           IsExpanded="True">
+                        <ui:FASettingsExpander.IconSource>
+                            <ic:SymbolIconSource Symbol="Folder" />
+                        </ui:FASettingsExpander.IconSource>
+
+                        <ui:FASettingsExpander.Footer>
+                            <Button Command="{Binding OpenDownloadsFolderCommand}"
+                                    ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
+                                <ic:SymbolIcon Symbol="OpenFolder" />
+                            </Button>
+                        </ui:FASettingsExpander.Footer>
+
+                        <ui:FASettingsExpanderItem Content="{Binding Config?.DownloadPath}"
+                                                   Description="{loc:T DownloadPathDescription}">
+                            <ui:FASettingsExpanderItem.Footer>
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <Button Command="{Binding SelectDownloadPathCommand}"
+                                            ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
+                                        <ic:SymbolIcon Symbol="FolderSearch" />
+                                    </Button>
+
+                                    <Button Command="{Binding ChangeDownloadPathCommand}"
+                                            ToolTip.Tip="{loc:T EditPathButtonTooltip}">
+                                        <ic:SymbolIcon Symbol="Edit" />
+                                    </Button>
+                                </StackPanel>
+                            </ui:FASettingsExpanderItem.Footer>
+                        </ui:FASettingsExpanderItem>
+                    </ui:FASettingsExpander>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

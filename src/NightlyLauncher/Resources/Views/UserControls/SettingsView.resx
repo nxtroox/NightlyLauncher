@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="AboutCommandBarButtonLabel" xml:space="preserve">
-    <value>NightlyLauncher</value>
+    <value>About NightlyLauncher</value>
   </data>
-  <data name="AppPathLabel" xml:space="preserve">
-    <value>App path</value>
+  <data name="AppPathDescription" xml:space="preserve">
+    <value>Current app path</value>
   </data>
-  <data name="DownloadPathLabel" xml:space="preserve">
-    <value>Download path</value>
+  <data name="AppPathHeader" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="EditPathButtonTooltip" xml:space="preserve">
+    <value>Edit path</value>
+  </data>
+  <data name="DownloadPathDescription" xml:space="preserve">
+    <value>Current download path</value>
+  </data>
+  <data name="DownloadPathHeader" xml:space="preserve">
+    <value>Downloads</value>
   </data>
   <data name="IssuesCommandBarButtonLabel" xml:space="preserve">
     <value>Report issues</value>
   </data>
+  <data name="OpenFolderButtonTooltip" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="PathOptionsHeading" xml:space="preserve">
+    <value>Paths</value>
+  </data>
   <data name="SaveCommandBarButtonLabel" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="SelectFolderLabel" xml:space="preserve">
+  <data name="SelectFolderButtonTooltip" xml:space="preserve">
     <value>Select folder</value>
   </data>
   <data name="SourceCodeCommandBarButtonLabel" xml:space="preserve">

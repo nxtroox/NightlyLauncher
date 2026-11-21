@@ -3,8 +3,26 @@
   <data name="AboutContentDialogPrimaryButtonText" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="ChangePathDialogCloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ChangePathDialogPrimaryButtonText" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="ChangePathDialogSecondaryButtonText" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ChangePathDialogTitle" xml:space="preserve">
+    <value>Enter {0} Path</value>
+  </data>
+  <data name="AppsFolderName" xml:space="preserve">
+    <value>Apps</value>
+  </data>
+  <data name="DownloadsFolderName" xml:space="preserve">
+    <value>Downloads</value>
+  </data>
   <data name="OpenFolderDialogTitle" xml:space="preserve">
-    <value>Select folder</value>
+    <value>Select {0} Folder</value>
   </data>
   <data name="SettingsViewTitle" xml:space="preserve">
     <value>Settings</value>
