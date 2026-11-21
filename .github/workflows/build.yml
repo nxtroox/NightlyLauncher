@@ -30,7 +30,7 @@ jobs:
       - name: Uninstall Inno Setup 6
         run: choco uninstall innosetup
       - name: Install Inno Setup 7
-        run: winget install JRSoftware.InnoSetup --accept-source-agreements --accept-package-agreements
+        run: winget install JRSoftware.InnoSetup.7 --scope machine --accept-source-agreements --accept-package-agreements
       - name: Compile Installer
         shell: pwsh
         run: >
