@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Core.Models;
+using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 

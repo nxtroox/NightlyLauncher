@@ -5,6 +5,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Microsoft.Extensions.Localization;
 using NightlyLauncher.Core.Models;
+using NightlyLauncher.Models;
 
 namespace NightlyLauncher.Services;
 
