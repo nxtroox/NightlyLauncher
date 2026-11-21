@@ -107,6 +107,7 @@
                                            IsVisible="{Binding IconPath, Converter={x:Static StringConverters.IsNullOrEmpty}}" />
 
                             <Image Source="{Binding IconPath, Converter={StaticResource StringToBitmapConverter}}"
+                                   IsVisible="{Binding IconPath, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                    MaxHeight="24" />
 
                             <StackPanel VerticalAlignment="Center">
