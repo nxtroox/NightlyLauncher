@@ -26,3 +26,4 @@ jobs:
         with:
           commit_message: 'chore: generate repositories'
           file_pattern: 'repositories/*.json'
+          add_options: '-f'
