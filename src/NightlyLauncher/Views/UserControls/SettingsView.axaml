@@ -60,7 +60,7 @@
                     <ui:FASettingsExpander Header="{loc:T AppPathHeader}"
                                            IsExpanded="True">
                         <ui:FASettingsExpander.IconSource>
-                            <ic:SymbolIconSource Symbol="Folder" />
+                            <ic:SymbolIconSource Symbol="Apps" />
                         </ui:FASettingsExpander.IconSource>
 
                         <ui:FASettingsExpander.Footer>
@@ -72,6 +72,9 @@
 
                         <ui:FASettingsExpanderItem Content="{Binding Config?.AppPath}"
                                                    Description="{loc:T AppPathDescription}">
+                            <ui:FASettingsExpanderItem.IconSource>
+                                <ic:SymbolIconSource Symbol="Folder" />
+                            </ui:FASettingsExpanderItem.IconSource>
                             <ui:FASettingsExpanderItem.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <Button Command="{Binding SelectAppPathCommand}"
@@ -91,7 +94,7 @@
                     <ui:FASettingsExpander Header="{loc:T DownloadPathHeader}"
                                            IsExpanded="True">
                         <ui:FASettingsExpander.IconSource>
-                            <ic:SymbolIconSource Symbol="Folder" />
+                            <ic:SymbolIconSource Symbol="ArrowDownload" />
                         </ui:FASettingsExpander.IconSource>
 
                         <ui:FASettingsExpander.Footer>
@@ -103,6 +106,9 @@
 
                         <ui:FASettingsExpanderItem Content="{Binding Config?.DownloadPath}"
                                                    Description="{loc:T DownloadPathDescription}">
+                            <ui:FASettingsExpanderItem.IconSource>
+                                <ic:SymbolIconSource Symbol="Folder" />
+                            </ui:FASettingsExpanderItem.IconSource>
                             <ui:FASettingsExpanderItem.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="4">
                                     <Button Command="{Binding SelectDownloadPathCommand}"
