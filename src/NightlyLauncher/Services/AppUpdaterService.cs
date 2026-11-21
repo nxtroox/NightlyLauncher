@@ -60,7 +60,7 @@ internal sealed class AppUpdaterService(
 
             await ApplyPortableAsync(app, cancellationToken);
 
-            var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+            var latestVersion = await GetLatestVersionAsync(app.Manifest.LatestCommitApiUri, cancellationToken);
 
             await databaseService.UpdateAppAsync(
                 app with { LastUpdatedOn = DateTime.UtcNow, LocalVersion = latestVersion }, cancellationToken);
@@ -76,8 +76,7 @@ internal sealed class AppUpdaterService(
         CancellationToken cancellationToken = default) {
         progress.Report(new ProgressReport(-1, localizer["CheckingForUpdatesProgressReportStatusText"]));
 
-        var option = databaseService.FindInstallOption(app);
-        var latestVersion = await GetLatestVersionAsync(option, cancellationToken);
+        var latestVersion = await GetLatestVersionAsync(app.Manifest.LatestCommitApiUri, cancellationToken);
 
         if (app.LocalVersion != latestVersion) {
             progress.Report(new ProgressReport(-1, localizer["UpdateFoundProgressReportStatusText"]));
@@ -124,8 +123,8 @@ internal sealed class AppUpdaterService(
             throw new NotSupportedException(localizer["UnsupportedArchiveFileTypeExceptionMessage"]);
     }
 
-    private async Task<string> GetLatestVersionAsync(InstallOption option, CancellationToken cancellationToken) {
-        var result = await httpClient.GetFromJsonAsync<CommitResponse>(option.LatestCommitApiUri,
+    private async Task<string> GetLatestVersionAsync(Uri latestCommitApiUri, CancellationToken cancellationToken) {
+        var result = await httpClient.GetFromJsonAsync<CommitResponse>(latestCommitApiUri,
             AppJsonContext.Default.CommitResponse, cancellationToken);
         return result?.Sha ?? throw new InvalidOperationException(localizer["EmptyCommitHashExceptionMessage"]);
     }

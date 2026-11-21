@@ -3,7 +3,6 @@
 public sealed record InstallOption(
     Guid Guid,
     Uri DownloadUri,
-    Uri LatestCommitApiUri,
     string DisplayName,
     Platform Platform,
     AppOptions AppOptions,
