@@ -1,6 +1,6 @@
-﻿namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Core.Models;
 
-internal sealed record Config(
+public sealed record Config(
     string AppPath = "Apps",
     string DownloadPath = "Downloads",
     List<RepositoryEntry>? Repositories = null);

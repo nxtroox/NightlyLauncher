@@ -6,7 +6,7 @@ using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia.Fluent;
 using HanumanInstitute.MvvmDialogs.FrameworkDialogs;
 using Microsoft.Extensions.Localization;
-using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 using NightlyLauncher.Services;
 
 namespace NightlyLauncher.ViewModels;

@@ -1,6 +1,6 @@
-﻿namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Core.Models;
 
-internal record Repository(
+public sealed record Repository(
     Guid Guid,
     string DisplayName,
     Uri UpdateUri,

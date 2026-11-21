@@ -1,5 +1,5 @@
 ﻿using System.Runtime.InteropServices;
-using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 
 namespace NightlyLauncher.Services;
 

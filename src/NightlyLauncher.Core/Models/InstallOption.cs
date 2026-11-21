@@ -1,6 +1,6 @@
-﻿namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Core.Models;
 
-internal sealed record InstallOption(
+public sealed record InstallOption(
     Guid Guid,
     Uri DownloadUri,
     Uri LatestCommitApiUri,

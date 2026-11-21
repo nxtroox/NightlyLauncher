@@ -1,6 +1,6 @@
-﻿namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Core.Models;
 
-internal sealed record AppOptions(
+public readonly record struct AppOptions(
     LaunchOptions LaunchOptions,
     bool Portable = false,
     bool UpdatePrompt = false);

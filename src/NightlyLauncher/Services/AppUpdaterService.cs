@@ -4,7 +4,7 @@ using System.Formats.Tar;
 using System.IO.Compression;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Localization;
-using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 
 namespace NightlyLauncher.Services;
 
@@ -90,12 +90,13 @@ internal sealed class AppUpdaterService(
         var portablePath = databaseService.FindInstallOption(app).PortablePath;
 
         if (portablePath is null) return;
+        var portableOptions = portablePath.Value;
 
-        var path = Path.Combine(pathService.GetAppPath(app), portablePath.Path);
+        var path = Path.Combine(pathService.GetAppPath(app), portableOptions.Path);
         var disabledPath = path + ".disabled";
         var (source, destination) = app.Options.Portable ? (disabledPath, path) : (path, disabledPath);
 
-        if (portablePath.PortableType is PortableType.Folder) {
+        if (portableOptions.PortableType is PortableType.Folder) {
             if (Directory.Exists(source))
                 Directory.Move(source, destination);
             else if (app.Options.Portable)

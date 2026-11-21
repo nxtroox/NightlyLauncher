@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text.Json;
 using Microsoft.Extensions.Localization;
-using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 
 namespace NightlyLauncher.Services;
 

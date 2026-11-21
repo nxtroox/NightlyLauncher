@@ -13,6 +13,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Resources/**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../NightlyLauncher.Core/NightlyLauncher.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Avalonia" Version="12.1.6" />
     <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
@@ -24,9 +32,5 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="11.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Resources/**" />
   </ItemGroup>
 </Project>

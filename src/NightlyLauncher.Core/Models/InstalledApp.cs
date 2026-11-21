@@ -1,6 +1,6 @@
-﻿namespace NightlyLauncher.Models;
+﻿namespace NightlyLauncher.Core.Models;
 
-internal sealed record InstalledApp(
+public sealed record InstalledApp(
     AppManifest Manifest,
     Guid InstallOptionGuid,
     AppOptions Options,

@@ -1,4 +1,4 @@
-﻿using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 
 namespace NightlyLauncher.Services;
 

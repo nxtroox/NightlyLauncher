@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using NightlyLauncher.Models;
+using NightlyLauncher.Core.Models;
 
 namespace NightlyLauncher.Serialization;
 

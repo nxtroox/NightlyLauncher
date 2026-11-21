@@ -1,7 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace NightlyLauncher.Models;
+namespace NightlyLauncher.Core.Models;
 
-internal readonly record struct Platform(
+public readonly record struct Platform(
     OsType OsType,
     Architecture Architecture);

@@ -1,3 +1,4 @@
 <Solution>
   <Project Path="src/NightlyLauncher/NightlyLauncher.csproj" />
+  <Project Path="src/NightlyLauncher.Core/NightlyLauncher.Core.csproj" />
 </Solution>
