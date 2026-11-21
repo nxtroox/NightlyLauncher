@@ -27,10 +27,14 @@ jobs:
         with:
           name: NightlyLauncher-win-x64
           path: publish
+      - name: Uninstall Inno Setup 6
+        run: choco uninstall innosetup
+      - name: Install Inno Setup 7
+        run: winget install JRSoftware.InnoSetup --accept-source-agreements --accept-package-agreements
       - name: Compile Installer
-        uses: Minionguyjpro/Inno-Setup-Action@v1.3.0
-        with:
-          path: installer/setup.iss
+        shell: pwsh
+        run: >
+          & "${env:ProgramFiles}\Inno Setup 7\ISCC.exe" "installer/setup.iss"
       - name: Upload Installer
         uses: actions/upload-artifact@v7
         with:
