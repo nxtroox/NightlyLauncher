@@ -1,7 +1,13 @@
 ﻿name: Data Generator
 on:
   workflow_dispatch:
-  workflow_call:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'src/NightlyLauncher.Core/**'
+      - 'src/NightlyLauncher.RepositoryGenerator/**'
+      - '.github/workflows/datagen.yml'
 
 jobs:
   datagen:

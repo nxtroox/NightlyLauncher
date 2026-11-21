@@ -3,19 +3,16 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - "main"
+      - 'main'
     paths:
-      - "src/**"
-      - "**.slnx"
-      - "global.json"
-      - ".github/workflows/**"
+      - 'src/**'
+      - '!src/NightlyLauncher.RepositoryGenerator/**'
+      - '**.slnx'
+      - 'global.json'
+      - '.github/workflows/build.yml'
 
 jobs:
-  call-datagen:
-    uses: ./.github/workflows/datagen.yml
-
   build:
-    needs: call-datagen
     runs-on: windows-latest
     steps:
       - name: Checkout repository
