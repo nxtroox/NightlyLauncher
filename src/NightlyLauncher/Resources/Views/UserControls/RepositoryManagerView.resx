@@ -3,6 +3,9 @@
   <data name="AddRepositoryCommandBarButtonLabel" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="OpenRepositoryLabel" xml:space="preserve">
+    <value>Open in browser</value>
+  </data>
   <data name="RemoveRepositoryLabel" xml:space="preserve">
     <value>Remove</value>
   </data>

@@ -23,6 +23,14 @@
                             <ic:SymbolIconSource Symbol="Add" />
                         </ui:FACommandBarButton.IconSource>
                     </ui:FACommandBarButton>
+                </ui:FACommandBar.PrimaryCommands>
+                <ui:FACommandBar.SecondaryCommands>
+                    <ui:FACommandBarButton Label="{loc:T OpenRepositoryLabel}"
+                                           Command="{Binding OpenRepositoryCommand}">
+                        <ui:FACommandBarButton.IconSource>
+                            <ic:SymbolIconSource Symbol="Globe" />
+                        </ui:FACommandBarButton.IconSource>
+                    </ui:FACommandBarButton>
 
                     <ui:FACommandBarSeparator />
 
@@ -32,21 +40,30 @@
                             <ic:SymbolIconSource Symbol="Delete" />
                         </ui:FACommandBarButton.IconSource>
                     </ui:FACommandBarButton>
-                </ui:FACommandBar.PrimaryCommands>
+                </ui:FACommandBar.SecondaryCommands>
             </ui:FACommandBar>
         </Grid>
 
         <ListBox Grid.Row="1" ItemsSource="{Binding Repositories}"
                  SelectedItem="{Binding SelectedRepository}"
+                 DoubleTapped="RepositoryListBox_DoubleTapped"
                  x:Name="RepositoryListBox">
+            <ListBox.KeyBindings>
+                <KeyBinding Command="{Binding OpenRepositoryCommand}"
+                            Gesture="Enter" />
+            </ListBox.KeyBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel VerticalAlignment="Center">
-                        <TextBlock Text="{Binding DisplayName}"
-                                   ToolTip.Tip="{Binding UpdateUri}" />
-                        <TextBlock Text="{Binding Guid}"
-                                   FontWeight="Light"
-                                   FontSize="10" />
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ic:SymbolIcon Symbol="Database" />
+
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="{Binding DisplayName}"
+                                       ToolTip.Tip="{Binding UpdateUri}" />
+                            <TextBlock Text="{Binding Guid}"
+                                       FontWeight="Light"
+                                       FontSize="10" />
+                        </StackPanel>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -54,6 +71,15 @@
                 <Style Selector="ListBoxItem">
                     <Setter Property="ContextFlyout">
                         <ui:FAMenuFlyout>
+                            <ui:FAMenuFlyoutItem Text="{loc:T OpenRepositoryLabel}"
+                                                 Command="{Binding #RepositoryListBox.((vm:RepositoryManagerViewModel)DataContext)?.OpenRepositoryCommand}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Globe" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
+
+                            <ui:FAMenuFlyoutSeparator />
+
                             <ui:FAMenuFlyoutItem Text="{loc:T RemoveRepositoryLabel}"
                                                  Command="{Binding #RepositoryListBox.((vm:RepositoryManagerViewModel)DataContext)?.RemoveRepositoryCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>

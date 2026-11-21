@@ -16,19 +16,19 @@ using NightlyLauncher.Services;
 namespace NightlyLauncher.ViewModels;
 
 internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
-    private readonly IConfigService _configService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
+    private readonly ILauncherService _launcherService;
     private readonly IStringLocalizer<RepositoryManagerViewModel> _localizer;
 
     private readonly IRepositoryService _repositoryService;
 
-    public RepositoryManagerViewModel(IConfigService configService, DialogOwner dialogOwner,
-        IDialogService dialogService,
-        IRepositoryService repositoryService, IStringLocalizer<RepositoryManagerViewModel> localizer) {
-        _configService = configService;
+    public RepositoryManagerViewModel(DialogOwner dialogOwner, IDialogService dialogService,
+        ILauncherService launcherService, IRepositoryService repositoryService,
+        IStringLocalizer<RepositoryManagerViewModel> localizer) {
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
+        _launcherService = launcherService;
         _repositoryService = repositoryService;
         _localizer = localizer;
 
@@ -38,6 +38,7 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
     [ObservableProperty] public partial List<Repository>? Repositories { get; private set; }
 
     [ObservableProperty]
+    [NotifyCanExecuteChangedFor(nameof(OpenRepositoryCommand))]
     [NotifyCanExecuteChangedFor(nameof(RemoveRepositoryCommand))]
     public partial Repository? SelectedRepository { get; set; }
 
@@ -79,6 +80,10 @@ internal sealed partial class RepositoryManagerViewModel : ViewModelBase {
             }
         }
     }
+
+    [RelayCommand(CanExecute = nameof(CanModifyRepository))]
+    private Task<bool> OpenRepository(CancellationToken cancellationToken) =>
+        _launcherService.OpenUriAsync(SelectedRepository!.UpdateUri);
 
     [RelayCommand(CanExecute = nameof(CanModifyRepository))]
     private async Task RemoveRepository(CancellationToken cancellationToken) {
