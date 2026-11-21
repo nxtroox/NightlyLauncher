@@ -6,6 +6,8 @@ on:
 jobs:
   datagen:
     runs-on: ubuntu-slim
+    permissions:
+      contents: write
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
