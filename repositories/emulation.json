@@ -5,12 +5,12 @@
   "apps": [
     {
       "guid": "860fe852-e59a-459c-af6c-789faa8533a5",
+      "latest_commit_api_uri": "https://api.github.com/repos/cemu-project/Cemu/commits/main",
       "display_name": "Cemu",
       "install_options": [
         {
           "guid": "2194f0bf-26d1-4c19-9cb8-5a1a5cf120e5",
           "download_uri": "https://nightly.link/cemu-project/Cemu/workflows/build_check/main/cemu-bin-windows-x64.zip",
-          "latest_commit_api_uri": "https://api.github.com/repos/cemu-project/Cemu/commits/main",
           "display_name": "Nightly (Windows (x64))",
           "platform": {
             "os_type": 0,
@@ -31,6 +31,50 @@
         }
       ],
       "icon_uri": "https://raw.githubusercontent.com/cemu-project/Cemu/main/dist/linux/info.cemu.Cemu.png"
+    },
+    {
+      "guid": "d9923d21-75d4-4af3-b10f-299dc5b0f36b",
+      "latest_commit_api_uri": "https://api.github.com/repos/melonDS-emu/melonDS/commits/master",
+      "display_name": "melonDS",
+      "install_options": [
+        {
+          "guid": "c44044ff-e56e-450e-95b6-e2f21cd1955c",
+          "download_uri": "https://nightly.link/melonDS-emu/melonDS/workflows/build-windows/master/melonDS-windows-x86_64.zip",
+          "display_name": "Nightly (Windows (x64))",
+          "platform": {
+            "os_type": 0,
+            "architecture": 1
+          },
+          "app_options": {
+            "launch_options": {
+              "executable_path": "melonDS.exe",
+              "arguments": null
+            },
+            "portable": false,
+            "update_prompt": false
+          },
+          "portable_path": null
+        },
+        {
+          "guid": "e7d55ec7-29f6-4745-9d4c-2cac085486d6",
+          "download_uri": "https://nightly.link/melonDS-emu/melonDS/workflows/build-windows/master/melonDS-windows-x86_64.zip",
+          "display_name": "Nightly (Windows (arm64))",
+          "platform": {
+            "os_type": 0,
+            "architecture": 3
+          },
+          "app_options": {
+            "launch_options": {
+              "executable_path": "melonDS.exe",
+              "arguments": null
+            },
+            "portable": false,
+            "update_prompt": false
+          },
+          "portable_path": null
+        }
+      ],
+      "icon_uri": "https://raw.githubusercontent.com/melonDS-emu/melonDS/master/res/icon/melon_128x128.png"
     }
   ]
 }
