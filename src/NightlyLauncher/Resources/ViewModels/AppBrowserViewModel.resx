@@ -7,7 +7,7 @@
     <value>No new apps are available for download.</value>
   </data>
   <data name="NoAppsAvailableMessageBoxTitle" xml:space="preserve">
-    <value>Add apps</value>
+    <value>Add Apps</value>
   </data>
   <data name="NoInstallOptionSelectedExceptionMessage" xml:space="preserve">
     <value>No install option selected.</value>
@@ -22,6 +22,6 @@
     <value>Submit</value>
   </data>
   <data name="SelectInstallOptionDialogTitle" xml:space="preserve">
-    <value>NightlyLauncher - Select install option</value>
+    <value>Select Install Option</value>
   </data>
 </root>

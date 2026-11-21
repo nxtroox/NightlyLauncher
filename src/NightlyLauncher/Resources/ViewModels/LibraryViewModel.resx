@@ -16,7 +16,7 @@
     <value>Library</value>
   </data>
   <data name="OpenFolderErrorMessageBoxTitle" xml:space="preserve">
-    <value>Open folder</value>
+    <value>Open Folder</value>
   </data>
   <data name="RemoveAppMessageBoxContent" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
@@ -28,12 +28,12 @@
     <value>Also remove data for {0}?</value>
   </data>
   <data name="RepositoryUpdateErrorMessageBoxTitle" xml:space="preserve">
-    <value>Update repositories</value>
+    <value>Update Repositories</value>
   </data>
   <data name="UpdatePromptMessageBoxContent" xml:space="preserve">
     <value>Would you like to update {0}?</value>
   </data>
   <data name="UpdatePromptMessageBoxTitle" xml:space="preserve">
-    <value>Update available for {0}</value>
+    <value>Update Available for {0}</value>
   </data>
 </root>

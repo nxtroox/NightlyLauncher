@@ -57,16 +57,10 @@ internal sealed class ConfigService(
     }
 
     private async Task SaveAsync(CancellationToken cancellationToken) {
-        await _gate.WaitAsync(cancellationToken);
+        if (_config is null)
+            throw new InvalidOperationException(localizer["ConfigNotInitializedExceptionMessage"]);
 
-        try {
-            if (_config is null)
-                throw new InvalidOperationException(localizer["ConfigNotInitializedExceptionMessage"]);
-
-            await WriteAsync(_config!, _configPath, cancellationToken);
-        } finally {
-            _gate.Release();
-        }
+        await WriteAsync(_config!, _configPath, cancellationToken);
     }
 
     private async Task WriteAsync(Config config, string path, CancellationToken cancellationToken = default) {
@@ -78,17 +72,16 @@ internal sealed class ConfigService(
         var tempPath = path + "." + Guid.NewGuid() + ".tmp";
 
         try {
-            await using var stream = new FileStream(
-                tempPath,
-                FileMode.CreateNew,
-                FileAccess.Write,
-                FileShare.None,
-                4096,
-                true);
-
-            await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
-
-            await stream.FlushAsync(cancellationToken);
+            await using (var stream = new FileStream(
+                             tempPath,
+                             FileMode.CreateNew,
+                             FileAccess.Write,
+                             FileShare.None,
+                             4096,
+                             true)) {
+                await JsonSerializer.SerializeAsync(stream, config, jsonSerializerOptions, cancellationToken);
+                await stream.FlushAsync(cancellationToken);
+            }
 
             cancellationToken.ThrowIfCancellationRequested();
 
