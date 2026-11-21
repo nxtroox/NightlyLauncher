@@ -31,7 +31,7 @@ git clone git@github.com:nxtroox/NightlyLauncher.git
 Inside the NightlyLauncher repository, run:
 
 ```bash
-dotnet publish -r <your runtime identifier> -o publish/
+dotnet publish -r <your runtime identifier> -o publish
 ```
 
 The binaries will be located in the `publish` folder at the root of the NightlyLauncher repository.

@@ -1,0 +1,31 @@
+﻿name: Build
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "src/**"
+      - "**.slnx"
+      - "global.json"
+      - ".github/workflows/**"
+
+jobs:
+  call-datagen:
+    uses: ./.github/workflows/datagen.yml
+
+  build:
+    needs: call-datagen
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+      - name: Publish NightlyLauncher
+        run: dotnet publish src/NightlyLauncher/NightlyLauncher.csproj -c Release -r win-x64 -o publish
+      - name: Upload files
+        uses: actions/upload-artifact@v7
+        with:
+          name: NightlyLauncher-win-x64
+          path: publish

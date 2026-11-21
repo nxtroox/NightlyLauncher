@@ -1,0 +1,26 @@
+﻿name: Data Generator
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  datagen:
+    runs-on: ubuntu-slim
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+      - name: Publish NightlyLauncher.RepositoryGenerator
+        run: >
+          dotnet publish src/NightlyLauncher.RepositoryGenerator/NightlyLauncher.RepositoryGenerator.csproj
+          -o publish
+      - name: Delete Old Repositories
+        run: rm -rf repositories/*
+      - name: Run Repository Generator
+        run: publish/NightlyLauncher.RepositoryGenerator
+      - name: Add Generated Repositories
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: 'chore: generate repositories'
+          file_pattern: 'repositories/*.json'
