@@ -21,13 +21,13 @@ public sealed class App : Application {
         LocalizationManager.Instance = services.GetRequiredService<LocalizationManager>();
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop) {
+            var vm = services.GetRequiredService<MainWindowViewModel>();
+            desktop.MainWindow = new MainWindow { DataContext = vm };
+
             desktop.Startup += async (_, _) => {
                 try {
                     var configService = services.GetRequiredService<IConfigService>();
                     await configService.InitializeAsync();
-
-                    var vm = services.GetRequiredService<MainWindowViewModel>();
-                    desktop.MainWindow = new MainWindow { DataContext = vm };
                 } catch {
                     desktop.Shutdown(-1);
                 }
