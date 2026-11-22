@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using NightlyLauncher.Core.Models;
 using NightlyLauncher.Models;
-using NightlyLauncher.Models.UI;
 
 namespace NightlyLauncher.Serialization;
 
