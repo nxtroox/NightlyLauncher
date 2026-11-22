@@ -37,7 +37,7 @@ internal sealed partial class MainWindowViewModel : ViewModelBase {
     public ObservableCollection<NavigationItem> MenuItems { get; }
     public ObservableCollection<NavigationItem> FooterItems { get; }
 
-    public new string? Title {
+    public override string? Title {
         get;
         set {
             field = $"{value} - {_localizer["AppName"]}";
