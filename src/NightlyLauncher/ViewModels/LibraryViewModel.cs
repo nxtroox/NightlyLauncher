@@ -108,7 +108,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                 };
 
                 shouldUpdate =
-                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings) is true;
+                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings) is true;
             }
 
             if (shouldUpdate)
@@ -124,7 +124,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["AppUpdateErrorMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
         } finally {
             vm.Close();
             await dialogTask;
@@ -150,30 +150,42 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         };
 
         var removeAppResult =
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, removeAppMessageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, removeAppMessageBoxSettings);
 
         if (removeAppResult is true) {
-            if (Directory.Exists(_pathService.GetAppPath(SelectedApp!.App)) || Directory
-                    .EnumerateFiles(_pathService.IconPath, SelectedApp!.App.Manifest.Guid + "*").ToList()
-                    .Any(File.Exists)) {
-                var removeAppDataMessageBoxSettings = new MessageBoxSettings {
-                    Button = MessageBoxButton.YesNo,
-                    DefaultValue = false,
-                    Icon = MessageBoxImage.Warning,
-                    Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName],
-                    Content = _localizer["RemoveAppDataMessageBoxContent", SelectedApp!.App.Manifest.DisplayName]
+            try {
+                if (Directory.Exists(_pathService.GetAppPath(SelectedApp!.App)) || Directory
+                        .EnumerateFiles(_pathService.IconPath, SelectedApp!.App.Manifest.Guid + "*").ToList()
+                        .Any(File.Exists)) {
+                    var removeAppDataMessageBoxSettings = new MessageBoxSettings {
+                        Button = MessageBoxButton.YesNo,
+                        DefaultValue = false,
+                        Icon = MessageBoxImage.Warning,
+                        Title = _localizer["RemoveAppMessageBoxTitle", SelectedApp!.App.Manifest.DisplayName],
+                        Content = _localizer["RemoveAppDataMessageBoxContent", SelectedApp!.App.Manifest.DisplayName]
+                    };
+
+                    var removeAppDataResult =
+                        await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window,
+                            removeAppDataMessageBoxSettings);
+
+                    if (removeAppDataResult is true)
+                        _updaterService.DeleteAppData(SelectedApp!.App);
+                }
+
+                await _databaseService.RemoveAppAsync(SelectedApp!.App, cancellationToken);
+                await LoadAppsAsync(cancellationToken);
+            } catch (Exception ex) {
+                var messageBoxSettings = new MessageBoxSettings {
+                    Button = MessageBoxButton.Ok,
+                    Content = ex.Message,
+                    DefaultValue = true,
+                    Icon = MessageBoxImage.Error,
+                    Title = _localizer["RemoveAppErrorMessageBoxTitle"]
                 };
 
-                var removeAppDataResult =
-                    await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!,
-                        removeAppDataMessageBoxSettings);
-
-                if (removeAppDataResult is true)
-                    _updaterService.DeleteAppData(SelectedApp!.App);
+                await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
             }
-
-            await _databaseService.RemoveAppAsync(SelectedApp!.App, cancellationToken);
-            await LoadAppsAsync(cancellationToken);
         }
     }
 
@@ -188,7 +200,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["RepositoryUpdateErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
         }, cancellationToken);
 
     internal async Task InitializeAsync(CancellationToken cancellationToken = default) =>
@@ -231,7 +243,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                 Title = _localizer["OpenFolderErrorMessageBoxTitle"]
             };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
         }
     }
 }

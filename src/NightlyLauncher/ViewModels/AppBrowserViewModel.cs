@@ -50,33 +50,44 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
                 _repositoryService.CheckAppCompatibility(option.Platform.OsType, option.Platform.Architecture))
             .ToList();
 
-        if (compatibleOptions.Count is 1) {
-            SelectedInstallOptionGuid = compatibleOptions[0].Guid;
-            await InstallAppAsync(cancellationToken);
-            return;
+        if (compatibleOptions.Count is 1)
+            SelectedInstallOptionGuid = compatibleOptions.First().Guid;
+        else {
+            var vm = _dialogService.CreateViewModel<SelectionViewModel>();
+            vm.Content = _localizer["SelectInstallOptionContentDialogContent"];
+            compatibleOptions.ForEach(vm.Items.Add);
+
+            var contentDialogSettings = new ContentDialogSettings {
+                CloseButtonText = _localizer["SelectInstallOptionContentCloseButtonText"],
+                Content = vm,
+                DefaultButton = FAContentDialogButton.Primary,
+                PrimaryButtonText = _localizer["SelectInstallOptionContentDialogPrimaryButtonText"],
+                Title = _localizer["SelectInstallOptionContentDialogTitle"]
+            };
+
+            if (await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings) is
+                    FAContentDialogResult.Primary && vm.SelectedItem is InstallOption installOption)
+                SelectedInstallOptionGuid = installOption.Guid;
         }
 
-        var vm = _dialogService.CreateViewModel<SelectionViewModel>();
-        vm.Content = _localizer["SelectInstallOptionContentDialogContent"];
+        if (SelectedInstallOptionGuid is null) return;
 
-        foreach (var option in compatibleOptions)
-            vm.Items.Add(option);
-
-        var contentDialogSettings = new ContentDialogSettings {
-            CloseButtonText = _localizer["SelectInstallOptionContentCloseButtonText"],
-            Content = vm,
-            DefaultButton = FAContentDialogButton.Primary,
-            PrimaryButtonText = _localizer["SelectInstallOptionContentDialogPrimaryButtonText"],
-            Title = _localizer["SelectInstallOptionContentDialogTitle"]
-        };
-
-        if (await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings) is
-                FAContentDialogResult.Primary && vm.SelectedItem is InstallOption installOption) {
-            SelectedInstallOptionGuid = installOption.Guid;
+        try {
             await InstallAppAsync(cancellationToken);
+        } catch (Exception ex) {
+            var messageBoxSettings = new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = ex.Message,
+                DefaultValue = true,
+                Icon = MessageBoxImage.Error,
+                Title = _localizer["AddAppErrorMessageBoxTitle", SelectedManifest.DisplayName]
+            };
+
+            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
         }
     }
 
+    // ReSharper disable once UnusedParameterInPartialMethod
     partial void OnSearchTextChanged(string? value) => ApplySearchFilter();
 
     private void ApplySearchFilter() {

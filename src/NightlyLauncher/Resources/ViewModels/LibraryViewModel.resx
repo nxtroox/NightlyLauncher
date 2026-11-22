@@ -18,6 +18,9 @@
   <data name="OpenFolderErrorMessageBoxTitle" xml:space="preserve">
     <value>Open Folder</value>
   </data>
+  <data name="RemoveAppErrorMessageBoxTitle" xml:space="preserve">
+    <value>Unable to Remove {0}</value>
+  </data>
   <data name="RemoveAppMessageBoxContent" xml:space="preserve">
     <value>Are you sure that you want to remove {0}?</value>
   </data>

@@ -1,5 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <data name="AddAppErrorMessageBoxTitle" xml:space="preserve">
+    <value>Unable to Add {0}</value>
+  </data>
   <data name="AppBrowserViewTitle" xml:space="preserve">
     <value>Browse Apps</value>
   </data>
