@@ -12,8 +12,8 @@
                  x:DataType="vm:MainWindowViewModel"
                  Title="{Binding Title}"
                  Icon="/Assets/NightlyLauncher.ico"
-                 Height="800"
-                 Width="600"
+                 Height="850"
+                 Width="650"
                  Background="Transparent"
                  TransparencyBackgroundFallback="{DynamicResource SolidBackgroundFillColorBaseBrush}"
                  TransparencyLevelHint="Mica">

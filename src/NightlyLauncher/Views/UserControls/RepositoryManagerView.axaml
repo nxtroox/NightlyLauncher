@@ -9,13 +9,16 @@
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="800"
              x:Class="NightlyLauncher.Views.UserControls.RepositoryManagerView"
              x:DataType="vm:RepositoryManagerViewModel">
-    <Grid RowDefinitions="Auto,*" Margin="16" RowSpacing="8">
-        <Grid ColumnDefinitions="*,Auto">
+    <Grid RowDefinitions="Auto,*" RowSpacing="{StaticResource PageRowSpacing}">
+        <Grid Margin="{StaticResource PageHeaderMargin}"
+              ColumnDefinitions="*,Auto">
             <TextBlock Text="{Binding Title}"
-                       FontWeight="SemiBold"
+                       Theme="{StaticResource SubtitleTextBlockStyle}"
                        VerticalAlignment="Center" />
 
-            <ui:FACommandBar Grid.Column="1" DefaultLabelPosition="Right">
+            <ui:FACommandBar Grid.Column="1"
+                             DefaultLabelPosition="Right"
+                             VerticalAlignment="Center">
                 <ui:FACommandBar.PrimaryCommands>
                     <ui:FACommandBarButton Label="{loc:T AddRepositoryCommandBarButtonLabel}"
                                            Command="{Binding AddRepositoryCommand}">
@@ -44,7 +47,9 @@
             </ui:FACommandBar>
         </Grid>
 
-        <ListBox Grid.Row="1" ItemsSource="{Binding Repositories}"
+        <ListBox Grid.Row="1"
+                 Padding="{StaticResource PageScrollPadding}"
+                 ItemsSource="{Binding Repositories}"
                  SelectedItem="{Binding SelectedRepository}"
                  DoubleTapped="RepositoryListBox_DoubleTapped"
                  x:Name="RepositoryListBox">
@@ -54,15 +59,19 @@
             </ListBox.KeyBindings>
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <ic:SymbolIcon Symbol="Database" />
+                    <StackPanel Margin="0 8"
+                                Orientation="Horizontal"
+                                Spacing="12">
+                        <ic:SymbolIcon Symbol="Database"
+                                       FontSize="{StaticResource ListItemIconSize}"
+                                       VerticalAlignment="Center" />
 
                         <StackPanel VerticalAlignment="Center">
                             <TextBlock Text="{Binding DisplayName}"
                                        ToolTip.Tip="{Binding UpdateUri}" />
                             <TextBlock Text="{Binding Guid}"
-                                       FontWeight="Light"
-                                       FontSize="10" />
+                                       Theme="{StaticResource CaptionTextBlockStyle}"
+                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
                         </StackPanel>
                     </StackPanel>
                 </DataTemplate>

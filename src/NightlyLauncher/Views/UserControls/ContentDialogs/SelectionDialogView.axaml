@@ -11,7 +11,8 @@
     <StackPanel Spacing="8">
         <TextBlock Text="{Binding Content}" />
 
-        <ui:FAComboBox ItemsSource="{Binding Items}"
+        <ui:FAComboBox HorizontalAlignment="Stretch"
+                       ItemsSource="{Binding Items}"
                        SelectedItem="{Binding SelectedItem}">
             <ui:FAComboBox.ItemTemplate>
                 <DataTemplate DataType="models:InstallOption">
