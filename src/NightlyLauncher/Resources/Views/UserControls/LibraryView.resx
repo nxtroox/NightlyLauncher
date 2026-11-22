@@ -6,6 +6,9 @@
   <data name="ExitCommandBarButtonLabel" xml:space="preserve">
     <value>Exit</value>
   </data>
+  <data name="ForceUpdateLabel" xml:space="preserve">
+    <value>Force update</value>
+  </data>
   <data name="LaunchAppLabel" xml:space="preserve">
     <value>Launch</value>
   </data>

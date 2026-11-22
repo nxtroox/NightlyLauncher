@@ -80,7 +80,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     }
 
     [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private async Task LaunchApp(CancellationToken cancellationToken) {
+    private async Task LaunchApp(bool? forceUpdate, CancellationToken cancellationToken) {
         var vm = _dialogService.CreateViewModel<UpdaterViewModel>();
 
         var progress = new Progress<ProgressReport>(report => {
@@ -94,8 +94,9 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         var dialogTask = _dialogService.ShowDialogAsync(_dialogOwner.Window!, vm);
 
         try {
-            var needsUpdate = await _updaterService.NeedsUpdateAsync(SelectedApp!.App, progress, cancellationToken);
-            var shouldUpdate = SelectedApp!.App.LastUpdatedOn is null || needsUpdate;
+            var shouldUpdate = forceUpdate is true ||
+                               SelectedApp!.App.LastUpdatedOn is null ||
+                               await _updaterService.NeedsUpdateAsync(SelectedApp!.App, progress, cancellationToken);
 
             if (shouldUpdate && SelectedApp!.App.LastUpdatedOn is not null && SelectedApp!.App.Options.UpdatePrompt) {
                 var messageBoxSettings = new MessageBoxSettings {

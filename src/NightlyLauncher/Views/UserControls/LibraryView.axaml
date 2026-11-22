@@ -89,6 +89,16 @@
 
                             <ui:FAMenuFlyoutSeparator />
 
+                            <ui:FAMenuFlyoutItem Text="{loc:T ForceUpdateLabel}"
+                                                 Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.LaunchAppCommand}"
+                                                 CommandParameter="{x:True}">
+                                <ui:FAMenuFlyoutItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="ArrowClockwise" />
+                                </ui:FAMenuFlyoutItem.IconSource>
+                            </ui:FAMenuFlyoutItem>
+
+                            <ui:FAMenuFlyoutSeparator />
+
                             <ui:FAMenuFlyoutItem Text="{loc:T RemoveAppLabel}"
                                                  Command="{Binding #AppListBox.((vm:LibraryViewModel)DataContext)?.RemoveAppCommand}">
                                 <ui:FAMenuFlyoutItem.IconSource>
