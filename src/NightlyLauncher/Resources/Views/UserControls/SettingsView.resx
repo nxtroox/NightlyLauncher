@@ -12,11 +12,11 @@
   <data name="EditPathButtonTooltip" xml:space="preserve">
     <value>Edit path</value>
   </data>
-  <data name="DownloadPathDescription" xml:space="preserve">
-    <value>Current download path</value>
+  <data name="CachePathDescription" xml:space="preserve">
+    <value>Current cache path</value>
   </data>
-  <data name="DownloadPathHeader" xml:space="preserve">
-    <value>Downloads</value>
+  <data name="CachePathHeader" xml:space="preserve">
+    <value>Cache</value>
   </data>
   <data name="IssuesCommandBarButtonLabel" xml:space="preserve">
     <value>Report issues</value>

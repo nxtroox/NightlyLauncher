@@ -18,8 +18,8 @@
   <data name="AppsFolderName" xml:space="preserve">
     <value>Apps</value>
   </data>
-  <data name="DownloadsFolderName" xml:space="preserve">
-    <value>Downloads</value>
+  <data name="CacheFolderName" xml:space="preserve">
+    <value>Cache</value>
   </data>
   <data name="OpenFolderDialogTitle" xml:space="preserve">
     <value>Select {0} Folder</value>

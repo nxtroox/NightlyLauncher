@@ -15,13 +15,15 @@ internal sealed class PathService(IConfigService configService) : IPathService {
 
     public string AppPath => ParseRootedPath(configService.Config.AppPath, true);
 
+    public string CachePath => ParseRootedPath(configService.Config.CachePath, true);
+
     public string DatabasePath => Path.Combine(LocalPath, "apps.json");
 
-    public string DownloadPath => ParseRootedPath(configService.Config.DownloadPath, true);
+    public string DownloadPath => Path.Combine(CachePath, "Downloads");
 
-    public string IconPath => Path.Combine(LocalPath, "Icons");
+    public string IconPath => Path.Combine(CachePath, "Icons");
 
-    public string RepositoryPath => Path.Combine(LocalPath, "Repositories");
+    public string RepositoryPath => Path.Combine(CachePath, "Repositories");
 
     public string GetAppPath(InstalledApp app) =>
         Path.Combine(ParseRootedPath(configService.Config.AppPath, true),

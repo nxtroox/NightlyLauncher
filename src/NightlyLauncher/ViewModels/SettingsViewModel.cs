@@ -61,11 +61,11 @@ internal sealed partial class SettingsViewModel : ViewModelBase {
     }
 
     [RelayCommand]
-    private async Task ChangeDownloadPath() {
-        var result = await ShowChangePathDialogAsync("DownloadsFolderName", new Config().DownloadPath);
+    private async Task ChangeCachePath() {
+        var result = await ShowChangePathDialogAsync("CacheFolderName", new Config().CachePath);
 
         if (!string.IsNullOrWhiteSpace(result))
-            Config = Config! with { DownloadPath = result };
+            Config = Config! with { CachePath = result };
     }
 
     [RelayCommand]
@@ -85,12 +85,12 @@ internal sealed partial class SettingsViewModel : ViewModelBase {
         SelectFolderAsync(path => { Config = Config! with { AppPath = path }; }, "AppsFolderName");
 
     [RelayCommand]
-    private Task SelectDownloadPath() =>
-        SelectFolderAsync(path => { Config = Config! with { DownloadPath = path }; }, "DownloadsFolderName");
+    private Task SelectCachePath() =>
+        SelectFolderAsync(path => { Config = Config! with { CachePath = path }; }, "CacheFolderName");
 
     [RelayCommand]
-    private Task<bool> OpenDownloadsFolder() =>
-        _launcherService.OpenFolderAsync(_pathService.DownloadPath);
+    private Task<bool> OpenCacheFolder() =>
+        _launcherService.OpenFolderAsync(_pathService.CachePath);
 
     [RelayCommand]
     private Task<bool> OpenAppsFolder() =>

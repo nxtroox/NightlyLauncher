@@ -2,5 +2,5 @@
 
 internal sealed record Config(
     string AppPath = "Apps",
-    string DownloadPath = "Downloads",
+    string CachePath = "Cache",
     List<RepositoryEntry>? Repositories = null);

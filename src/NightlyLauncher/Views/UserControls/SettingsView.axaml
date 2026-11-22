@@ -91,32 +91,32 @@
                         </ui:FASettingsExpanderItem>
                     </ui:FASettingsExpander>
 
-                    <ui:FASettingsExpander Header="{loc:T DownloadPathHeader}"
+                    <ui:FASettingsExpander Header="{loc:T CachePathHeader}"
                                            IsExpanded="True">
                         <ui:FASettingsExpander.IconSource>
-                            <ic:SymbolIconSource Symbol="ArrowDownload" />
+                            <ic:SymbolIconSource Symbol="DatabaseLightning" />
                         </ui:FASettingsExpander.IconSource>
 
                         <ui:FASettingsExpander.Footer>
-                            <Button Command="{Binding OpenDownloadsFolderCommand}"
+                            <Button Command="{Binding OpenCacheFolderCommand}"
                                     ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
                                 <ic:SymbolIcon Symbol="OpenFolder" />
                             </Button>
                         </ui:FASettingsExpander.Footer>
 
-                        <ui:FASettingsExpanderItem Content="{Binding Config?.DownloadPath}"
-                                                   Description="{loc:T DownloadPathDescription}">
+                        <ui:FASettingsExpanderItem Content="{Binding Config?.CachePath}"
+                                                   Description="{loc:T CachePathDescription}">
                             <ui:FASettingsExpanderItem.IconSource>
                                 <ic:SymbolIconSource Symbol="Folder" />
                             </ui:FASettingsExpanderItem.IconSource>
                             <ui:FASettingsExpanderItem.Footer>
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <Button Command="{Binding SelectDownloadPathCommand}"
+                                    <Button Command="{Binding SelectCachePathCommand}"
                                             ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
                                         <ic:SymbolIcon Symbol="FolderSearch" />
                                     </Button>
 
-                                    <Button Command="{Binding ChangeDownloadPathCommand}"
+                                    <Button Command="{Binding ChangeCachePathCommand}"
                                             ToolTip.Tip="{loc:T EditPathButtonTooltip}">
                                         <ic:SymbolIcon Symbol="Edit" />
                                     </Button>
