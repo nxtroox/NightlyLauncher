@@ -12,7 +12,7 @@
   <data name="PortableDescription" xml:space="preserve">
     <value>Does not delete any files when toggled</value>
   </data>
-  <data name="SelectedInstallOptionComboboxPlaceholderText" xml:space="preserve">
+  <data name="SelectedInstallOptionComboBoxPlaceholderText" xml:space="preserve">
     <value>Select an installation option</value>
   </data>
   <data name="SelectedInstallOptionContent" xml:space="preserve">

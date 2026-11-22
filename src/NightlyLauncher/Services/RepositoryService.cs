@@ -21,10 +21,10 @@ internal sealed class RepositoryService(
 
         var updated = false;
         for (var index = 0; index < _repositories!.Count; index++) {
-            var repo = _repositories[index];
+            var repository = _repositories[index];
 
             try {
-                var updatedRepository = await GetRepositoryFromUriAsync(repo.UpdateUri, cancellationToken);
+                var updatedRepository = await GetRepositoryFromUriAsync(repository.UpdateUri, cancellationToken);
 
                 _repositories[index] = updatedRepository ??
                                        throw new InvalidOperationException(
@@ -34,7 +34,7 @@ internal sealed class RepositoryService(
             } catch (Exception exception) {
                 var detailedException = new InvalidOperationException(
                     localizer["RepositoryNotUpdatedExceptionMessage",
-                        repo.DisplayName,
+                        repository.DisplayName,
                         exception.Message]);
 
                 await errorCallback(detailedException);
@@ -73,7 +73,7 @@ internal sealed class RepositoryService(
         await LoadRepositoriesIfNeededAsync(cancellationToken);
 
         return [
-            .. _repositories!.SelectMany(repo => repo.Apps)
+            .. _repositories!.SelectMany(repository => repository.Apps)
                 .Where(manifest => manifest.InstallOptions.Any(option =>
                     CheckAppCompatibility(option.Platform.OsType, option.Platform.Architecture)))
         ];
@@ -106,17 +106,17 @@ internal sealed class RepositoryService(
     }
 
     private async Task AddRepositoryCoreAsync(Uri uri, CancellationToken cancellationToken, Guid? guid = null) {
-        var repo = guid is null
+        var repository = guid is null
             ? await GetRepositoryFromUriAsync(uri, cancellationToken)
             : await GetRepositoryFromFileAsync(
                 guid ?? throw new InvalidOperationException(localizer["RepositoryGuidIsNullExceptionMessage"]),
                 cancellationToken);
 
-        if (repo is not null) {
-            if (_repositories!.Any(r => r.UpdateUri == repo.UpdateUri || r.Guid == repo.Guid))
+        if (repository is not null) {
+            if (_repositories!.Any(r => r.UpdateUri == repository.UpdateUri || r.Guid == repository.Guid))
                 throw new InvalidOperationException(localizer["RepositoryAlreadyInstalledExceptionMessage"]);
 
-            _repositories!.Add(repo);
+            _repositories!.Add(repository);
         } else
             throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
     }

@@ -27,7 +27,7 @@
                         <ui:FAComboBox Grid.Column="1"
                                        ItemsSource="{Binding SelectedApp?.Manifest.InstallOptions}"
                                        SelectedItem="{Binding SelectedInstallOption, Mode=TwoWay}"
-                                       PlaceholderText="{loc:T SelectedInstallOptionComboboxPlaceholderText}"
+                                       PlaceholderText="{loc:T SelectedInstallOptionComboBoxPlaceholderText}"
                                        IsEnabled="{Binding SelectedApp?.Manifest.InstallOptions.Count, Converter={x:Static conv:CollectionConverters.HasMultipleItems}}">
                             <ui:FAComboBox.ItemTemplate>
                                 <DataTemplate DataType="models:InstallOption">
