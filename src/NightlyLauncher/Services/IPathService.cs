@@ -9,5 +9,7 @@ internal interface IPathService {
     string DownloadPath { get; }
     string IconPath { get; }
     string RepositoryPath { get; }
+
     string GetAppPath(InstalledApp app);
+    string GetRepositoryPath(Guid repositoryGuid);
 }

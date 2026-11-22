@@ -32,6 +32,9 @@ internal sealed class PathService : IPathService {
     public string GetAppPath(InstalledApp app) =>
         Path.Combine(AppPath, app.Manifest.Guid + "_" + app.InstallOptionGuid);
 
+    public string GetRepositoryPath(Guid repositoryGuid) =>
+        Path.Combine(RepositoryPath, repositoryGuid + ".json");
+
     private static bool IsPortable() =>
         File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"));
 

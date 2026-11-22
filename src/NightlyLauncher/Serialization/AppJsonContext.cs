@@ -11,6 +11,5 @@ namespace NightlyLauncher.Serialization;
 [JsonSerializable(typeof(Config))]
 [JsonSerializable(typeof(List<InstalledApp>))]
 [JsonSerializable(typeof(Repository))]
-[JsonSerializable(typeof(List<Repository>))]
 internal sealed partial class AppJsonContext : JsonSerializerContext {
 }

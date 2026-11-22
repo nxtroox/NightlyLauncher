@@ -26,10 +26,13 @@ internal sealed class RepositoryService(
             try {
                 var updatedRepository = await GetRepositoryFromUriAsync(repository.UpdateUri, cancellationToken);
 
-                _repositories[index] = updatedRepository ??
-                                       throw new InvalidOperationException(
-                                           localizer["RepositoryNotFetchedExceptionMessage"]);
+                if (updatedRepository is null)
+                    throw new InvalidOperationException(localizer["RepositoryNotFetchedExceptionMessage"]);
 
+                if (repository.Guid != updatedRepository.Guid)
+                    File.Delete(pathService.GetRepositoryPath(repository.Guid));
+
+                _repositories[index] = updatedRepository;
                 updated = true;
             } catch (Exception exception) {
                 var detailedException = new InvalidOperationException(
@@ -41,10 +44,8 @@ internal sealed class RepositoryService(
             }
         }
 
-        if (updated) {
-            await UpdateConfig(cancellationToken);
+        if (updated)
             await WriteRepositoriesAsync(cancellationToken);
-        }
     }
 
     public async Task AddRepositoryAsync(Uri uri, CancellationToken cancellationToken = default) {
@@ -52,7 +53,6 @@ internal sealed class RepositoryService(
 
         await AddRepositoryCoreAsync(uri, cancellationToken);
 
-        await UpdateConfig(cancellationToken);
         await WriteRepositoriesAsync(cancellationToken);
     }
 
@@ -63,7 +63,6 @@ internal sealed class RepositoryService(
 
         if (found is not null) {
             _repositories!.Remove(found);
-            await UpdateConfig(cancellationToken);
             await WriteRepositoriesAsync(cancellationToken);
         } else
             throw new KeyNotFoundException(localizer["RepositoryNotFoundExceptionMessage", repository.DisplayName]);
@@ -138,8 +137,14 @@ internal sealed class RepositoryService(
         httpClient.GetFromJsonAsync<Repository>(uri, AppJsonContext.Default.Repository, cancellationToken);
 
     private async Task<Repository?> GetRepositoryFromFileAsync(Guid guid, CancellationToken cancellationToken) {
-        var path = Path.Combine(pathService.RepositoryPath, $"{guid.ToString()}.json");
-        await using var stream = File.OpenRead(path);
+        await using var stream = new FileStream(
+            pathService.GetRepositoryPath(guid),
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            4096,
+            true);
+
         return await JsonSerializer.DeserializeAsync<Repository>(stream, AppJsonContext.Default.Repository,
             cancellationToken);
     }
@@ -151,21 +156,25 @@ internal sealed class RepositoryService(
         if (directory is not null)
             Directory.CreateDirectory(directory);
 
-        foreach (var path in _repositories.Select(repository =>
-                     Path.Combine(pathService.RepositoryPath, $"{repository.Guid.ToString()}.json"))) {
-            await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
-            await JsonSerializer.SerializeAsync(stream, _repositories, AppJsonContext.Default.ListRepository,
+        foreach (var repository in _repositories) {
+            await using var stream = new FileStream(
+                pathService.GetRepositoryPath(repository.Guid),
+                FileMode.Create,
+                FileAccess.Write,
+                FileShare.None,
+                4096,
+                true);
+
+            await JsonSerializer.SerializeAsync(stream, repository, AppJsonContext.Default.Repository,
                 cancellationToken);
         }
-    }
 
-    private Task UpdateConfig(CancellationToken cancellationToken) =>
-        configService.UpdateAsync(configService.Config with {
-                Repositories = [
-                    .. _repositories!.Select(repository => new RepositoryEntry(repository.UpdateUri, repository.Guid))
-                ]
-            },
-            cancellationToken);
+        await configService.UpdateAsync(
+            configService.Config with {
+                Repositories =
+                [.. _repositories!.Select(repository => new RepositoryEntry(repository.UpdateUri, repository.Guid))]
+            }, cancellationToken);
+    }
 
     private OsType GetCurrentOperatingSystem() =>
         OperatingSystem.IsWindows() ? OsType.Windows
