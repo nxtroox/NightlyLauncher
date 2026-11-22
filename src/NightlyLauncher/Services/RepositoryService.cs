@@ -147,14 +147,12 @@ internal sealed class RepositoryService(
     private async Task WriteRepositoriesAsync(CancellationToken cancellationToken) {
         if (_repositories is null || _repositories.Count is 0) return;
 
-        var repositoryCachePath = pathService.RepositoryPath;
-
-        var directory = Path.GetDirectoryName(repositoryCachePath);
+        var directory = Path.GetDirectoryName(pathService.RepositoryPath);
         if (directory is not null)
             Directory.CreateDirectory(directory);
 
         foreach (var path in _repositories.Select(repository =>
-                     Path.Combine(repositoryCachePath, $"{repository.Guid.ToString()}.json"))) {
+                     Path.Combine(pathService.RepositoryPath, $"{repository.Guid.ToString()}.json"))) {
             await using var stream = File.Open(path, FileMode.Create, FileAccess.Write);
             await JsonSerializer.SerializeAsync(stream, _repositories, AppJsonContext.Default.ListRepository,
                 cancellationToken);
