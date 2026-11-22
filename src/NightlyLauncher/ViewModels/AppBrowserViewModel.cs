@@ -18,9 +18,10 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
     private readonly IStringLocalizer<AppBrowserViewModel> _localizer;
     private readonly IRepositoryService _repositoryService;
 
+    private IReadOnlyList<AppManifest> _apps = [];
+
     public AppBrowserViewModel(IDatabaseService databaseService, DialogOwner dialogOwner, IDialogService dialogService,
-        IRepositoryService repositoryService,
-        IStringLocalizer<AppBrowserViewModel> localizer) {
+        IRepositoryService repositoryService, IStringLocalizer<AppBrowserViewModel> localizer) {
         _databaseService = databaseService;
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
@@ -28,12 +29,8 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
         _localizer = localizer;
 
         Title = localizer["AppBrowserViewTitle"];
-
-        Apps.CollectionChanged += (_, _) => ApplySearchFilter();
-        ApplySearchFilter();
     }
 
-    private ObservableCollection<AppManifest> Apps { get; } = [];
     public ObservableCollection<AppManifest> FilteredApps { get; } = [];
 
     [ObservableProperty]
@@ -42,59 +39,34 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
 
     [ObservableProperty] public partial string? SearchText { get; set; }
 
-    private Guid? SelectedInstallOptionGuid { get; set; }
+    internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
+        var manifests = await _repositoryService.GetAvailableAppsAsync(cancellationToken);
+        var installedApps = await _databaseService.GetInstalledAppsAsync(cancellationToken);
 
-    [RelayCommand(CanExecute = nameof(CanInteractWithApp))]
-    private async Task AddApp(CancellationToken cancellationToken) {
-        var compatibleOptions = SelectedManifest!.InstallOptions.Where(option =>
-                _repositoryService.CheckAppCompatibility(option.Platform.OsType, option.Platform.Architecture))
-            .ToList();
+        var installedGuids = installedApps.Select(app => app.Manifest.Guid).ToHashSet();
+        _apps = [.. manifests.Where(manifest => !installedGuids.Contains(manifest.Guid))];
 
-        if (compatibleOptions.Count is 1)
-            SelectedInstallOptionGuid = compatibleOptions.First().Guid;
-        else {
-            var vm = _dialogService.CreateViewModel<SelectionViewModel>();
-            vm.Content = _localizer["SelectInstallOptionContentDialogContent"];
-            compatibleOptions.ForEach(vm.Items.Add);
-
-            var contentDialogSettings = new ContentDialogSettings {
-                CloseButtonText = _localizer["SelectInstallOptionContentCloseButtonText"],
-                Content = vm,
-                DefaultButton = FAContentDialogButton.Primary,
-                PrimaryButtonText = _localizer["SelectInstallOptionContentDialogPrimaryButtonText"],
-                Title = _localizer["SelectInstallOptionContentDialogTitle"]
-            };
-
-            if (await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, contentDialogSettings) is
-                    FAContentDialogResult.Primary && vm.SelectedItem is InstallOption installOption)
-                SelectedInstallOptionGuid = installOption.Guid;
+        if (_apps.Count is 0) {
+            await ShowMessageBoxAsync(
+                _localizer["NoAppsAvailableMessageBoxTitle"],
+                _localizer["NoAppsAvailableMessageBoxContent"],
+                MessageBoxImage.Information);
+            return;
         }
 
-        if (SelectedInstallOptionGuid is null) return;
-
-        try {
-            await InstallAppAsync(cancellationToken);
-        } catch (Exception ex) {
-            var messageBoxSettings = new MessageBoxSettings {
-                Button = MessageBoxButton.Ok,
-                Content = ex.Message,
-                DefaultValue = true,
-                Icon = MessageBoxImage.Error,
-                Title = _localizer["AddAppErrorMessageBoxTitle", SelectedManifest.DisplayName]
-            };
-
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window, messageBoxSettings);
-        }
+        ApplySearchFilter();
     }
 
-    // ReSharper disable once UnusedParameterInPartialMethod
-    partial void OnSearchTextChanged(string? value) => ApplySearchFilter();
+    partial void OnSearchTextChanged(string? value) {
+        if (_apps.Count is not 0)
+            ApplySearchFilter();
+    }
 
     private void ApplySearchFilter() {
         var query = SearchText?.Trim();
-        var matches = string.IsNullOrWhiteSpace(query)
-            ? Apps
-            : Apps.Where(app => app.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase));
+        var matches = string.IsNullOrEmpty(query)
+            ? _apps
+            : _apps.Where(app => app.DisplayName.Contains(query, StringComparison.OrdinalIgnoreCase));
 
         FilteredApps.Clear();
         foreach (var app in matches)
@@ -104,48 +76,62 @@ internal sealed partial class AppBrowserViewModel : ViewModelBase {
             SelectedManifest = null;
     }
 
-    internal async Task InitializeAsync(CancellationToken cancellationToken = default) {
-        var manifests = await _repositoryService.GetAvailableAppsAsync(cancellationToken);
-        var installedApps = await _databaseService.GetInstalledAppsAsync(cancellationToken);
+    private bool CanAddApp() => SelectedManifest is not null;
 
-        var apps = manifests
-            .Where(manifest => installedApps.All(m => m.Manifest.Guid != manifest.Guid))
+    [RelayCommand(CanExecute = nameof(CanAddApp))]
+    private async Task AddApp(CancellationToken cancellationToken) {
+        var manifest = SelectedManifest!;
+
+        var compatibleOptions = manifest.InstallOptions
+            .Where(option => _repositoryService.CheckAppCompatibility(option.Platform.OsType,
+                option.Platform.Architecture))
             .ToList();
 
-        if (apps.Count is 0) {
-            var messageBoxSettings = new MessageBoxSettings {
-                Button = MessageBoxButton.Ok,
-                Content = _localizer["NoAppsAvailableMessageBoxContent"],
-                DefaultValue = true,
-                Icon = MessageBoxImage.Information,
-                Title = _localizer["NoAppsAvailableMessageBoxTitle"]
-            };
+        var installOption = compatibleOptions switch {
+            [] => null, // this is technically not possible, but better be safe than sorry I guess
+            [var single] => single,
+            _ => await SelectInstallOptionAsync(compatibleOptions)
+        };
 
-            await _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!, messageBoxSettings);
-            return;
+        if (installOption is null) return;
+
+        try {
+            var app = new InstalledApp(manifest, installOption.Guid, installOption.AppOptions);
+            await _databaseService.UpdateAppAsync(app, cancellationToken);
+            await InitializeAsync(cancellationToken);
+        } catch (Exception ex) when (ex is not OperationCanceledException) {
+            await ShowMessageBoxAsync(
+                _localizer["AddAppErrorMessageBoxTitle", manifest.DisplayName],
+                ex.Message,
+                MessageBoxImage.Error);
         }
-
-        foreach (var app in apps)
-            Apps.Add(app);
     }
 
-    private bool CanInteractWithApp() => SelectedManifest is not null;
+    private async Task<InstallOption?> SelectInstallOptionAsync(IEnumerable<InstallOption> options) {
+        var vm = _dialogService.CreateViewModel<SelectionViewModel>();
+        vm.Content = _localizer["SelectInstallOptionContentDialogContent"];
+        foreach (var option in options)
+            vm.Items.Add(option);
 
-    private Task LoadAppsAsync(CancellationToken cancellationToken) {
-        Apps.Clear();
-        return InitializeAsync(cancellationToken);
+        var settings = new ContentDialogSettings {
+            CloseButtonText = _localizer["SelectInstallOptionContentCloseButtonText"],
+            Content = vm,
+            DefaultButton = FAContentDialogButton.Primary,
+            PrimaryButtonText = _localizer["SelectInstallOptionContentDialogPrimaryButtonText"],
+            Title = _localizer["SelectInstallOptionContentDialogTitle"]
+        };
+
+        var result = await _dialogService.ShowContentDialogAsync(_dialogOwner.Window!, settings);
+        return result is FAContentDialogResult.Primary ? vm.SelectedItem as InstallOption : null;
     }
 
-    private async Task InstallAppAsync(CancellationToken cancellationToken) {
-        var option =
-            SelectedManifest!.InstallOptions.FirstOrDefault(option => option.Guid == SelectedInstallOptionGuid);
-
-        var app = new InstalledApp(SelectedManifest!,
-            SelectedInstallOptionGuid ??
-            throw new InvalidOperationException(_localizer["NoInstallOptionSelectedExceptionMessage"]),
-            option!.AppOptions);
-
-        await _databaseService.UpdateAppAsync(app, cancellationToken);
-        await LoadAppsAsync(cancellationToken);
-    }
+    private Task<bool?> ShowMessageBoxAsync(string title, string content, MessageBoxImage icon) =>
+        _dialogService.ShowMessageBoxAsync(_dialogOwner.Window!,
+            new MessageBoxSettings {
+                Button = MessageBoxButton.Ok,
+                Content = content,
+                DefaultValue = true,
+                Icon = icon,
+                Title = title
+            });
 }
