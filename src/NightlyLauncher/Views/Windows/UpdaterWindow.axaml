@@ -12,7 +12,10 @@
                  Height="200"
                  Width="600"
                  WindowStartupLocation="CenterScreen"
-                 WindowDecorations="None">
+                 WindowDecorations="None"
+                 Background="Transparent"
+                 TransparencyBackgroundFallback="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                 TransparencyLevelHint="Mica">
     <StackPanel VerticalAlignment="Center" Spacing="8" Margin="16">
         <TextBlock Text="{Binding StatusText}"
                    HorizontalAlignment="Center"

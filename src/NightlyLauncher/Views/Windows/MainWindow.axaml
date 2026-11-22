@@ -13,7 +13,10 @@
                  Title="{Binding Title}"
                  Icon="/Assets/NightlyLauncher.ico"
                  Height="800"
-                 Width="600">
+                 Width="600"
+                 Background="Transparent"
+                 TransparencyBackgroundFallback="{DynamicResource SolidBackgroundFillColorBaseBrush}"
+                 TransparencyLevelHint="Mica">
     <ui:FANavigationView PaneDisplayMode="Left"
                          IsPaneOpen="False"
                          IsSettingsVisible="False"
