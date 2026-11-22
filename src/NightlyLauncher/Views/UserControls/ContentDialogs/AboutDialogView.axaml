@@ -15,7 +15,7 @@
                    VerticalAlignment="Center" />
 
             <StackPanel VerticalAlignment="Center">
-                <TextBlock Text="{loc:T AppName}"
+                <TextBlock Text="{Binding AppName}"
                            Theme="{StaticResource BodyStrongTextBlockStyle}" />
 
                 <StackPanel Orientation="Horizontal">

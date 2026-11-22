@@ -3,4 +3,7 @@
   <data name="AboutDialogViewTitle" xml:space="preserve">
     <value>About NightlyLauncher</value>
   </data>
+  <data name="AppName" xml:space="preserve">
+    <value>NightlyLauncher {0}</value>
+  </data>
 </root>

@@ -12,6 +12,7 @@ internal sealed partial class AboutDialogViewModel : ViewModelBase {
         _launcherService = launcherService;
 
         Title = localizer["AboutDialogViewTitle"];
+        AppName = localizer["AppName", typeof(Program).Assembly.GetName().Version?.ToString() ?? string.Empty];
         AuthorUri = new Uri("https://github.com/nxtroox");
     }
 
@@ -29,7 +30,8 @@ internal sealed partial class AboutDialogViewModel : ViewModelBase {
         "Microsoft.Extensions.Localization"
     ];
 
-    public Uri AuthorUri { get; private set; }
+    public string AppName { get; }
+    public Uri AuthorUri { get; }
 
     [RelayCommand]
     private Task<bool> OpenLibrary(string nuGetPackageName) =>
