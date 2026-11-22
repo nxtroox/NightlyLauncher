@@ -20,16 +20,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="12.1.6" />
-    <PackageReference Include="Avalonia.Desktop" Version="12.1.6" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-    <PackageReference Include="FluentAvaloniaUI" Version="3.1.0" />
-    <PackageReference Include="FluentIcons.Avalonia.Fluent" Version="2.1.345" />
-    <PackageReference Include="HanumanInstitute.MvvmDialogs" Version="2.4.0" />
-    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.4.0" />
-    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.Fluent" Version="2.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="11.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="11.0.0" />
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="FluentAvaloniaUI" />
+    <PackageReference Include="FluentIcons.Avalonia.Fluent" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia" />
+    <PackageReference Include="HanumanInstitute.MvvmDialogs.Avalonia.Fluent" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Http" />
+    <PackageReference Include="Microsoft.Extensions.Localization" />
   </ItemGroup>
 </Project>

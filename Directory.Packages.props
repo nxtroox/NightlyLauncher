@@ -1,0 +1,18 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Avalonia" Version="12.1.6" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.6" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="FluentAvaloniaUI" Version="3.1.0" />
+    <PackageVersion Include="FluentIcons.Avalonia.Fluent" Version="2.1.345" />
+    <PackageVersion Include="HanumanInstitute.MvvmDialogs" Version="2.4.0" />
+    <PackageVersion Include="HanumanInstitute.MvvmDialogs.Avalonia" Version="2.4.0" />
+    <PackageVersion Include="HanumanInstitute.MvvmDialogs.Avalonia.Fluent" Version="2.4.0" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="11.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Localization" Version="11.0.0" />
+  </ItemGroup>
+</Project>
