@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using System.Reflection;
 using HanumanInstitute.MvvmDialogs;
 using HanumanInstitute.MvvmDialogs.Avalonia;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,14 +27,13 @@ internal static class ServiceCollectionExtensions {
         collection.AddHttpClient<IAppUpdaterService, AppUpdaterService>(client => {
             client.DefaultRequestHeaders.UserAgent.Add(
                 new ProductInfoHeaderValue("NightlyLauncher",
-                    Assembly.GetExecutingAssembly().GetName().Version?.ToString())
-            );
+                    typeof(Program).Assembly.GetName().Version?.ToString()));
         });
 
         collection.AddHttpClient<IRepositoryService, RepositoryService>(client => {
             client.DefaultRequestHeaders.UserAgent.Add(
                 new ProductInfoHeaderValue("NightlyLauncher",
-                    Assembly.GetExecutingAssembly().GetName().Version?.ToString()));
+                    typeof(Program).Assembly.GetName().Version?.ToString()));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         });
 
