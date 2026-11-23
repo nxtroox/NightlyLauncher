@@ -9,6 +9,17 @@ on:
       - 'src/NightlyLauncher.RepositoryGenerator/**'
       - '.github/workflows/datagen.yml'
 
+permissions:
+  contents: write
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
 jobs:
   datagen:
     runs-on: ubuntu-slim

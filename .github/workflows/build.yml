@@ -12,31 +12,61 @@ on:
       - 'global.json'
       - '.github/workflows/build.yml'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_NOLOGO: true
+
 jobs:
   build:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            runtime: win-x64
+          - os: windows-latest
+            runtime: win-arm64
+          - os: ubuntu-latest
+            runtime: linux-x64
+          - os: ubuntu-latest
+            runtime: linux-arm64
+          - os: macos-latest
+            runtime: osx-x64
+          - os: macos-latest
+            runtime: osx-arm64
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v7
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
       - name: Publish NightlyLauncher
-        run: dotnet publish src/NightlyLauncher/NightlyLauncher.csproj -r win-x64 -o publish
+        run: dotnet publish src/NightlyLauncher/NightlyLauncher.csproj -r ${{ matrix.runtime }} -o publish
       - name: Upload Binaries
         uses: actions/upload-artifact@v7
         with:
-          name: NightlyLauncher-win-x64
+          name: NightlyLauncher-${{ matrix.runtime }}
           path: publish
       - name: Uninstall Inno Setup 6
+        if: runner.os == 'Windows'
         run: choco uninstall innosetup
       - name: Install Inno Setup 7
+        if: runner.os == 'Windows'
         run: winget install JRSoftware.InnoSetup.7 --scope machine --accept-source-agreements --accept-package-agreements
       - name: Compile Installer
+        if: runner.os == 'Windows'
         shell: pwsh
         run: >
-          & "${env:ProgramFiles}\Inno Setup 7\ISCC.exe" "installer/setup.iss"
+          & "${env:ProgramFiles}\Inno Setup 7\ISCC.exe" "/DMyAppRuntime=${{ matrix.runtime }}" "installer/setup.iss"
       - name: Upload Installer
+        if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
-          path: installer/Output/NightlyLauncherSetup-win-x64.exe
+          path: installer/Output/NightlyLauncherSetup-${{ matrix.runtime }}.exe
           archive: false

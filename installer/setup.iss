@@ -1,4 +1,14 @@
-﻿#define MyAppName "NightlyLauncher"
+﻿#ifndef MyAppRuntime
+  #define MyAppRuntime "win-x64"
+#endif
+
+#if MyAppRuntime == "win-arm64"
+  #define MyArch "arm64"
+#else
+  #define MyArch "x64compatible"
+#endif
+
+#define MyAppName "NightlyLauncher"
 #define MyAppVersion GetVersionNumbersString("..\publish\NightlyLauncher.exe")
 #define MyAppPublisher "nxtroox"
 #define MyAppURL "https://github.com/nxtroox/NightlyLauncher"
@@ -17,13 +27,13 @@ AppSupportURL={#MyAppURL}/issues
 AppUpdatesURL={#MyAppURL}/releases
 DefaultDirName={autopf}\{#MyAppName}
 UninstallDisplayIcon={app}\{#MyAppExeName}
-ArchitecturesAllowed=x64compatible
-ArchitecturesInstallIn64BitMode=x64compatible
+ArchitecturesAllowed={#MyArch}
+ArchitecturesInstallIn64BitMode={#MyArch}
 SetupArchitecture=x64
 DisableProgramGroupPage=yes
 LicenseFile=..\LICENSE
 PrivilegesRequiredOverridesAllowed=dialog
-OutputBaseFilename={#MyAppName}Setup-win-x64
+OutputBaseFilename={#MyAppName}Setup-{#MyAppRuntime}
 SolidCompression=yes
 WizardStyle=modern dynamic
 SetupIconFile=..\src\NightlyLauncher\Assets\NightlyLauncher.ico
