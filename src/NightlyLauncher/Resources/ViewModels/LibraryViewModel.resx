@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <data name="AppUpdateErrorMessageBoxTitle" xml:space="preserve">
-    <value>Update {0}</value>
+    <value>Unable to Update {0}</value>
   </data>
   <data name="EditAppContentDialogCloseButtonText" xml:space="preserve">
     <value>Cancel</value>
@@ -16,7 +16,7 @@
     <value>Library</value>
   </data>
   <data name="OpenFolderErrorMessageBoxTitle" xml:space="preserve">
-    <value>Open Folder</value>
+    <value>Unable to Open Folder</value>
   </data>
   <data name="RemoveAppErrorMessageBoxTitle" xml:space="preserve">
     <value>Unable to Remove {0}</value>
@@ -31,7 +31,7 @@
     <value>Also remove data for {0}?</value>
   </data>
   <data name="RepositoryUpdateErrorMessageBoxTitle" xml:space="preserve">
-    <value>Update Repositories</value>
+    <value>Unable to Update Repositories</value>
   </data>
   <data name="UpdatePromptMessageBoxContent" xml:space="preserve">
     <value>Would you like to update {0}?</value>
