@@ -15,6 +15,7 @@ using NightlyLauncher.Services;
 namespace NightlyLauncher.ViewModels;
 
 internal sealed partial class LibraryViewModel : ViewModelBase {
+    private readonly IConfigService _configService;
     private readonly IDatabaseService _databaseService;
     private readonly DialogOwner _dialogOwner;
     private readonly IDialogService _dialogService;
@@ -24,7 +25,8 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
     private readonly IRepositoryService _repositoryService;
     private readonly IAppUpdaterService _updaterService;
 
-    public LibraryViewModel(IDatabaseService databaseService,
+    public LibraryViewModel(IConfigService configService,
+        IDatabaseService databaseService,
         DialogOwner dialogOwner,
         IDialogService dialogService,
         ILauncherService launcherService,
@@ -32,6 +34,7 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
         IPathService pathService,
         IRepositoryService repositoryService,
         IAppUpdaterService updaterService) {
+        _configService = configService;
         _databaseService = databaseService;
         _dialogOwner = dialogOwner;
         _dialogService = dialogService;
@@ -115,6 +118,9 @@ internal sealed partial class LibraryViewModel : ViewModelBase {
                 await _updaterService.UpdateAsync(SelectedApp!.App, progress, cancellationToken);
 
             await _launcherService.StartAppAsync(SelectedApp!.App, progress, cancellationToken);
+
+            if (_configService.Config.CloseAfterLaunch)
+                Exit();
         } catch (Exception ex) {
             var messageBoxSettings = new MessageBoxSettings {
                 Button = MessageBoxButton.Ok,

@@ -55,84 +55,102 @@
         </Grid>
 
         <ScrollViewer Grid.Row="1" Padding="{StaticResource PageScrollPadding}">
-            <StackPanel Spacing="8">
-                <TextBlock Text="{loc:T PathOptionsHeading}"
-                           Theme="{StaticResource BodyStrongTextBlockStyle}" />
+            <StackPanel Spacing="24">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{loc:T GeneralOptionsHeading}"
+                               Theme="{StaticResource BodyStrongTextBlockStyle}" />
 
-                <StackPanel Spacing="4">
-                    <ui:FASettingsExpander Header="{loc:T AppPathHeader}"
-                                           IsExpanded="True">
+                    <ui:FASettingsExpander Header="{loc:T CloseAfterLaunchHeader}"
+                                           Description="{loc:T CloseAfterLaunchDescription}">
                         <ui:FASettingsExpander.IconSource>
-                            <ic:SymbolIconSource Symbol="Apps" />
+                            <ic:SymbolIconSource Symbol="ArrowExit" />
                         </ui:FASettingsExpander.IconSource>
 
                         <ui:FASettingsExpander.Footer>
-                            <Button Classes="icon-only"
-                                    Command="{Binding OpenAppsFolderCommand}"
-                                    ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
-                                <ic:SymbolIcon Symbol="OpenFolder" />
-                            </Button>
+                            <ToggleSwitch IsChecked="{Binding Config?.CloseAfterLaunch}" />
                         </ui:FASettingsExpander.Footer>
-
-                        <ui:FASettingsExpanderItem Content="{Binding Config?.AppPath}"
-                                                   Description="{loc:T AppPathDescription}">
-                            <ui:FASettingsExpanderItem.IconSource>
-                                <ic:SymbolIconSource Symbol="Folder" />
-                            </ui:FASettingsExpanderItem.IconSource>
-                            <ui:FASettingsExpanderItem.Footer>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Button Classes="icon-only"
-                                            Command="{Binding SelectAppPathCommand}"
-                                            ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
-                                        <ic:SymbolIcon Symbol="FolderSearch" />
-                                    </Button>
-
-                                    <Button Classes="icon-only"
-                                            Command="{Binding ChangeAppPathCommand}"
-                                            ToolTip.Tip="{loc:T EditPathButtonTooltip}">
-                                        <ic:SymbolIcon Symbol="Edit" />
-                                    </Button>
-                                </StackPanel>
-                            </ui:FASettingsExpanderItem.Footer>
-                        </ui:FASettingsExpanderItem>
                     </ui:FASettingsExpander>
+                </StackPanel>
 
-                    <ui:FASettingsExpander Header="{loc:T CachePathHeader}"
-                                           IsExpanded="True">
-                        <ui:FASettingsExpander.IconSource>
-                            <ic:SymbolIconSource Symbol="DatabaseLightning" />
-                        </ui:FASettingsExpander.IconSource>
+                <StackPanel Spacing="8">
+                    <TextBlock Text="{loc:T PathOptionsHeading}"
+                               Theme="{StaticResource BodyStrongTextBlockStyle}" />
 
-                        <ui:FASettingsExpander.Footer>
-                            <Button Classes="icon-only"
-                                    Command="{Binding OpenCacheFolderCommand}"
-                                    ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
-                                <ic:SymbolIcon Symbol="OpenFolder" />
-                            </Button>
-                        </ui:FASettingsExpander.Footer>
+                    <StackPanel Spacing="4">
+                        <ui:FASettingsExpander Header="{loc:T AppPathHeader}"
+                                               IsExpanded="True">
+                            <ui:FASettingsExpander.IconSource>
+                                <ic:SymbolIconSource Symbol="Apps" />
+                            </ui:FASettingsExpander.IconSource>
 
-                        <ui:FASettingsExpanderItem Content="{Binding Config?.CachePath}"
-                                                   Description="{loc:T CachePathDescription}">
-                            <ui:FASettingsExpanderItem.IconSource>
-                                <ic:SymbolIconSource Symbol="Folder" />
-                            </ui:FASettingsExpanderItem.IconSource>
-                            <ui:FASettingsExpanderItem.Footer>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <Button Classes="icon-only"
-                                            Command="{Binding SelectCachePathCommand}"
-                                            ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
-                                        <ic:SymbolIcon Symbol="FolderSearch" />
-                                    </Button>
+                            <ui:FASettingsExpander.Footer>
+                                <Button Classes="icon-only"
+                                        Command="{Binding OpenAppsFolderCommand}"
+                                        ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
+                                    <ic:SymbolIcon Symbol="OpenFolder" />
+                                </Button>
+                            </ui:FASettingsExpander.Footer>
 
-                                    <Button Classes="icon-only"
-                                            Command="{Binding ChangeCachePathCommand}"
-                                            ToolTip.Tip="{loc:T EditPathButtonTooltip}">
-                                        <ic:SymbolIcon Symbol="Edit" />
-                                    </Button>
-                                </StackPanel>
-                            </ui:FASettingsExpanderItem.Footer>
-                        </ui:FASettingsExpanderItem>
-                    </ui:FASettingsExpander>
+                            <ui:FASettingsExpanderItem Content="{Binding Config?.AppPath}"
+                                                       Description="{loc:T AppPathDescription}">
+                                <ui:FASettingsExpanderItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Folder" />
+                                </ui:FASettingsExpanderItem.IconSource>
+                                <ui:FASettingsExpanderItem.Footer>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button Classes="icon-only"
+                                                Command="{Binding SelectAppPathCommand}"
+                                                ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
+                                            <ic:SymbolIcon Symbol="FolderSearch" />
+                                        </Button>
+
+                                        <Button Classes="icon-only"
+                                                Command="{Binding ChangeAppPathCommand}"
+                                                ToolTip.Tip="{loc:T EditPathButtonTooltip}">
+                                            <ic:SymbolIcon Symbol="Edit" />
+                                        </Button>
+                                    </StackPanel>
+                                </ui:FASettingsExpanderItem.Footer>
+                            </ui:FASettingsExpanderItem>
+                        </ui:FASettingsExpander>
+
+                        <ui:FASettingsExpander Header="{loc:T CachePathHeader}"
+                                               IsExpanded="True">
+                            <ui:FASettingsExpander.IconSource>
+                                <ic:SymbolIconSource Symbol="DatabaseLightning" />
+                            </ui:FASettingsExpander.IconSource>
+
+                            <ui:FASettingsExpander.Footer>
+                                <Button Classes="icon-only"
+                                        Command="{Binding OpenCacheFolderCommand}"
+                                        ToolTip.Tip="{loc:T OpenFolderButtonTooltip}">
+                                    <ic:SymbolIcon Symbol="OpenFolder" />
+                                </Button>
+                            </ui:FASettingsExpander.Footer>
+
+                            <ui:FASettingsExpanderItem Content="{Binding Config?.CachePath}"
+                                                       Description="{loc:T CachePathDescription}">
+                                <ui:FASettingsExpanderItem.IconSource>
+                                    <ic:SymbolIconSource Symbol="Folder" />
+                                </ui:FASettingsExpanderItem.IconSource>
+                                <ui:FASettingsExpanderItem.Footer>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button Classes="icon-only"
+                                                Command="{Binding SelectCachePathCommand}"
+                                                ToolTip.Tip="{loc:T SelectFolderButtonTooltip}">
+                                            <ic:SymbolIcon Symbol="FolderSearch" />
+                                        </Button>
+
+                                        <Button Classes="icon-only"
+                                                Command="{Binding ChangeCachePathCommand}"
+                                                ToolTip.Tip="{loc:T EditPathButtonTooltip}">
+                                            <ic:SymbolIcon Symbol="Edit" />
+                                        </Button>
+                                    </StackPanel>
+                                </ui:FASettingsExpanderItem.Footer>
+                            </ui:FASettingsExpanderItem>
+                        </ui:FASettingsExpander>
+                    </StackPanel>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>

@@ -3,4 +3,5 @@
 internal sealed record Config(
     string AppPath = "Apps",
     string CachePath = "Cache",
-    List<RepositoryEntry>? Repositories = null);
+    List<RepositoryEntry>? Repositories = null,
+    bool CloseAfterLaunch = true);

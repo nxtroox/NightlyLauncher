@@ -9,14 +9,23 @@
   <data name="AppPathHeader" xml:space="preserve">
     <value>Apps</value>
   </data>
-  <data name="EditPathButtonTooltip" xml:space="preserve">
-    <value>Edit path</value>
-  </data>
   <data name="CachePathDescription" xml:space="preserve">
     <value>Current cache path</value>
   </data>
   <data name="CachePathHeader" xml:space="preserve">
     <value>Cache</value>
+  </data>
+  <data name="CloseAfterLaunchDescription" xml:space="preserve">
+    <value>Closes NightlyLauncher after launching an app</value>
+  </data>
+  <data name="CloseAfterLaunchHeader" xml:space="preserve">
+    <value>Close after launching app</value>
+  </data>
+  <data name="EditPathButtonTooltip" xml:space="preserve">
+    <value>Edit path</value>
+  </data>
+  <data name="GeneralOptionsHeading" xml:space="preserve">
+    <value>General</value>
   </data>
   <data name="IssuesCommandBarButtonLabel" xml:space="preserve">
     <value>Report issues</value>
