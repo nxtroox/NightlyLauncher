@@ -1,8 +1,12 @@
 <div align="center">
 
-<img src="assets/NightlyLauncher.svg" width="200">
+<img src="assets/NightlyLauncher.svg" width="200" alt="NightlyLauncher logo">
 
 # NightlyLauncher
+
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/nxtroox/NightlyLauncher/total?logo=github&logoColor=e9afc6&label=Downloads&labelColor=50162d&color=c83771)
+![GitHub License](https://img.shields.io/github/license/nxtroox/NightlyLauncher?logo=github&logoColor=e9afc6&label=License&labelColor=50162d&color=c83771)
+![GitHub Release](https://img.shields.io/github/v/release/nxtroox/NightlyLauncher?logo=github&logoColor=e9afc6&label=Release&labelColor=50162d&color=c83771)
 
 Automatic updates for all of your favorite apps
 
@@ -20,10 +24,10 @@ You can download the latest version from the [releases page](https://github.com/
 > [!TIP]
 > You can configure everything from the UI and do not need to edit config files manually.
 
-1. Add a repository. *(Open sidebar menu -> 'Repositories' -> 'Add')*
-2. Add an app. *(Open sidebar menu -> 'App Browser' -> Double click on the app you want to install)*
-3. (optional) Configure the app. *(Open sidebar menu -> 'Library' -> Right click on the app -> 'Edit')*
-4. The app will always update automatically when you launch it. *(Open sidebar menu -> 'Library' -> Double click an app to launch it)*
+1. Add a repository. *(Open sidebar menu → 'Repositories' → 'Add')*
+2. Add an app. *(Open sidebar menu → 'App Browser' → Double-click on the app you want to install)*
+3. (optional) Configure the app. *(Open sidebar menu → 'Library' → Right-click on the app → 'Edit')*
+4. The app will always update automatically when you launch it. *(Open sidebar menu → 'Library' → Double-click an app to launch it)*
 
 Check out the [documentation](docs) if you have any questions.
 

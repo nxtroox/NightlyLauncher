@@ -7,43 +7,24 @@
    viewBox="0 0 793.74998 793.75"
    version="1.1"
    id="svg1"
-   inkscape:version="1.4.4 (dcaf3e7, 2026-05-05)"
-   sodipodi:docname="NightlyLauncher.svg"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
-  <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#505050"
-     inkscape:document-units="px"
-     inkscape:zoom="0.022466199"
-     inkscape:cx="-3605.4164"
-     inkscape:cy="4295.3417"
-     inkscape:window-width="1920"
-     inkscape:window-height="1009"
-     inkscape:window-x="-8"
-     inkscape:window-y="-8"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="layer1" />
   <defs
      id="defs1">
-    <rect
-       x="-2492.6335"
-       y="267.06788"
-       width="1602.4073"
-       height="1135.0385"
-       id="rect23" />
     <linearGradient
-       id="linearGradient21"
-       inkscape:collect="always">
+       id="linearGradient1">
+      <stop
+         style="stop-color:#e9afc6;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+      <stop
+         style="stop-color:#e6a3bd;stop-opacity:1;"
+         offset="1"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient21">
       <stop
          style="stop-color:#c83771;stop-opacity:1;"
          offset="0"
@@ -54,8 +35,7 @@
          id="stop23" />
     </linearGradient>
     <linearGradient
-       id="linearGradient19"
-       inkscape:collect="always">
+       id="linearGradient19">
       <stop
          style="stop-color:#782144;stop-opacity:1;"
          offset="0"
@@ -66,8 +46,7 @@
          id="stop21" />
     </linearGradient>
     <linearGradient
-       id="linearGradient18"
-       inkscape:collect="always">
+       id="linearGradient18">
       <stop
          style="stop-color:#50162d;stop-opacity:1;"
          offset="0"
@@ -91,7 +70,6 @@
          ry="178.59375" />
     </clipPath>
     <radialGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient18"
        id="radialGradient19"
        cx="396.875"
@@ -101,36 +79,40 @@
        r="396.875"
        gradientUnits="userSpaceOnUse" />
     <radialGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient19"
        id="radialGradient21"
        cx="220.66251"
-       cy="573.08749"
+       cy="573.08746"
        fx="220.66251"
-       fy="573.08749"
+       fy="573.08746"
        r="396.875"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(9.1682422e-6)" />
     <radialGradient
-       inkscape:collect="always"
        xlink:href="#linearGradient21"
        id="radialGradient23"
        cx="73.554169"
-       cy="720.19583"
+       cy="720.1958"
        fx="73.554169"
-       fy="720.19583"
+       fy="720.1958"
        r="396.875"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(-29.104163,29.104171)" />
+    <radialGradient
+       xlink:href="#linearGradient1"
+       id="radialGradient2"
+       cx="562.73132"
+       cy="562.73132"
+       fx="562.73132"
+       fy="562.73132"
+       r="172.2812"
+       gradientUnits="userSpaceOnUse" />
   </defs>
   <g
-     inkscape:label="fg"
-     inkscape:groupmode="layer"
      id="layer1">
     <g
        id="g17"
-       clip-path="url(#clipPath17)"
-       inkscape:label="rect">
+       clip-path="url(#clipPath17)">
       <rect
          style="fill:url(#radialGradient19);stroke-width:0.264583"
          id="rect10"
@@ -139,8 +121,7 @@
          x="0"
          y="0"
          rx="178.59375"
-         ry="178.59375"
-         inkscape:label="rect3" />
+         ry="178.59375" />
       <rect
          style="fill:url(#radialGradient21);stroke-width:0.264583"
          id="rect11"
@@ -149,8 +130,7 @@
          x="-176.21249"
          y="176.21249"
          rx="178.59375"
-         ry="178.59375"
-         inkscape:label="rect2" />
+         ry="178.59375" />
       <rect
          style="fill:url(#radialGradient23);stroke-width:0.264583"
          id="rect12"
@@ -159,13 +139,11 @@
          x="-352.42499"
          y="352.42499"
          rx="178.59375"
-         ry="178.59375"
-         inkscape:label="rect1" />
+         ry="178.59375" />
     </g>
     <path
        id="path1"
-       style="fill:#e9afc6;stroke-width:0.264583"
-       d="m 610.84953,390.45012 a 176.21247,176.21249 0 0 1 7.8626,52.04954 176.21247,176.21249 0 0 1 -176.21249,176.21247 176.21247,176.21249 0 0 1 -52.04952,-7.8625 176.21247,176.21249 0 0 0 168.3499,124.1629 176.21247,176.21249 0 0 0 176.21251,-176.21248 176.21247,176.21249 0 0 0 -124.163,-168.34993 z"
-       inkscape:label="moon" />
+       style="fill:url(#radialGradient2);stroke-width:0.264583"
+       d="m 610.84953,390.45012 a 176.21247,176.21249 0 0 1 7.8626,52.04954 176.21247,176.21249 0 0 1 -176.21249,176.21247 176.21247,176.21249 0 0 1 -52.04952,-7.8625 176.21247,176.21249 0 0 0 168.3499,124.1629 176.21247,176.21249 0 0 0 176.21251,-176.21248 176.21247,176.21249 0 0 0 -124.163,-168.34993 z" />
   </g>
 </svg>
