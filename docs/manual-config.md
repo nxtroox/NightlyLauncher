@@ -14,4 +14,4 @@ NightlyLauncher uses the following files and folders when operating:
 ### :file_folder: Folders
 
 - `%localappdata%/Apps` *(Default value, can be changed)*
-- `%localappdata%/Downloads` *(Default value, can be changed)*
+- `%localappdata%/Cache` *(Default value, can be changed)*
