@@ -6,7 +6,7 @@
 
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/nxtroox/NightlyLauncher/total?logo=github&logoColor=e9afc6&label=Downloads&labelColor=50162d&color=c83771)
 ![GitHub License](https://img.shields.io/github/license/nxtroox/NightlyLauncher?logo=github&logoColor=e9afc6&label=License&labelColor=50162d&color=c83771)
-![GitHub Release](https://img.shields.io/github/v/release/nxtroox/NightlyLauncher?logo=github&logoColor=e9afc6&label=Release&labelColor=50162d&color=c83771)
+![GitHub Release](https://img.shields.io/github/v/release/nxtroox/NightlyLauncher?include_prereleases&logo=github&logoColor=e9afc6&label=Release&labelColor=50162d&color=c83771)
 
 Automatic updates for all of your favorite apps
 
