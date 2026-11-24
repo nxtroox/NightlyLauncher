@@ -15,7 +15,7 @@ Automatic updates for all of your favorite apps
 ## :cd: Installation
 
 > [!IMPORTANT]
-> The non-portable Windows versions require the [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) to be installed.
+> The Windows versions require the [Microsoft Visual C++ Redistributable](https://learn.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist) to be installed.
 
 You can download the latest version from the [releases page](https://github.com/nxtroox/NightlyLauncher/releases/latest).
 
