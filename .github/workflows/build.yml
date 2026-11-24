@@ -53,12 +53,21 @@ jobs:
         with:
           name: NightlyLauncher-${{ matrix.runtime }}
           path: publish
-      - name: Repair/Update WinGet via official module
+      - name: Install WinGet
         if: matrix.os == 'windows-11-arm'
         shell: pwsh
         run: |
-          Install-Module -Name Microsoft.WinGet.Client -Force -Repository PSGallery
-          Repair-WinGetPackageManager -AllUsers
+          $URL = "https://api.github.com/repos/microsoft/winget-cli/releases/latest"
+          $URL = (Invoke-WebRequest -Uri $URL -UseBasicParsing).Content | ConvertFrom-Json |
+          Select-Object -ExpandProperty "assets" |
+          Where-Object "browser_download_url" -Match '.msixbundle' |
+          Select-Object -ExpandProperty "browser_download_url"
+
+          Invoke-WebRequest -Uri $URL -OutFile "Setup.msix" -UseBasicParsing
+
+          Add-AppxPackage -Path "Setup.msix"
+
+          Remove-Item "Setup.msix"
       - name: Install Inno Setup 7
         if: runner.os == 'Windows'
         run: winget install JRSoftware.InnoSetup.7 --scope machine --accept-source-agreements --accept-package-agreements
